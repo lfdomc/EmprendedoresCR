@@ -3,6 +3,7 @@ Allow: /
 
 # Allow WhatsApp to access images
 User-agent: WhatsApp
+Allow: /whatsapp-logo
 Allow: /logo.png
 Allow: /cremprende-logo.png
 Allow: /logo.webp
