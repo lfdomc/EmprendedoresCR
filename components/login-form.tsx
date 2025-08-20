@@ -50,34 +50,36 @@ export function LoginForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="text-xl sm:text-2xl">Iniciar sesión</CardTitle>
+          <CardDescription className="text-sm sm:text-base">
+            Ingresa tu correo electrónico para iniciar sesión en tu cuenta
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleLogin}>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 sm:gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm sm:text-base">Correo electrónico</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="correo@ejemplo.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="h-10 sm:h-11"
                 />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-sm sm:text-base">Contraseña</Label>
                   <Link
                     href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    className="ml-auto inline-block text-xs sm:text-sm underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    <span className="hidden sm:inline">¿Olvidaste tu contraseña?</span>
+                    <span className="sm:hidden">¿Olvidaste?</span>
                   </Link>
                 </div>
                 <Input
@@ -86,20 +88,23 @@ export function LoginForm({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="h-10 sm:h-11"
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Logging in..." : "Login"}
+              {error && <p className="text-xs sm:text-sm text-red-500">{error}</p>}
+              <Button type="submit" className="w-full h-10 sm:h-11" disabled={isLoading}>
+                <span className="hidden sm:inline">{isLoading ? "Iniciando sesión..." : "Iniciar sesión"}</span>
+                <span className="sm:hidden">{isLoading ? "Iniciando..." : "Entrar"}</span>
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
+            <div className="mt-4 text-center text-xs sm:text-sm">
+              <span className="hidden sm:inline">¿No tienes una cuenta? </span>
+              <span className="sm:hidden">¿No tienes cuenta? </span>
               <Link
                 href="/auth/sign-up"
                 className="underline underline-offset-4"
               >
-                Sign up
+                Registrarse
               </Link>
             </div>
           </form>

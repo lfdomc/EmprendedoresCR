@@ -7,10 +7,10 @@ export function SignUpUserSteps() {
     <ol className="flex flex-col gap-6">
       {process.env.VERCEL_ENV === "preview" ||
       process.env.VERCEL_ENV === "production" ? (
-        <TutorialStep title="Set up redirect urls">
-          <p>It looks like this App is hosted on Vercel.</p>
+        <TutorialStep title="Configurar URLs de redirección">
+          <p>Parece que esta aplicación está alojada en Vercel.</p>
           <p className="mt-4">
-            This particular deployment is
+            Este despliegue en particular es
             <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
               &quot;{process.env.VERCEL_ENV}&quot;
             </span>{" "}
@@ -21,16 +21,16 @@ export function SignUpUserSteps() {
             .
           </p>
           <p className="mt-4">
-            You will need to{" "}
+            Necesitarás{" "}
             <Link
               className="text-primary hover:text-foreground"
               href={
                 "https://supabase.com/dashboard/project/_/auth/url-configuration"
               }
             >
-              update your Supabase project
+              actualizar tu proyecto Supabase
             </Link>{" "}
-            with redirect URLs based on your Vercel deployment URLs.
+            con URLs de redirección basadas en las URLs de despliegue de Vercel.
           </p>
           <ul className="mt-4">
             <li>
@@ -53,13 +53,13 @@ export function SignUpUserSteps() {
                   "",
                 )}-*-[vercel-team-url].vercel.app/**`}
               </span>{" "}
-              (Vercel Team URL can be found in{" "}
+              (La URL del equipo de Vercel se puede encontrar en{" "}
               <Link
                 className="text-primary hover:text-foreground"
                 href="https://vercel.com/docs/accounts/create-a-team#find-your-team-id"
                 target="_blank"
               >
-                Vercel Team settings
+                configuración del equipo de Vercel
               </Link>
               )
             </li>
@@ -69,21 +69,21 @@ export function SignUpUserSteps() {
             target="_blank"
             className="text-primary/50 hover:text-primary flex items-center text-sm gap-1 mt-4"
           >
-            Redirect URLs Docs <ArrowUpRight size={14} />
+            Documentación de URLs de redirección <ArrowUpRight size={14} />
           </Link>
         </TutorialStep>
       ) : null}
-      <TutorialStep title="Sign up your first user">
+      <TutorialStep title="Registrar tu primer usuario">
         <p>
-          Head over to the{" "}
+          Ve a la página de{" "}
           <Link
             href="auth/sign-up"
             className="font-bold hover:underline text-foreground/80"
           >
-            Sign up
+            Registro
           </Link>{" "}
-          page and sign up your first user. It&apos;s okay if this is just you
-          for now. Your awesome idea will have plenty of users later!
+          y registra tu primer usuario. Está bien si por ahora eres solo tú.
+          ¡Tu increíble idea tendrá muchos usuarios más adelante!
         </p>
       </TutorialStep>
     </ol>

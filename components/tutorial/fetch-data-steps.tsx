@@ -8,9 +8,9 @@ const create = `create table notes (
 
 insert into notes(title)
 values
-  ('Today I created a Supabase project.'),
-  ('I added some data and queried it from Next.js.'),
-  ('It was awesome!');
+  ('Hoy creé un proyecto de Supabase.'),
+  ('Agregué algunos datos y los consulté desde Next.js.'),
+  ('¡Fue increíble!');
 `.trim();
 
 const server = `import { createClient } from '@/utils/supabase/server'
@@ -29,7 +29,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useEffect, useState } from 'react'
 
 export default function Page() {
-  const [notes, setNotes] = useState<any[] | null>(null)
+  const [notes, setNotes] = useState<Record<string, unknown>[] | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -47,58 +47,58 @@ export default function Page() {
 export function FetchDataSteps() {
   return (
     <ol className="flex flex-col gap-6">
-      <TutorialStep title="Create some tables and insert some data">
+      <TutorialStep title="Crear algunas tablas e insertar datos">
         <p>
-          Head over to the{" "}
+          Ve al{" "}
           <a
             href="https://supabase.com/dashboard/project/_/editor"
             className="font-bold hover:underline text-foreground/80"
             target="_blank"
             rel="noreferrer"
           >
-            Table Editor
+            Editor de Tablas
           </a>{" "}
-          for your Supabase project to create a table and insert some example
-          data. If you&apos;re stuck for creativity, you can copy and paste the
-          following into the{" "}
+          de tu proyecto Supabase para crear una tabla e insertar algunos datos
+          de ejemplo. Si te falta creatividad, puedes copiar y pegar lo
+          siguiente en el{" "}
           <a
             href="https://supabase.com/dashboard/project/_/sql/new"
             className="font-bold hover:underline text-foreground/80"
             target="_blank"
             rel="noreferrer"
           >
-            SQL Editor
+            Editor SQL
           </a>{" "}
-          and click RUN!
+          y hacer clic en ¡EJECUTAR!
         </p>
         <CodeBlock code={create} />
       </TutorialStep>
 
-      <TutorialStep title="Query Supabase data from Next.js">
+      <TutorialStep title="Consultar datos de Supabase desde Next.js">
         <p>
-          To create a Supabase client and query data from an Async Server
-          Component, create a new page.tsx file at{" "}
+          Para crear un cliente de Supabase y consultar datos desde un
+          Componente de Servidor Asíncrono, crea un nuevo archivo page.tsx en{" "}
           <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
             /app/notes/page.tsx
           </span>{" "}
-          and add the following.
+          y agrega lo siguiente.
         </p>
         <CodeBlock code={server} />
-        <p>Alternatively, you can use a Client Component.</p>
+        <p>Alternativamente, puedes usar un Componente de Cliente.</p>
         <CodeBlock code={client} />
       </TutorialStep>
 
-      <TutorialStep title="Explore the Supabase UI Library">
+      <TutorialStep title="Explorar la Biblioteca de UI de Supabase">
         <p>
-          Head over to the{" "}
+          Ve a la{" "}
           <a
             href="https://supabase.com/ui"
             className="font-bold hover:underline text-foreground/80"
           >
-            Supabase UI library
+            biblioteca de UI de Supabase
           </a>{" "}
-          and try installing some blocks. For example, you can install a
-          Realtime Chat block by running:
+          y prueba instalar algunos bloques. Por ejemplo, puedes instalar un
+          bloque de Chat en Tiempo Real ejecutando:
         </p>
         <CodeBlock
           code={
@@ -107,8 +107,8 @@ export function FetchDataSteps() {
         />
       </TutorialStep>
 
-      <TutorialStep title="Build in a weekend and scale to millions!">
-        <p>You&apos;re ready to launch your product to the world! 🚀</p>
+      <TutorialStep title="¡Construye en un fin de semana y escala a millones!">
+        <p>¡Estás listo para lanzar tu producto al mundo! 🚀</p>
       </TutorialStep>
     </ol>
   );
