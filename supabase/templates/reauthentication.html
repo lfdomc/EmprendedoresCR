@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Identidad - Emprendimientos CR</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e74c3c;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .message {
+            margin-bottom: 25px;
+            line-height: 1.8;
+        }
+        .button {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #c0392b;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        .reauth-box {
+            background-color: #fdedec;
+            border: 1px solid #e74c3c;
+            color: #a93226;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .link-text {
+            word-break: break-all;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .security-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .security-info h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .action-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #e74c3c;
+        }
+        .icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .reasons {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .reasons h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+        .reasons ul {
+            list-style: none;
+            padding: 0;
+        }
+        .reasons li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .reasons li:before {
+            content: "🔐 ";
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚀 Emprendimientos CR</div>
+            <div class="subtitle">Plataforma de Emprendedores Costarricenses</div>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">¡Hola!</div>
+            
+            <div class="reauth-box">
+                <div class="icon">🔐</div>
+                <h3>Confirmación de Identidad Requerida</h3>
+                <p>Necesitamos verificar tu identidad para completar esta acción de seguridad.</p>
+            </div>
+            
+            <div class="action-info">
+                <p><strong>🛡️ Acción solicitada:</strong></p>
+                <p>Has intentado realizar una acción que requiere confirmación adicional de tu identidad por motivos de seguridad.</p>
+            </div>
+            
+            <div class="reasons">
+                <h3>¿Por qué necesitamos esto?</h3>
+                <ul>
+                    <li>Cambios importantes en la configuración de tu cuenta</li>
+                    <li>Modificaciones de datos sensibles</li>
+                    <li>Acciones que afectan la seguridad de tu perfil</li>
+                    <li>Protección contra accesos no autorizados</li>
+                </ul>
+            </div>
+            
+            <div class="message">
+                <p>Para confirmar tu identidad y proceder con la acción solicitada, haz clic en el siguiente botón:</p>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ .ConfirmationURL }}" class="button">Confirmar mi Identidad</a>
+            </div>
+            
+            <div class="message">
+                <p>Si el botón no funciona, puedes copiar y pegar el siguiente enlace en tu navegador:</p>
+                <div class="link-text">{{ .ConfirmationURL }}</div>
+            </div>
+            
+            <div class="security-info">
+                <h4>⚠️ Información de Seguridad</h4>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><strong>Este enlace expira en 15 minutos</strong> por tu seguridad</li>
+                    <li>Solo funciona una vez - después se desactiva automáticamente</li>
+                    <li>Debes estar conectado a tu cuenta para usarlo</li>
+                    <li>Si no completas la verificación, la acción será cancelada</li>
+                </ul>
+            </div>
+            
+            <div class="message">
+                <p><strong>🚨 ¿No reconoces esta solicitud?</strong></p>
+                <p>Si no fuiste tú quien intentó realizar esta acción, <strong>NO hagas clic en el enlace</strong> y cambia tu contraseña inmediatamente. Tu cuenta podría estar comprometida.</p>
+            </div>
+            
+            <div class="message">
+                <p><strong>¿Problemas para verificar?</strong></p>
+                <p>Si tienes dificultades con el proceso de verificación, puedes intentar nuevamente desde tu cuenta o contactarnos a través de nuestra plataforma.</p>
+            </div>
+            
+            <div class="message">
+                <p><strong>💡 Consejo de Seguridad:</strong></p>
+                <p>Siempre verifica que estés en el sitio oficial de Emprendimientos CR antes de ingresar tu información personal.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Emprendimientos CR</strong> - Conectando emprendedores costarricenses</p>
+            <p>Este es un correo automático, por favor no respondas a esta dirección.</p>
+            <p>Si tienes alguna pregunta, contáctanos a través de nuestra plataforma.</p>
+            <p style="margin-top: 15px; font-size: 12px; color: #999;">
+                Estás recibiendo este correo porque intentaste realizar una acción que requiere verificación adicional en Emprendimientos CR.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
