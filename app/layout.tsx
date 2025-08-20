@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     siteName: "Costa Rica Emprende",
     images: [
       {
-        url: "/opengraph-image.png",
+        url: "/cremprende-logo.png",
         width: 1200,
         height: 630,
         alt: "Costa Rica Emprende - Marketplace de Emprendimientos",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Costa Rica Emprende - Marketplace de Emprendimientos",
     description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos y servicios especializados.",
-    images: ["/twitter-image.png"],
+    images: ["/cremprende-logo.png"],
     creator: "@costaricaemprende",
   },
   robots: {

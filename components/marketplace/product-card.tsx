@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { SafeLink } from '@/components/ui/safe-link';
 import { Eye } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
@@ -95,7 +95,7 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
       <Card className="hover:shadow-md transition-shadow duration-200 h-24 sm:h-28">
         <div className="flex h-full">
           {/* Image */}
-          <Link href={`/products/${productSlug}`}>
+          <SafeLink href={`/products/${productSlug}`}>
              <div className="relative w-20 sm:w-24 h-full flex-shrink-0 cursor-pointer bg-white">
                <Image
                  src={getImageUrl()}
@@ -110,7 +110,7 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
                  Producto
                </div>
              </div>
-           </Link>
+           </SafeLink>
 
           {/* Content */}
           <div className="flex-1 p-2 sm:p-3 min-w-0 flex">
@@ -122,17 +122,17 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
                     <span className="ml-1">{product.category.name}</span>
                   </div>
                 )}
-                <Link href={`/products/${productSlug}`}>
+                <SafeLink href={`/products/${productSlug}`}>
                   <h3 className="font-semibold text-sm sm:text-base hover:text-primary transition-colors line-clamp-1 mb-1">
                     {product.name}
                   </h3>
-                </Link>
+                </SafeLink>
                 {product.business && (
-                  <Link href={`/businesses/${businessSlug}`}>
+                  <SafeLink href={`/businesses/${businessSlug}`}>
                     <p className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors truncate">
                       por {product.business.name}
                     </p>
-                  </Link>
+                  </SafeLink>
                 )}
               </div>
               
@@ -146,9 +146,9 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
             {/* Buttons - Vertical on the right */}
             <div className="flex flex-col gap-1 justify-center ml-2 flex-shrink-0">
               <Button variant="outline" size="sm" className="h-8 w-8 p-1" asChild>
-                <Link href={`/products/${productSlug}`}>
+                <SafeLink href={`/products/${productSlug}`}>
                   <Eye className="h-5 w-5" />
-                </Link>
+                </SafeLink>
               </Button>
               <Button 
                 size="sm" 
@@ -167,7 +167,7 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
   return (
     <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       <div className="relative">
-        <Link href={`/products/${productSlug}`}>
+        <SafeLink href={`/products/${productSlug}`}>
            <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white">
              <Image
                src={getImageUrl()}
@@ -183,7 +183,7 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
                Producto
              </div>
            </div>
-         </Link>
+         </SafeLink>
       </div>
 
       <CardContent className="p-2 sm:p-3">
@@ -194,18 +194,18 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
           </div>
         )}
         
-        <Link href={`/products/${productSlug}`}>
+        <SafeLink href={`/products/${productSlug}`}>
           <h3 className="font-medium text-xs sm:text-sm hover:text-primary transition-colors line-clamp-2 mb-1 leading-tight">
             {product.name}
           </h3>
-        </Link>
+        </SafeLink>
         
         {product.business && (
-          <Link href={`/businesses/${businessSlug}`}>
+          <SafeLink href={`/businesses/${businessSlug}`}>
             <p className="text-xs text-muted-foreground hover:text-primary transition-colors mb-1 truncate">
               por {product.business.name}
             </p>
-          </Link>
+          </SafeLink>
         )}
 
         <div className="flex items-center justify-between mb-2">
@@ -217,10 +217,10 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
 
       <CardFooter className="p-2 sm:p-3 pt-0 flex gap-1">
         <Button variant="outline" size="sm" className="flex-1 text-xs px-1 sm:px-3" asChild>
-          <Link href={`/products/${productSlug}`}>
+          <SafeLink href={`/products/${productSlug}`}>
             <Eye className="h-5 w-5 mr-0 sm:mr-1" />
             <span className="hidden sm:inline">Ver</span>
-          </Link>
+          </SafeLink>
         </Button>
         <Button 
           size="sm" 

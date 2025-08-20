@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { SafeLink } from '@/components/ui/safe-link';
 import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -57,7 +57,7 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
       <Card className="hover:shadow-md transition-shadow duration-200 h-24 sm:h-28">
         <div className="flex h-full">
           {/* Image */}
-          <Link href={`/services/${serviceSlug}`}>
+          <SafeLink href={`/services/${serviceSlug}`}>
              <div className="relative w-20 sm:w-24 h-full flex-shrink-0 cursor-pointer bg-white">
                <Image
                  src={getImageUrl()}
@@ -71,7 +71,7 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
                  Servicio
                </div>
              </div>
-           </Link>
+           </SafeLink>
 
           {/* Content */}
           <div className="flex-1 p-2 sm:p-3 min-w-0 flex">
@@ -83,17 +83,17 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
                     <span className="ml-1">{service.category.name}</span>
                   </div>
                 )}
-                <Link href={`/services/${serviceSlug}`}>
+                <SafeLink href={`/services/${serviceSlug}`}>
                   <h3 className="font-semibold text-sm sm:text-base hover:text-primary transition-colors line-clamp-1 mb-1">
                     {service.name}
                   </h3>
-                </Link>
+                </SafeLink>
                 {service.business && (
-                  <Link href={`/businesses/${businessSlug}`}>
+                  <SafeLink href={`/businesses/${businessSlug}`}>
                     <p className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors truncate">
                       por {service.business.name}
                     </p>
-                  </Link>
+                  </SafeLink>
                 )}
               </div>
               
@@ -107,9 +107,9 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
             {/* Buttons - Vertical on the right */}
             <div className="flex flex-col gap-1 justify-center ml-2 flex-shrink-0">
               <Button variant="outline" size="sm" className="h-8 w-8 p-1" asChild>
-                <Link href={`/services/${serviceSlug}`}>
+                <SafeLink href={`/services/${serviceSlug}`}>
                   <Eye className="h-5 w-5" />
-                </Link>
+                </SafeLink>
               </Button>
               <WhatsAppServiceButton
                 whatsappNumber={service.business?.whatsapp}
@@ -132,7 +132,7 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
   return (
     <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       <div className="relative">
-        <Link href={`/services/${serviceSlug}`}>
+        <SafeLink href={`/services/${serviceSlug}`}>
           <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white">
             <Image
               src={getImageUrl()}
@@ -147,7 +147,7 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
               Servicio
             </Badge>
           </div>
-        </Link>
+        </SafeLink>
       </div>
 
       <CardContent className="p-2 sm:p-3">
@@ -158,18 +158,18 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
           </div>
         )}
         
-        <Link href={`/services/${serviceSlug}`}>
+        <SafeLink href={`/services/${serviceSlug}`}>
           <h3 className="font-medium text-xs sm:text-sm hover:text-primary transition-colors line-clamp-2 mb-1 leading-tight">
             {service.name}
           </h3>
-        </Link>
+        </SafeLink>
         
         {service.business && (
-          <Link href={`/businesses/${businessSlug}`}>
+          <SafeLink href={`/businesses/${businessSlug}`}>
             <p className="text-xs text-muted-foreground hover:text-primary transition-colors mb-1 truncate">
               por {service.business.name}
             </p>
-          </Link>
+          </SafeLink>
         )}
 
 
@@ -185,10 +185,10 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
 
       <CardFooter className="p-2 sm:p-3 pt-0 flex gap-1">
         <Button variant="outline" size="sm" className="flex-1 text-xs px-1 sm:px-3" asChild>
-          <Link href={`/services/${serviceSlug}`}>
+          <SafeLink href={`/services/${serviceSlug}`}>
             <Eye className="h-5 w-5 mr-0 sm:mr-1" />
             <span className="hidden sm:inline">Ver</span>
-          </Link>
+          </SafeLink>
         </Button>
         <WhatsAppServiceButton
           whatsappNumber={service.business?.whatsapp}

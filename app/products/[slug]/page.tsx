@@ -255,7 +255,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
           }
         ] : [
           {
-            url: '/opengraph-image.png',
+            url: '/cremprende-logo.png',
             width: 1200,
             height: 630,
             alt: 'Costa Rica Emprende - Marketplace de Emprendimientos',
@@ -268,7 +268,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         card: 'summary_large_image',
         title,
         description,
-        images: product.image_url ? [product.image_url] : ['/twitter-image.png'],
+        images: product.image_url ? [product.image_url] : ['/cremprende-logo.png'],
       },
       alternates: {
         canonical: `${defaultUrl}/products/${slug}`,

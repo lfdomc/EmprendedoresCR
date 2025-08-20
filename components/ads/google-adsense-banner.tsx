@@ -8,7 +8,7 @@ interface GoogleAdsenseBannerProps {
 }
 
 export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBannerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const adRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [adLoaded, setAdLoaded] = useState(false);
 
@@ -17,89 +17,107 @@ export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBan
   }, []);
 
   useEffect(() => {
-    if (!mounted || !containerRef.current || adLoaded) return;
+    if (mounted && adRef.current && !adLoaded) {
+      let retryCount = 0;
+      const maxRetries = 5;
+      let timeoutId: NodeJS.Timeout;
 
-    const checkAndLoadAd = () => {
-      if (!containerRef.current || adLoaded) return false;
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      const computedStyle = window.getComputedStyle(containerRef.current);
-      
-      // Verificar múltiples condiciones para asegurar que el elemento tenga dimensiones válidas
-      const hasValidDimensions = 
-        rect.width > 0 && 
-        rect.height > 0 && 
-        containerRef.current.offsetWidth > 0 && 
-        containerRef.current.offsetHeight > 0 &&
-        computedStyle.display !== 'none' &&
-        computedStyle.visibility !== 'hidden';
-      
-      if (hasValidDimensions) {
-        try {
-          (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle = 
-            (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle || [];
-          (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle.push({});
-          setAdLoaded(true);
-          return true;
-        } catch (error) {
-          console.error('Error loading AdSense ad:', error);
-          return false;
-        }
-      }
-      return false;
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Intentar cargar inmediatamente
-            if (checkAndLoadAd()) {
-              observer.disconnect();
-              return;
-            }
-            
-            // Si no se pudo cargar, intentar después de un delay
-            setTimeout(() => {
-              if (checkAndLoadAd()) {
-                observer.disconnect();
-                return;
-              }
-              
-              // Último intento después de más tiempo
-              setTimeout(() => {
-                if (checkAndLoadAd()) {
-                  observer.disconnect();
+      const checkAndLoadAd = () => {
+        const container = adRef.current;
+        if (!container || adLoaded) return;
+        
+        // Esperar a que el DOM esté completamente renderizado
+        requestAnimationFrame(() => {
+          const rect = container.getBoundingClientRect();
+          const computedStyle = window.getComputedStyle(container);
+          const parentRect = container.parentElement?.getBoundingClientRect();
+          
+          // Verificaciones más estrictas
+          const hasValidDimensions = rect.width >= 100 && rect.height >= 50;
+          const hasValidParent = parentRect && parentRect.width >= 100 && parentRect.height >= 50;
+          const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+          const isDisplayed = computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
+          
+          console.log('AdSense validation:', {
+            width: rect.width,
+            height: rect.height,
+            parentWidth: parentRect?.width,
+            parentHeight: parentRect?.height,
+            isVisible,
+            isDisplayed,
+            retryCount
+          });
+          
+          if (hasValidDimensions && hasValidParent && isVisible && isDisplayed) {
+            // Esperar un poco más para asegurar que el layout esté estable
+            timeoutId = setTimeout(() => {
+              try {
+                if (typeof window !== 'undefined' && !adLoaded) {
+                  const adsbygoogle = (window as unknown as { adsbygoogle?: unknown[] }).adsbygoogle;
+                  if (adsbygoogle) {
+                    adsbygoogle.push({});
+                    setAdLoaded(true);
+                    console.log('AdSense ad loaded successfully');
+                  }
                 }
-              }, 800);
-            }, 300);
+              } catch (error) {
+                console.error('Error loading AdSense ad:', error);
+                setAdLoaded(true); // Evitar reintentos infinitos
+              }
+            }, 2000);
+          } else if (retryCount < maxRetries) {
+            retryCount++;
+            timeoutId = setTimeout(() => {
+              checkAndLoadAd();
+            }, 1500);
+          } else {
+            console.warn('AdSense: Max retries reached, stopping attempts');
+            setAdLoaded(true); // Evitar reintentos infinitos
           }
         });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '20px'
+      };
+      
+      // Usar IntersectionObserver para detectar cuando el elemento es visible
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && !adLoaded) {
+              // Esperar un poco después de que sea visible
+              timeoutId = setTimeout(() => {
+                checkAndLoadAd();
+              }, 500);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '50px' }
+      );
+      
+      if (adRef.current) {
+        observer.observe(adRef.current);
       }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+      
+      return () => {
+        if (timeoutId) clearTimeout(timeoutId);
+        if (observer) observer.disconnect();
+      };
     }
-
-    return () => {
-      observer.disconnect();
-    };
   }, [mounted, adLoaded]);
 
   if (!mounted) {
-    return null;
+    return (
+      <div className={`w-full ${className}`} style={{ minHeight: '50px' }}>
+        <div style={{ width: '100%', height: '50px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ color: '#9ca3af', fontSize: '12px' }}>Cargando anuncio...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div ref={containerRef} className={`w-full ${className}`} style={{ minHeight: '90px' }}>
+    <div ref={adRef} className={`w-full ${className}`} style={{ minHeight: '50px' }}>
       <ins 
         className="adsbygoogle"
-        style={{ display: 'block', minHeight: '90px' }}
+        style={{ display: 'block', width: '100%' }}
         data-ad-client="ca-pub-4334054982108939"
         data-ad-slot={adSlot}
         data-ad-format="auto"

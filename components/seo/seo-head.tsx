@@ -23,7 +23,7 @@ export function SEOHead({
   title = 'Costa Rica Emprende - Marketplace de Emprendimientos',
   description = 'Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos, servicios especializados y apoya a emprendedores costarricenses.',
   keywords = [],
-  image = '/opengraph-image.png',
+  image = '/cremprende-logo.png',
   url,
   type = 'website',
   locale = 'es_CR',
