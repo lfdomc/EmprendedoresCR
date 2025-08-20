@@ -32,9 +32,9 @@ export default function SideBanner({ adSlot, className = '' }: SideBannerProps) 
           const computedStyle = window.getComputedStyle(container);
           const parentRect = container.parentElement?.getBoundingClientRect();
           
-          // Verificaciones más estrictas para side banner (160x600)
-          const hasValidDimensions = rect.width >= 160 && rect.height >= 600;
-          const hasValidParent = parentRect && parentRect.width >= 160 && parentRect.height >= 600;
+          // Verificaciones más estrictas para side banner (160x100)
+          const hasValidDimensions = rect.width >= 160 && rect.height >= 100;
+          const hasValidParent = parentRect && parentRect.width >= 160 && parentRect.height >= 100;
           const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
           const isDisplayed = computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
           
@@ -105,8 +105,8 @@ export default function SideBanner({ adSlot, className = '' }: SideBannerProps) 
 
   if (!mounted) {
     return (
-      <div className={`hidden lg:block ${className}`} style={{ width: '160px', minHeight: '600px' }}>
-        <div style={{ width: '160px', height: '600px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={`hidden lg:block ${className}`} style={{ width: '160px', minHeight: '100px' }}>
+        <div style={{ width: '160px', height: '100px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: '#9ca3af', fontSize: '12px' }}>Cargando...</span>
         </div>
       </div>
@@ -114,14 +114,14 @@ export default function SideBanner({ adSlot, className = '' }: SideBannerProps) 
   }
 
   return (
-    <div className={`hidden lg:block ${className}`} style={{ width: '160px', minHeight: '600px' }}>
-      <div ref={adRef} style={{ width: '160px', height: '600px', position: 'relative' }}>
+    <div className={`hidden lg:block ${className}`} style={{ width: '160px', minHeight: '100px' }}>
+      <div ref={adRef} style={{ width: '160px', height: '100px', position: 'relative' }}>
         <ins
           className="adsbygoogle"
           style={{
             display: 'block',
             width: '160px',
-            height: '600px',
+            height: '100px',
             position: 'absolute',
             top: 0,
             left: 0

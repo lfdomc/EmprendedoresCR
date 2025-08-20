@@ -33,8 +33,8 @@ export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBan
           const parentRect = container.parentElement?.getBoundingClientRect();
           
           // Verificaciones más estrictas
-          const hasValidDimensions = rect.width >= 100 && rect.height >= 50;
-          const hasValidParent = parentRect && parentRect.width >= 100 && parentRect.height >= 50;
+          const hasValidDimensions = rect.width >= 100 && rect.height >= 100;
+          const hasValidParent = parentRect && parentRect.width >= 100 && parentRect.height >= 100;
           const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
           const isDisplayed = computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
           
@@ -105,8 +105,8 @@ export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBan
 
   if (!mounted) {
     return (
-      <div className={`w-full ${className}`} style={{ minHeight: '50px' }}>
-        <div style={{ width: '100%', height: '50px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={`w-full ${className}`} style={{ minHeight: '100px' }}>
+        <div style={{ width: '100%', height: '100px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: '#9ca3af', fontSize: '12px' }}>Cargando anuncio...</span>
         </div>
       </div>
@@ -114,7 +114,7 @@ export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBan
   }
 
   return (
-    <div ref={adRef} className={`w-full ${className}`} style={{ minHeight: '50px' }}>
+    <div ref={adRef} className={`w-full ${className}`} style={{ minHeight: '100px' }}>
       <ins 
         className="adsbygoogle"
         style={{ display: 'block', width: '100%' }}
