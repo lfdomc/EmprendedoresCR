@@ -5,19 +5,16 @@ import { Header } from "@/components/layout/header";
 import { Toaster } from "sonner";
 import { WebsiteStructuredData } from "@/components/seo/structured-data";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { siteConfig } from "@/lib/config";
 import "./globals.css";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Costa Rica Emprende - Marketplace de Emprendimientos",
+    default: siteConfig.title,
     template: "%s | Costa Rica Emprende"
   },
-  description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos, servicios especializados y apoya a emprendedores costarricenses en nuestra plataforma digital.",
+  description: siteConfig.description,
   keywords: [
     "emprendimientos",
     "Costa Rica",
@@ -30,14 +27,9 @@ export const metadata: Metadata = {
     "pymes",
     "startups"
   ],
-  authors: [{ name: "Costa Rica Emprende", url: defaultUrl }],
+  authors: [{ name: "Costa Rica Emprende", url: siteConfig.url }],
   creator: "Costa Rica Emprende",
   publisher: "Costa Rica Emprende",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
   robots: {
     index: true,
     follow: true,
@@ -52,25 +44,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'es_CR',
-    url: defaultUrl,
-    siteName: "Costa Rica Emprende",
-    title: "Costa Rica Emprende - Marketplace de Emprendimientos",
-    description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos, servicios especializados y apoya a emprendedores costarricenses.",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
     images: [
       {
-        url: `${defaultUrl}/opengraph-image.png`,
+        url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: "Costa Rica Emprende - Marketplace de Emprendimientos",
+        alt: siteConfig.title,
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Costa Rica Emprende - Marketplace de Emprendimientos",
-    description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos y servicios especializados.",
-    images: [`${defaultUrl}/twitter-image.png`],
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
   verification: {
     google: "google-site-verification-code",
@@ -94,13 +86,13 @@ export const metadata: Metadata = {
     'msvalidate.01': 'bing-site-verification-code',
     'yandex-verification': 'yandex-site-verification-code',
     // Metadatos específicos para WhatsApp
-    'og:image:secure_url': `${defaultUrl}/opengraph-image.png`,
+    'og:image:secure_url': siteConfig.ogImage,
     'og:image:width': '1200',
     'og:image:height': '630',
     'og:image:type': 'image/png',
-    'og:image:alt': "Costa Rica Emprende - Marketplace de Emprendimientos",
-    'whatsapp:image': `${defaultUrl}/opengraph-image.png`,
-    'telegram:image': `${defaultUrl}/opengraph-image.png`,
+    'og:image:alt': siteConfig.title,
+    'whatsapp:image': siteConfig.ogImage,
+    'telegram:image': siteConfig.ogImage,
   },
   category: 'business',
   classification: 'marketplace, emprendimientos, Costa Rica',
