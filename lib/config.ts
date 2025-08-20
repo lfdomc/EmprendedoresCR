@@ -32,7 +32,7 @@ export const siteConfig = {
   title: 'Costa Rica Emprende - Marketplace de Emprendimientos',
   description: 'Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos, servicios especializados y apoya a emprendedores costarricenses.',
   url: getBaseUrl(),
-  ogImage: `${getBaseUrl()}/opengraph-image.png`,
+  ogImage: `${getBaseUrl()}/logosmall.jpg`,
   logo: getImageUrl('/logo.png'),
   logoWebp: getImageUrl('/logo.webp'),
   logoJpeg: getImageUrl('/logosmall.jpg'),
