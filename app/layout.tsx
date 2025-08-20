@@ -45,26 +45,11 @@ export const metadata: Metadata = {
     title: "Costa Rica Emprende - Marketplace de Emprendimientos",
     description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos, servicios especializados y apoya a emprendedores costarricenses.",
     siteName: "Costa Rica Emprende",
-    images: [
-      {
-        url: `${defaultUrl}/cremprende-logo.png`,
-        width: 1200,
-        height: 630,
-        alt: "Costa Rica Emprende - Marketplace de Emprendimientos",
-      },
-      {
-        url: `${defaultUrl}/logosmall.png`,
-        width: 1200,
-        height: 630,
-        alt: "Costa Rica Emprende - Logo",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Costa Rica Emprende - Marketplace de Emprendimientos",
     description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos y servicios especializados.",
-    images: [`${defaultUrl}/cremprende-logo.png`],
     creator: "@costaricaemprende",
   },
   robots: {
@@ -85,16 +70,6 @@ export const metadata: Metadata = {
     'google-site-verification': 'google-site-verification-code',
     'msvalidate.01': 'bing-site-verification-code',
     'yandex-verification': 'yandex-site-verification-code',
-    // WhatsApp specific meta tags
-    'og:image:type': 'image/png',
-    'og:image:secure_url': `${defaultUrl}/logosmall.png`,
-    'og:image:width': '1200',
-    'og:image:height': '630',
-    'og:image:alt': 'Costa Rica Emprende - Logo',
-    'thumbnail': `${defaultUrl}/logosmall.png`,
-    'image': `${defaultUrl}/logosmall.png`,
-    'og:site_name': 'Costa Rica Emprende',
-    'og:locale': 'es_CR',
   },
   category: 'business',
   classification: 'marketplace, emprendimientos, Costa Rica',
