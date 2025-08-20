@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { generateBusinessSlug } from '@/lib/utils/slug';
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
+import { ShareProductButton } from '@/components/ui/share-product-button';
 import { ProductWithDetails } from '@/lib/types/database';
 import { ProductStructuredData } from '@/components/seo/structured-data';
 import type { Metadata } from 'next';
@@ -150,8 +151,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </Card>
               )}
 
-              {/* Contact Button */}
+              {/* Action Buttons */}
               <div className="space-y-4">
+                <ShareProductButton
+                  productName={product.name}
+                  productDescription={product.description}
+                  className="w-full"
+                />
                 <WhatsAppButton
                   whatsappNumber={product.business?.whatsapp}
                   productName={product.name}

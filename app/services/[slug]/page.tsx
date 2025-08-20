@@ -4,11 +4,12 @@ import { extractIdFromSlug } from '@/lib/utils/slug';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Wrench, ArrowLeft, Calendar } from 'lucide-react';
+import { Wrench, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { generateBusinessSlug } from '@/lib/utils/slug';
 import { WhatsAppServiceButton } from '@/components/ui/whatsapp-service-button';
+import { ShareServiceButton } from '@/components/ui/share-service-button';
 import { ServiceWithDetails } from '@/lib/types/database';
 import { ServiceStructuredData } from '@/components/seo/structured-data';
 import type { Metadata } from 'next';
@@ -139,10 +140,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
               {/* Action Buttons */}
               <div className="space-y-3">
-                <Button size="lg" className="w-full">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Reservar Servicio
-                </Button>
+                <ShareServiceButton 
+                  serviceName={service.name}
+                  serviceDescription={service.description || ''}
+                />
                 
                 <WhatsAppServiceButton 
                   whatsappNumber={service.business?.whatsapp}
