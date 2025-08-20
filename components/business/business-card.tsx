@@ -38,18 +38,18 @@ export function BusinessCard({ business, viewMode }: BusinessCardProps) {
         <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <div className="flex">
             {/* Image */}
-            <div className="relative w-20 sm:w-32 h-16 sm:h-24 flex-shrink-0">
-              <div className="relative w-full h-full bg-white rounded-l-lg flex items-center justify-center overflow-hidden">
+            <div className="relative w-24 sm:w-36 h-20 sm:h-28 flex-shrink-0">
+              <div className="relative w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-l-lg flex items-center justify-center overflow-hidden border-r border-gray-200">
                 {business.logo_url && !imageError ? (
                   <Image
                     src={getImageUrl()}
                     alt={`Logo de ${business.name}`}
                     fill
-                    className="object-contain p-1 sm:p-2 hover:scale-105 transition-transform duration-200"
+                    className="object-contain p-2 sm:p-3 hover:scale-110 transition-transform duration-300 drop-shadow-sm"
                     onError={() => setImageError(true)}
                   />
                 ) : (
-                  <Store className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                  <Store className="h-8 w-8 sm:h-10 sm:w-10 text-primary/70" />
                 )}
               </div>
               {/* Featured badge removed - is_featured column no longer exists */}
@@ -99,17 +99,17 @@ export function BusinessCard({ business, viewMode }: BusinessCardProps) {
     <Link href={`/businesses/${businessSlug}`} className="block">
       <Card className="group hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer h-full">
         <div className="relative">
-          <div className="relative aspect-square sm:aspect-[4/3] overflow-hidden rounded-t-lg bg-white flex items-center justify-center">
+          <div className="relative aspect-square sm:aspect-[4/3] overflow-hidden rounded-t-lg bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center border-b border-gray-200">
             {business.logo_url && !imageError ? (
               <Image
                  src={getImageUrl()}
                  alt={`Logo de ${business.name}`}
                  fill
-                 className="object-contain group-hover:scale-105 transition-transform duration-200 p-1 sm:p-2"
+                 className="object-contain group-hover:scale-110 transition-transform duration-300 p-3 sm:p-4 drop-shadow-sm"
                  onError={() => setImageError(true)}
                />
             ) : (
-              <Store className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <Store className="h-12 w-12 sm:h-16 sm:w-16 text-primary/70" />
             )}
           </div>
         </div>

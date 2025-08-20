@@ -30,10 +30,10 @@ const businessSchema = z.object({
   provincia: z.string().optional(),
   google_maps_link: z.string().url('URL inválida').optional().or(z.literal('')),
   logo_url: z.string().url('URL inválida').optional().or(z.literal('')),
-  phone: z.string().min(8, 'El teléfono debe tener al menos 8 caracteres'),
+  phone: z.string().regex(/^\+\d{1,4}\d{4,14}$/, 'Formato inválido. Use: +códigodepaísnúmero (ej: +50670120250)'),
   email: z.string().email('Email inválido'),
   website: z.string().url('URL inválida').optional().or(z.literal('')),
-  whatsapp: z.string().optional(),
+  whatsapp: z.string().regex(/^\+\d{1,4}\d{4,14}$/, 'Formato inválido. Use: +códigodepaísnúmero (ej: +50670120250)'),
   facebook: z.string().url('URL inválida').optional().or(z.literal('')),
   instagram: z.string().url('URL inválida').optional().or(z.literal('')),
   opening_hours: z.string().optional(),
@@ -269,8 +269,24 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
                     <FormItem>
                       <FormLabel className="text-sm sm:text-base">Teléfono *</FormLabel>
                       <FormControl>
-                        <Input placeholder="+506 8888-8888" {...field} className="h-10 sm:h-11" />
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+                            +
+                          </span>
+                          <Input 
+                            placeholder="50670120250" 
+                            className="h-10 sm:h-11 pl-8" 
+                            value={field.value ? field.value.replace(/^\+/, '') : ''}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/[^\d]/g, '');
+                              field.onChange(value ? `+${value}` : '');
+                            }}
+                          />
+                        </div>
                       </FormControl>
+                      <FormDescription>
+                        Código de país {"(+506)"} y número sin espacios {"(ej: 50670120250)"}
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -293,16 +309,29 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
               
               <FormField
                 control={form.control}
-                name="address"
+                name="whatsapp"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-sm sm:text-base">
-                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-                      Dirección *
-                    </FormLabel>
+                    <FormLabel className="text-sm sm:text-base">WhatsApp *</FormLabel>
                     <FormControl>
-                      <Input placeholder="San José, Costa Rica" {...field} className="h-10 sm:h-11" />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+                          +
+                        </span>
+                        <Input 
+                          placeholder="50670120250" 
+                          className="h-10 sm:h-11 pl-8" 
+                          value={field.value ? field.value.replace(/^\+/, '') : ''}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^\d]/g, '');
+                            field.onChange(value ? `+${value}` : '');
+                          }}
+                        />
+                      </div>
                     </FormControl>
+                    <FormDescription>
+                      Código de país {"(+506)"} y número sin espacios {"(ej: 50670120250)"}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -385,6 +414,23 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
                 />
               </div>
               
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-sm sm:text-base">
+                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
+                      Dirección *
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="San José, Costa Rica" {...field} className="h-10 sm:h-11" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
 
               
               <FormField
@@ -392,36 +438,41 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
                 name="google_maps_link"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Enlace de Google Maps</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://maps.google.com/..." {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Enlace directo a tu ubicación en Google Maps
-                    </FormDescription>
+                    <FormLabel className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      Enlace de Google Maps
+                    </FormLabel>
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <FormControl className="flex-1">
+                          <Input placeholder="https://maps.google.com/..." {...field} />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open('https://maps.google.com', '_blank')}
+                          className="shrink-0"
+                        >
+                          <MapPin className="h-4 w-4 mr-1" />
+                          Buscar
+                        </Button>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <p><strong>Cómo obtener el enlace:</strong></p>
+                        <ol className="list-decimal list-inside space-y-1 ml-2">
+                          <li>Haz clic en &quot;Buscar&quot; para abrir Google Maps</li>
+                          <li>Busca tu ubicación exacta</li>
+                          <li>Haz clic en &quot;Compartir&quot; en Google Maps</li>
+                          <li>Copia el enlace y pégalo aquí</li>
+                        </ol>
+                      </div>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
 
-              
-              <FormField
-                control={form.control}
-                name="whatsapp"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>WhatsApp</FormLabel>
-                    <FormControl>
-                      <Input placeholder="+506 8888-8888" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Número de WhatsApp para contacto directo
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             {/* Redes Sociales y Web */}
@@ -462,7 +513,24 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
                     <FormItem>
                       <FormLabel>Sitio Web</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://miemprendimiento.com" {...field} />
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+                            https://
+                          </span>
+                          <Input 
+                            placeholder="miemprendimiento.com" 
+                            className="pl-16"
+                            value={field.value ? field.value.replace(/^https?:\/\//, '') : ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value) {
+                                field.onChange(`https://${value}`);
+                              } else {
+                                field.onChange('');
+                              }
+                            }}
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

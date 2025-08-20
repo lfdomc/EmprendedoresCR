@@ -184,6 +184,8 @@ export interface ProductFilters {
   provincia?: string;
   canton?: string;
   country?: string;
+  page?: number;
+  limit?: number;
 }
 
 export interface ServiceFilters {
@@ -197,10 +199,13 @@ export interface ServiceFilters {
   min_duration?: number;
   max_duration?: number;
   country?: string;
+  page?: number;
+  limit?: number;
 }
 
 export interface BusinessFilters {
   search?: string;
+  category_id?: string;
   canton?: string;
   provincia?: string;
   city?: string;
@@ -208,6 +213,8 @@ export interface BusinessFilters {
   country?: string;
   has_products?: boolean;
   has_services?: boolean;
+  page?: number;
+  limit?: number;
 }
 
 // Interfaces para estadísticas

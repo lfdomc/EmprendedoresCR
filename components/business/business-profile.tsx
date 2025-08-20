@@ -30,7 +30,9 @@ import {
   Trash2,
   Package,
   Wrench,
-  Loader2
+  Loader2,
+  Facebook,
+  Instagram
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -161,50 +163,52 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Business Header */}
         <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 mb-6">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-xl flex items-center justify-center overflow-hidden mx-auto sm:mx-0">
-              {business.logo_url ? (
-                <Image
-                  src={business.logo_url}
-                  alt={`Logo de ${business.name}`}
-                  width={96}
-                  height={96}
-                  className="w-full h-full object-cover rounded-xl"
-                  priority
-                />
-              ) : (
-                <Store className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
-              )}
-            </div>
-            <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{business.name}</h1>
-              <p className="text-base sm:text-lg text-muted-foreground mb-4">{business.description}</p>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                <div className="flex items-center gap-1 text-muted-foreground justify-center sm:justify-start">
-                  <MapPin className="h-4 w-4" />
-                  <span className="text-sm sm:text-base">{business.address}</span>
+          <div className="flex flex-col lg:flex-row lg:items-start gap-4 sm:gap-6">
+            {/* Logo and Info Section */}
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 flex-1">
+              <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center overflow-hidden mx-auto sm:mx-0 border border-gray-200 shadow-sm">
+                {business.logo_url ? (
+                  <Image
+                    src={business.logo_url}
+                    alt={`Logo de ${business.name}`}
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-contain p-4 rounded-xl hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+                    priority
+                  />
+                ) : (
+                  <Store className="h-16 w-16 sm:h-20 sm:w-20 text-primary/70" />
+                )}
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{business.name}</h1>
+                <p className="text-base sm:text-lg text-muted-foreground mb-4">{business.description}</p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                  <div className="flex items-center gap-1 text-muted-foreground justify-center sm:justify-start">
+                    <MapPin className="h-4 w-4" />
+                    <span className="text-sm sm:text-base">{business.address}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <Card>
-              <CardContent className="p-3 sm:p-4 text-center">
-                <Package className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-blue-600" />
-                <p className="text-lg sm:text-2xl font-bold">{activeProducts.length}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Productos</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-3 sm:p-4 text-center">
-                <Wrench className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-green-600" />
-                <p className="text-lg sm:text-2xl font-bold">{activeServices.length}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">Servicios</p>
-              </CardContent>
-            </Card>
-
+            {/* Quick Stats - Right side on large screens */}
+            <div className="grid grid-cols-2 lg:grid-cols-1 lg:w-48 gap-2 sm:gap-3">
+              <Card>
+                <CardContent className="p-2 sm:p-3 text-center">
+                  <Package className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 text-blue-600" />
+                  <p className="text-base sm:text-xl font-bold">{activeProducts.length}</p>
+                  <p className="text-xs text-muted-foreground">Productos</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-2 sm:p-3 text-center">
+                  <Wrench className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 text-green-600" />
+                  <p className="text-base sm:text-xl font-bold">{activeServices.length}</p>
+                  <p className="text-xs text-muted-foreground">Servicios</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
 
@@ -231,48 +235,37 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
               <CardHeader>
                 <CardTitle className="text-lg sm:text-xl">Información de Contacto</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {/* Información de Contacto Principal */}
                   <div className="space-y-4">
+                    <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">Contacto</h4>
                     <div className="flex items-center gap-3">
-                      <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                      <Phone className="h-5 w-5 text-primary" />
                       <div>
-                        <p className="font-medium text-sm sm:text-base">Teléfono</p>
-                        <p className="text-muted-foreground text-sm sm:text-base">{business.phone}</p>
+                        <p className="font-medium">Teléfono</p>
+                        <p className="text-muted-foreground">{business.phone}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                      <Mail className="h-5 w-5 text-primary" />
                       <div>
-                        <p className="font-medium text-sm sm:text-base">Email</p>
-                        <p className="text-muted-foreground text-sm sm:text-base break-all">{business.email}</p>
+                        <p className="font-medium">Email</p>
+                        <p className="text-muted-foreground break-all">{business.email}</p>
                       </div>
                     </div>
                     {business.whatsapp && (
                       <div className="flex items-center gap-3">
-                        <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                        <MessageSquare className="h-5 w-5 text-primary" />
                         <div>
-                          <p className="font-medium text-sm sm:text-base">WhatsApp</p>
-                          <p className="text-muted-foreground text-sm sm:text-base">{business.whatsapp}</p>
+                          <p className="font-medium">WhatsApp</p>
+                          <p className="text-muted-foreground">{business.whatsapp}</p>
                         </div>
                       </div>
                     )}
-                    {(business.provincia || business.canton) && (
-                      <div className="flex items-center gap-3">
-                        <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium text-sm sm:text-base">Ubicación</p>
-                          <p className="text-muted-foreground text-sm sm:text-base">
-                            {[business.canton, business.provincia].filter(Boolean).join(', ')}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-4">
                     {business.website && (
                       <div className="flex items-center gap-3">
-                        <Globe className="h-5 w-5 text-muted-foreground" />
+                        <Globe className="h-5 w-5 text-primary" />
                         <div>
                           <p className="font-medium">Sitio Web</p>
                           <a 
@@ -281,7 +274,40 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                             rel="noopener noreferrer"
                             className="text-primary hover:underline flex items-center gap-1"
                           >
-                            Visitar sitio web
+                            Visitar sitio
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Ubicación y Horarios */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">Ubicación</h4>
+                    {(business.provincia || business.canton) && (
+                      <div className="flex items-center gap-3">
+                        <MapPin className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="font-medium">Provincia y Cantón</p>
+                          <p className="text-muted-foreground">
+                            {[business.canton, business.provincia].filter(Boolean).join(', ')}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {business.google_maps_link && (
+                      <div className="flex items-center gap-3">
+                        <MapPin className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="font-medium">Google Maps</p>
+                          <a 
+                            href={business.google_maps_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline flex items-center gap-1"
+                          >
+                            Ver ubicación
                             <ExternalLink className="h-3 w-3" />
                           </a>
                         </div>
@@ -289,33 +315,57 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                     )}
                     {business.opening_hours && (
                       <div className="flex items-start gap-3">
-                        <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                        <Clock className="h-5 w-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium">Horarios de Atención</p>
-                          <p className="text-muted-foreground whitespace-pre-line">
+                          <p className="font-medium">Horarios</p>
+                          <p className="text-muted-foreground whitespace-pre-line text-sm">
                             {business.opening_hours}
                           </p>
                         </div>
                       </div>
                     )}
-                    {business.google_maps_link && (
-                      <div className="flex items-center gap-3">
-                        <MapPin className="h-5 w-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">Ubicación en Google Maps</p>
-                          <a 
-                            href={business.google_maps_link} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline flex items-center gap-1"
-                          >
-                            Ver en Google Maps
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        </div>
-                      </div>
-                    )}
                   </div>
+
+                  {/* Redes Sociales */}
+                  {(business.facebook || business.instagram) && (
+                    <div className="space-y-4">
+                      <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">Redes Sociales</h4>
+                      {business.facebook && (
+                        <div className="flex items-center gap-3">
+                          <Facebook className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="font-medium">Facebook</p>
+                            <a 
+                              href={business.facebook} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline flex items-center gap-1"
+                            >
+                              Visitar página
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                      {business.instagram && (
+                        <div className="flex items-center gap-3">
+                          <Instagram className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="font-medium">Instagram</p>
+                            <a 
+                              href={business.instagram} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline flex items-center gap-1"
+                            >
+                              Visitar perfil
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

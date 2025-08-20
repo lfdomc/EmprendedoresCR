@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Search, Filter, Grid, List } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Search, Filter, Grid, List, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FilterSidebar } from '@/components/marketplace/filter-sidebar';
@@ -19,6 +19,11 @@ export function Marketplace() {
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMoreProducts, setHasMoreProducts] = useState(true);
+  const [hasMoreServices, setHasMoreServices] = useState(true);
+  const [currentProductPage, setCurrentProductPage] = useState(1);
+  const [currentServicePage, setCurrentServicePage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [contentType, setContentType] = useState<ContentType>('all');
@@ -31,19 +36,31 @@ export function Marketplace() {
     provincia?: string;
     canton?: string;
   }>({});
+  const observerRef = useRef<HTMLDivElement>(null);
 
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
+      setCurrentProductPage(1);
+      setCurrentServicePage(1);
+      setHasMoreProducts(true);
+      setHasMoreServices(true);
+
+      const limit = 50;
+
       const [productsData, servicesData, categoriesData] = await Promise.all([
-        getProducts({ ...filters, search: searchQuery }),
-        getServices({ ...filters, search: searchQuery }),
+        getProducts({ ...filters, search: searchQuery, page: 1, limit }),
+        getServices({ ...filters, search: searchQuery, page: 1, limit }),
         getCategories()
       ]);
       
       setProducts(productsData);
       setServices(servicesData);
       setCategories(categoriesData);
+
+      // Check if we have more data
+      setHasMoreProducts(productsData.length === limit);
+      setHasMoreServices(servicesData.length === limit);
     } catch (error) {
       console.error('Error loading data:', error);
       // Set empty arrays to prevent crashes when Supabase is not configured
@@ -58,6 +75,87 @@ export function Marketplace() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Reset pagination when content type changes
+  useEffect(() => {
+    setCurrentProductPage(1);
+    setCurrentServicePage(1);
+    setHasMoreProducts(true);
+    setHasMoreServices(true);
+  }, [contentType]);
+
+  const loadMoreData = useCallback(async () => {
+    if (loadingMore) return;
+
+    const hasMore = (contentType === 'all' && (hasMoreProducts || hasMoreServices)) ||
+                   (contentType === 'products' && hasMoreProducts) ||
+                   (contentType === 'services' && hasMoreServices);
+
+    if (!hasMore) return;
+
+    try {
+      setLoadingMore(true);
+      const limit = 50;
+      
+      let newProducts: Product[] = [];
+      let newServices: Service[] = [];
+
+      // Load more products if needed
+      if ((contentType === 'all' || contentType === 'products') && hasMoreProducts) {
+        const nextProductPage = currentProductPage + 1;
+        newProducts = await getProducts({ 
+          ...filters, 
+          search: searchQuery, 
+          page: nextProductPage, 
+          limit 
+        });
+        setCurrentProductPage(nextProductPage);
+        setProducts(prev => [...prev, ...newProducts]);
+        setHasMoreProducts(newProducts.length === limit);
+      }
+
+      // Load more services if needed
+      if ((contentType === 'all' || contentType === 'services') && hasMoreServices) {
+        const nextServicePage = currentServicePage + 1;
+        newServices = await getServices({ 
+          ...filters, 
+          search: searchQuery, 
+          page: nextServicePage, 
+          limit 
+        });
+        setCurrentServicePage(nextServicePage);
+        setServices(prev => [...prev, ...newServices]);
+        setHasMoreServices(newServices.length === limit);
+      }
+    } catch (error) {
+      console.error('Error loading more data:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, contentType, hasMoreProducts, hasMoreServices, currentProductPage, currentServicePage, filters, searchQuery]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && !loadingMore) {
+          loadMoreData();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentObserverRef = observerRef.current;
+    if (currentObserverRef) {
+      observer.observe(currentObserverRef);
+    }
+
+    return () => {
+      if (currentObserverRef) {
+        observer.unobserve(currentObserverRef);
+      }
+    };
+  }, [loading, loadingMore, loadMoreData]);
 
   const handleFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -242,6 +340,18 @@ export function Marketplace() {
                     viewMode={viewMode}
                   />
                 ))}
+              </div>
+            )}
+
+            {/* Infinite Scroll Observer */}
+            {!loading && totalItems > 0 && (
+              <div ref={observerRef} className="w-full py-8 flex justify-center">
+                {loadingMore && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span>Cargando más...</span>
+                  </div>
+                )}
               </div>
             )}
           </div>

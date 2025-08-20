@@ -143,18 +143,18 @@ export function DashboardContent({ user }: DashboardContentProps) {
         {/* Business Header */}
         <div className="mb-8">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm">
               {business.logo_url ? (
                 <Image 
                   src={business.logo_url} 
                   alt={`Logo de ${business.name}`}
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover rounded-xl"
+                  width={160}
+                  height={160}
+                  className="w-full h-full object-contain p-4 rounded-xl hover:scale-105 transition-transform duration-300 drop-shadow-sm"
                   priority
                 />
               ) : (
-                <Store className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+                <Store className="h-16 w-16 sm:h-20 sm:w-20 text-primary/70" />
               )}
             </div>
             <div className="flex-1 min-w-0">

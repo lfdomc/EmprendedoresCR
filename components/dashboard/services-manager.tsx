@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { 
@@ -23,7 +24,8 @@ import {
   Trash2, 
   Loader2, 
   Search,
-  Filter
+  Filter,
+  AlertCircle
 } from 'lucide-react';
 import { Service, Category, ServiceFormData, Business } from '@/lib/types/database';
 import { 
@@ -66,6 +68,7 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const form = useForm({
     resolver: zodResolver(serviceSchema),
@@ -115,6 +118,7 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
   const onSubmit = async (values: ServiceFormValues) => {
     try {
       setSubmitting(true);
+      setImageError(null); // Limpiar errores previos
       
       let imageUrl = values.image_url || '';
       
@@ -124,12 +128,24 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
         
         // Validar tipo de archivo
         if (!isValidImageFile(file)) {
-          throw new Error('Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)');
+          const errorMsg = 'Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)';
+          setImageError(errorMsg);
+          toast.error('❌ Formato de imagen no válido', {
+            description: errorMsg,
+            duration: 5000,
+          });
+          throw new Error(errorMsg);
         }
 
         // Validar tamaño (máximo 10MB para el archivo original)
         if (file.size > 10 * 1024 * 1024) {
-          throw new Error('La imagen debe ser menor a 10MB');
+          const errorMsg = 'La imagen debe ser menor a 10MB';
+          setImageError(errorMsg);
+          toast.error('📁 Archivo muy grande', {
+            description: errorMsg,
+            duration: 5000,
+          });
+          throw new Error(errorMsg);
         }
 
         // Convertir a WebP y comprimir
@@ -196,10 +212,31 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
       
       setIsDialogOpen(false);
       setEditingService(null);
+      setImageError(null); // Limpiar errores de imagen
       form.reset();
     } catch (error) {
       console.error('Error saving service:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al guardar el servicio');
+      
+      // Manejo específico de errores de validación de imagen
+       if (error instanceof Error) {
+         if (error.message.includes('archivo de imagen válido') || error.message.includes('menor a 10MB')) {
+           // Ya se estableció el imageError y se mostró el toast específico arriba
+           return;
+         } else {
+           // Otros errores
+           setImageError(null); // Limpiar errores de imagen si es otro tipo de error
+           toast.error('❌ Error al guardar servicio', {
+             description: error.message,
+             duration: 5000,
+           });
+         }
+       } else {
+         setImageError(null);
+         toast.error('❌ Error al guardar servicio', {
+           description: 'Ocurrió un error inesperado',
+           duration: 5000,
+         });
+       }
     } finally {
       setSubmitting(false);
     }
@@ -207,6 +244,7 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
 
   const handleEdit = (service: Service) => {
     setEditingService(service);
+    setImageError(null); // Limpiar errores de imagen
     form.reset({
       name: service.name,
       description: service.description,
@@ -233,6 +271,7 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
 
   const handleNewService = () => {
     setEditingService(null);
+    setImageError(null); // Limpiar errores de imagen
     form.reset();
     setIsDialogOpen(true);
   };
@@ -304,6 +343,15 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
                 }
               </DialogDescription>
             </DialogHeader>
+            
+            {imageError && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="font-medium">
+                  {imageError}
+                </AlertDescription>
+              </Alert>
+            )}
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -401,7 +449,20 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
                             step="0.01"
                             placeholder="0.00"
                             {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                            value={field.value === 0 ? '' : field.value}
+                            onFocus={() => {
+                              if (field.value === 0) {
+                                field.onChange('');
+                              }
+                            }}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === '') {
+                                field.onChange(0);
+                              } else {
+                                field.onChange(parseFloat(value) || 0);
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -444,6 +505,10 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               field.onChange(file);
+                              // Limpiar error de imagen cuando se seleccione un nuevo archivo
+                              if (file && imageError) {
+                                setImageError(null);
+                              }
                             }}
                           />
                         </FormControl>

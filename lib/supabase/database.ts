@@ -55,6 +55,22 @@ export async function getBusinesses(filters?: BusinessFilters): Promise<Business
     query = query.eq('country', filters.country);
   }
 
+  if (filters?.provincia) {
+    query = query.eq('provincia', filters.provincia);
+  }
+
+  if (filters?.canton) {
+    query = query.eq('canton', filters.canton);
+  }
+
+  // Paginación
+  const limit = filters?.limit || 50;
+  const page = filters?.page || 1;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  query = query.range(from, to);
+
   const { data, error } = await query.order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -306,6 +322,14 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
     query = query.eq('canton', filters.canton);
   }
 
+  // Pagination
+  const limit = filters?.limit || 50;
+  const page = filters?.page || 1;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  query = query.range(from, to);
+
   const { data, error } = await query.order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -444,6 +468,14 @@ export async function getServices(filters?: ServiceFilters): Promise<Service[]> 
   if (filters?.canton) {
     query = query.eq('business.canton', filters.canton);
   }
+
+  // Pagination
+  const limit = filters?.limit || 50;
+  const page = filters?.page || 1;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  query = query.range(from, to);
 
   const { data, error } = await query.order('created_at', { ascending: false });
 

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { BusinessFilterSidebar } from './business-filter-sidebar';
 import { BusinessCard } from './business-card';
 import { Card, CardContent } from '@/components/ui/card';
-import { Store, Grid, List, Filter, X } from 'lucide-react';
+import { Store, Grid, List, Filter, X, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PageNavigation } from '@/components/layout/page-navigation';
@@ -31,8 +31,12 @@ export function BusinessesWithFilters({
 }: BusinessesWithFiltersProps) {
   const [businesses, setBusinesses] = useState<Business[]>(initialBusinesses);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMoreBusinesses, setHasMoreBusinesses] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const observerRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState({
     category_id: initialFilters.category,
     search: initialFilters.search,
@@ -59,12 +63,19 @@ export function BusinessesWithFilters({
     // If search filter changed, fetch new data from server
     if (newFilters.search !== filters.search) {
       setLoading(true);
+      setCurrentPage(1);
+      setHasMoreBusinesses(true);
       try {
         const fetchedBusinesses = await getBusinesses({
           search: newFilters.search,
-          // Add other server-side filters if needed
+          provincia: newFilters.provincia,
+          canton: newFilters.canton,
+          category_id: newFilters.category_id,
+          page: 1,
+          limit: 50
         });
         setBusinesses(fetchedBusinesses);
+        setHasMoreBusinesses(fetchedBusinesses.length === 50);
       } catch (error) {
         console.error('Error fetching businesses:', error);
       } finally {
@@ -85,15 +96,80 @@ export function BusinessesWithFilters({
     
     // Reload all businesses when filters are cleared
     setLoading(true);
+    setCurrentPage(1);
+    setHasMoreBusinesses(true);
     try {
-      const fetchedBusinesses = await getBusinesses({});
+      const fetchedBusinesses = await getBusinesses({
+        page: 1,
+        limit: 50
+      });
       setBusinesses(fetchedBusinesses);
+      setHasMoreBusinesses(fetchedBusinesses.length === 50);
     } catch (error) {
       console.error('Error fetching businesses:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  // Función para cargar más emprendimientos
+  const loadMoreBusinesses = useCallback(async () => {
+    if (loadingMore || !hasMoreBusinesses) return;
+
+    setLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      const moreBusinesses = await getBusinesses({
+        search: filters.search,
+        provincia: filters.provincia,
+        canton: filters.canton,
+        category_id: filters.category_id,
+        page: nextPage,
+        limit: 50
+      });
+
+      if (moreBusinesses.length > 0) {
+        setBusinesses(prev => [...prev, ...moreBusinesses]);
+        setCurrentPage(nextPage);
+        setHasMoreBusinesses(moreBusinesses.length === 50);
+      } else {
+        setHasMoreBusinesses(false);
+      }
+    } catch (error) {
+      console.error('Error loading more businesses:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, hasMoreBusinesses, currentPage, filters]);
+
+  // Resetear paginación cuando cambien los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+    setHasMoreBusinesses(true);
+  }, [filters.category_id, filters.provincia, filters.canton]);
+
+  // Intersection Observer para scroll infinito
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreBusinesses && !loading && !loadingMore) {
+          loadMoreBusinesses();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentObserverRef = observerRef.current;
+    if (currentObserverRef) {
+      observer.observe(currentObserverRef);
+    }
+
+    return () => {
+      if (currentObserverRef) {
+        observer.unobserve(currentObserverRef);
+      }
+    };
+  }, [hasMoreBusinesses, loading, loadingMore, filters, currentPage, loadMoreBusinesses]);
 
   const activeFiltersCount = Object.values(filters).filter(Boolean).length;
 
@@ -230,25 +306,39 @@ export function BusinessesWithFilters({
               </CardContent>
             </Card>
           ) : (
-            <div className={viewMode === 'grid' 
-              ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 lg:gap-4" 
-              : "space-y-3 sm:space-y-4"
-            }>
-              {filteredBusinesses.map((business) => {
-                const category = categories.find(c => c.id === business.category_id);
-                
-                return (
-                  <BusinessCard
-                    key={business.id}
-                    business={{
-                      ...business,
-                      category
-                    }}
-                    viewMode={viewMode}
-                  />
-                );
-              })}
-            </div>
+            <>
+              <div className={viewMode === 'grid' 
+                ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 lg:gap-4" 
+                : "space-y-3 sm:space-y-4"
+              }>
+                {filteredBusinesses.map((business) => {
+                  const category = categories.find(c => c.id === business.category_id);
+                  
+                  return (
+                    <BusinessCard
+                      key={business.id}
+                      business={{
+                        ...business,
+                        category
+                      }}
+                      viewMode={viewMode}
+                    />
+                  );
+                })}
+              </div>
+              
+              {/* Elemento observador para scroll infinito */}
+              {hasMoreBusinesses && (
+                <div ref={observerRef} className="flex justify-center py-8">
+                  {loadingMore && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Cargando más emprendimientos...</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
