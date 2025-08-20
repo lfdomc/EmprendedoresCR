@@ -54,7 +54,7 @@ export function WhatsAppButton({
         hour12: true
       });
       
-      const productUrl = productSlug ? `${window.location.origin}/products/${productSlug}` : 'https://emprendimientoscr.com';
+      const productUrl = productSlug ? `${window.location.origin}/products/${productSlug}` : 'https://costaricaemprende.com';
       const message = `🌟 *¡Hola! Estoy interesado/a en este producto* 🌟\n\n` +
         `📦 *Producto:* ${productName}\n` +
         `💰 *Precio:* ${formatPrice(price)}\n\n` +

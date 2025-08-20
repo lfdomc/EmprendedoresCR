@@ -60,18 +60,18 @@ export async function generateMetadata({ params }: BusinessPageProps) {
     
     if (!business) {
       return {
-        title: 'Emprendimiento no encontrado - EmprendimientosCR',
+        title: 'Emprendimiento no encontrado - Costa Rica Emprende',
         description: 'El emprendimiento que buscas no existe o no está disponible.',
       };
     }
 
     return {
-      title: `${business.name} - EmprendimientosCR`,
+      title: `${business.name} - Costa Rica Emprende`,
       description: business.description || `Conoce más sobre ${business.name} y sus productos y servicios.`,
     };
   } catch {
     return {
-      title: 'Error - EmprendimientosCR',
+      title: 'Error - Costa Rica Emprende',
       description: 'Ocurrió un error al cargar la información del emprendimiento.',
     };
   }

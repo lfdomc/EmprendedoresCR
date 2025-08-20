@@ -14,12 +14,13 @@ import { toast } from 'sonner';
 
 interface AuthFormProps {
   redirectTo?: string;
+  initialTab?: 'login' | 'signup';
 }
 
-export function AuthForm({ redirectTo = '/dashboard' }: AuthFormProps) {
+export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: AuthFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('login');
+  const [activeTab, setActiveTab] = useState(initialTab);
   const router = useRouter();
   const supabase = createClient();
 
@@ -133,13 +134,13 @@ export function AuthForm({ redirectTo = '/dashboard' }: AuthFormProps) {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">EmprendimientosCR</CardTitle>
+          <CardTitle className="text-2xl font-bold">Costa Rica Emprende</CardTitle>
           <CardDescription>
             Únete a la comunidad de emprendedores de Costa Rica
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'login' | 'signup')} className="space-y-4">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
               <TabsTrigger value="signup">Registrarse</TabsTrigger>

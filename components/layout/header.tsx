@@ -63,9 +63,10 @@ export function Header() {
           <Link href="/" className="flex items-center gap-0.5">
               <Image
                 src="/logosmall.webp"
-                alt="EmprendimientosCR Logo"
+                alt="Costa Rica Emprende Logo"
                 width={80}
                 height={80}
+                priority
                 className="h-12 w-12 sm:h-20 sm:w-20 object-contain"
               />
             <div className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight">
@@ -77,9 +78,9 @@ export function Header() {
                 </div>
               </div>
               <div className="sm:hidden">
-                <div className="text-white text-sm leading-none">CR</div>
+                <div className="text-white text-sm leading-none">Costa Rica</div>
                 <div className="text-sm leading-none">
-                  <span className="text-green-500">Emp</span>
+                  <span className="text-green-500">emprende</span>
                   <span className="text-yellow-500">.com</span>
                 </div>
               </div>
@@ -164,13 +165,13 @@ export function Header() {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/login">
-                  <Button variant="ghost" size="sm">
+                <Link href="/auth/register?tab=login">
+                  <Button variant="ghost" size="sm" className="bg-white text-black hover:bg-gray-100">
                     <span className="hidden lg:inline">Iniciar Sesión</span>
                     <span className="lg:hidden">Entrar</span>
                   </Button>
                 </Link>
-                <Link href="/login">
+                <Link href="/auth/register?tab=signup">
                   <Button size="sm">
                     <span className="hidden lg:inline">Registrarse</span>
                     <span className="lg:hidden">Registro</span>
@@ -202,20 +203,20 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t bg-header/95 backdrop-blur">
+          <div className="md:hidden border-t bg-header backdrop-blur">
             <div className="px-4 py-4 space-y-4">
               {/* Mobile Navigation */}
               <nav className="space-y-2">
                 <Link 
                   href="/" 
-                  className="block py-2 text-sm font-medium text-header-foreground hover:text-primary transition-colors"
+                  className="block py-2 text-sm font-medium text-white hover:text-yellow-300 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Marketplace
                 </Link>
                 <Link 
                   href="/businesses" 
-                  className="block py-2 text-sm font-medium text-header-foreground hover:text-primary transition-colors"
+                  className="block py-2 text-sm font-medium text-white hover:text-yellow-300 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Emprendimientos
@@ -224,10 +225,10 @@ export function Header() {
 
               {/* Mobile User Actions */}
               {user ? (
-                <div className="space-y-2 pt-2 border-t">
+                <div className="space-y-2 pt-2 border-t border-white/20">
                   <Link 
                     href="/dashboard" 
-                    className="flex items-center py-2 text-sm font-medium hover:text-primary transition-colors"
+                    className="flex items-center py-2 text-sm font-medium text-white hover:text-yellow-300 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Store className="mr-2 h-4 w-4" />
@@ -235,7 +236,7 @@ export function Header() {
                   </Link>
                   <Link 
                     href="/profile" 
-                    className="flex items-center py-2 text-sm font-medium hover:text-primary transition-colors"
+                    className="flex items-center py-2 text-sm font-medium text-white hover:text-yellow-300 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <User className="mr-2 h-4 w-4" />
@@ -243,7 +244,7 @@ export function Header() {
                   </Link>
                   <Link 
                     href="/settings" 
-                    className="flex items-center py-2 text-sm font-medium hover:text-primary transition-colors"
+                    className="flex items-center py-2 text-sm font-medium text-white hover:text-yellow-300 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Settings className="mr-2 h-4 w-4" />
@@ -254,14 +255,14 @@ export function Header() {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-2 pt-2 border-t">
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start">
+                <div className="space-y-2 pt-2 border-t border-white/20">
+                  <Link href="/auth/register?tab=login" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full bg-white text-black hover:bg-gray-100">
                       Iniciar Sesión
                     </Button>
                   </Link>
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full">
+                  <Link href="/auth/register?tab=signup" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full bg-yellow-700 text-white hover:bg-yellow-800 mt-2">
                       Registrarse
                     </Button>
                   </Link>

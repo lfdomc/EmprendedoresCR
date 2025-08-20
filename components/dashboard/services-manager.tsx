@@ -35,6 +35,7 @@ import {
   getBusinessById 
 } from '@/lib/supabase/database';
 import { createClient } from '@/lib/supabase/client';
+import { convertToWebP, isValidImageFile, getCompressionInfo, formatFileSize } from '@/lib/utils/image-processing';
 
 const supabase = createClient();
 
@@ -117,15 +118,43 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
       
       let imageUrl = values.image_url || '';
       
-      // Si hay un archivo de imagen, subirlo a Supabase Storage
+      // Si hay un archivo de imagen, procesarlo y subirlo a Supabase Storage
       if (values.image_file) {
         const file = values.image_file;
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${businessId}-${Date.now()}.${fileExt}`;
+        
+        // Validar tipo de archivo
+        if (!isValidImageFile(file)) {
+          throw new Error('Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)');
+        }
+
+        // Validar tamaño (máximo 10MB para el archivo original)
+        if (file.size > 10 * 1024 * 1024) {
+          throw new Error('La imagen debe ser menor a 10MB');
+        }
+
+        // Convertir a WebP y comprimir
+        toast.info('Procesando imagen...');
+        const processedFile = await convertToWebP(file, {
+          quality: 0.85,
+          maxWidth: 1200,
+          maxHeight: 1200
+        });
+
+        // Mostrar información de compresión
+        const compressionInfo = getCompressionInfo(file, processedFile);
+        console.log('Compresión aplicada:', compressionInfo);
+        
+        if (compressionInfo.reduction > 0) {
+          toast.success(
+            `Imagen optimizada: ${formatFileSize(file.size)} → ${formatFileSize(processedFile.size)} (${compressionInfo.reduction}% reducción)`
+          );
+        }
+        
+        const fileName = `${businessId}-${Date.now()}.webp`;
         
         const { error: uploadError } = await supabase.storage
           .from('service-images')
-          .upload(fileName, file);
+          .upload(fileName, processedFile);
           
         if (uploadError) {
           throw new Error('Error al subir la imagen: ' + uploadError.message);

@@ -69,7 +69,7 @@ export default function BusinessesPage({ searchParams }: BusinessesPageProps) {
 
 export async function generateMetadata() {
   return {
-    title: 'Emprendimientos - EmprendimientosCR',
+    title: 'Emprendimientos - Costa Rica Emprende',
     description: 'Descubre emprendimientos locales y apoya a los negocios de tu comunidad',
   };
 }

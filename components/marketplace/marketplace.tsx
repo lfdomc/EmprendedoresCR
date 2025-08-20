@@ -225,11 +225,12 @@ export function Marketplace() {
                 : "space-y-3 sm:space-y-4"
               }>
                 {/* Products */}
-                {filteredProducts.map((product) => (
+                {filteredProducts.map((product, index) => (
                   <ProductCard
                     key={product.id}
                     product={product}
                     viewMode={viewMode}
+                    priority={index === 0}
                   />
                 ))}
                 

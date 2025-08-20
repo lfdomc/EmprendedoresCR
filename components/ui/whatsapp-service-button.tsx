@@ -55,7 +55,7 @@ export function WhatsAppServiceButton({
         hour12: true
       });
       
-      const serviceUrl = serviceSlug ? `${window.location.origin}/services/${serviceSlug}` : 'https://emprendimientoscr.com';
+      const serviceUrl = serviceSlug ? `${window.location.origin}/services/${serviceSlug}` : 'https://costaricaemprende.com';
       const message = ` *¡Hola! Me interesa este servicio* \n\n` +
         `🛠️ *Servicio:* ${serviceName}\n` +
         `💰 *Precio:* ${formatPrice(price)}\n\n` +

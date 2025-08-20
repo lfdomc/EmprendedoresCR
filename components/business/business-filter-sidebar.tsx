@@ -144,9 +144,9 @@ export function BusinessFilterSidebar({
               variant="ghost"
               size="lg"
               onClick={onClose}
-              className="h-12 w-12 p-0 lg:hidden bg-red-100 hover:bg-red-200 border-2 border-red-300 hover:border-red-400 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
+              className="h-12 w-12 p-0 lg:hidden bg-yellow-800 hover:bg-yellow-900 border-2 border-yellow-700 hover:border-yellow-800 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
             >
-              <X className="h-8 w-8 text-red-600 font-bold" />
+              <X className="h-8 w-8 text-white font-bold" />
             </Button>
           )}
         </div>

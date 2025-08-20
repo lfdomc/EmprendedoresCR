@@ -28,9 +28,10 @@ interface ProductCardProps {
     };
   };
   viewMode: 'grid' | 'list';
+  priority?: boolean;
 }
 
-export function ProductCard({ product, viewMode }: ProductCardProps) {
+export function ProductCard({ product, viewMode, priority = false }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const formatPrice = (price?: number) => {
@@ -95,16 +96,19 @@ export function ProductCard({ product, viewMode }: ProductCardProps) {
         <div className="flex h-full">
           {/* Image */}
           <Link href={`/products/${productSlug}`}>
-             <div className="relative w-20 sm:w-24 h-full flex-shrink-0 cursor-pointer">
+             <div className="relative w-20 sm:w-24 h-full flex-shrink-0 cursor-pointer bg-white">
                <Image
                  src={getImageUrl()}
                  alt={product.name}
                  fill
                  className="object-cover rounded-l-lg"
                  onError={() => setImageError(true)}
+                 priority={priority}
                />
-               {/* Featured badge removed - is_featured column no longer exists */}
-
+               {/* Product badge */}
+               <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-green-500 text-white px-2.5 py-0.5 rounded-md text-xs font-semibold">
+                 Producto
+               </div>
              </div>
            </Link>
 
@@ -164,15 +168,20 @@ export function ProductCard({ product, viewMode }: ProductCardProps) {
     <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       <div className="relative">
         <Link href={`/products/${productSlug}`}>
-           <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer">
+           <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white">
              <Image
                src={getImageUrl()}
                alt={product.name}
                fill
+               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                className="object-cover group-hover:scale-105 transition-transform duration-200"
                onError={() => setImageError(true)}
+               priority={priority}
              />
-
+             {/* Product badge */}
+             <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-green-500 text-white px-2.5 py-0.5 rounded-md text-xs font-semibold">
+               Producto
+             </div>
            </div>
          </Link>
       </div>

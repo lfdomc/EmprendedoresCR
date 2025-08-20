@@ -117,9 +117,9 @@ export function FilterSidebar({
               variant="ghost"
               size="lg"
               onClick={onClose}
-              className="h-10 w-10 p-0 lg:hidden bg-gray-100 hover:bg-gray-200 rounded-full"
+              className="h-10 w-10 p-0 lg:hidden bg-yellow-800 hover:bg-yellow-900 rounded-full"
             >
-              <X className="h-6 w-6 text-gray-700" />
+              <X className="h-6 w-6 text-white" />
             </Button>
           )}
         </div>

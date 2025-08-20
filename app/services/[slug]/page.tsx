@@ -65,7 +65,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Service Image */}
             <div className="space-y-4">
-              <div className="relative aspect-video overflow-hidden rounded-lg bg-muted">
+              <div className="relative aspect-video overflow-hidden rounded-lg bg-white">
                 {service.image_url ? (
                   <Image
                     src={service.image_url}
@@ -113,7 +113,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   <CardContent>
                     <div className="flex items-center gap-4">
                       {service.business.logo_url && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-muted">
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white">
                           <Image
                             src={service.business.logo_url}
                             alt={service.business.name}
@@ -176,18 +176,18 @@ export async function generateMetadata({ params }: ServicePageProps) {
     
     if (!service) {
       return {
-        title: 'Servicio no encontrado - EmprendimientosCR',
+        title: 'Servicio no encontrado - Costa Rica Emprende',
         description: 'El servicio que buscas no existe o no está disponible.',
       };
     }
 
     return {
-      title: `${service.name} - EmprendimientosCR`,
+      title: `${service.name} - Costa Rica Emprende`,
       description: service.description || `Conoce más sobre ${service.name} y contacta al proveedor.`,
     };
   } catch {
     return {
-      title: 'Error - EmprendimientosCR',
+      title: 'Error - Costa Rica Emprende',
       description: 'Ocurrió un error al cargar la información del servicio.',
     };
   }

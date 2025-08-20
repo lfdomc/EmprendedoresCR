@@ -39,7 +39,7 @@ export function BusinessCard({ business, viewMode }: BusinessCardProps) {
           <div className="flex">
             {/* Image */}
             <div className="relative w-20 sm:w-32 h-16 sm:h-24 flex-shrink-0">
-              <div className="relative w-full h-full bg-primary/10 rounded-l-lg flex items-center justify-center overflow-hidden">
+              <div className="relative w-full h-full bg-white rounded-l-lg flex items-center justify-center overflow-hidden">
                 {business.logo_url && !imageError ? (
                   <Image
                     src={getImageUrl()}
@@ -99,7 +99,7 @@ export function BusinessCard({ business, viewMode }: BusinessCardProps) {
     <Link href={`/businesses/${businessSlug}`} className="block">
       <Card className="group hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 cursor-pointer h-full">
         <div className="relative">
-          <div className="relative aspect-square sm:aspect-[4/3] overflow-hidden rounded-t-lg bg-primary/10 flex items-center justify-center">
+          <div className="relative aspect-square sm:aspect-[4/3] overflow-hidden rounded-t-lg bg-white flex items-center justify-center">
             {business.logo_url && !imageError ? (
               <Image
                  src={getImageUrl()}

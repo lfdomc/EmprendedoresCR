@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { convertToWebP, isValidImageFile, getCompressionInfo, formatFileSize } from '@/lib/utils/image-processing';
 
 interface ImageUploadProps {
   value?: string;
@@ -35,26 +36,43 @@ export function ImageUpload({
       setUploading(true);
 
       // Validar tipo de archivo
-      if (!file.type.startsWith('image/')) {
-        toast.error('Por favor selecciona un archivo de imagen válido');
+      if (!isValidImageFile(file)) {
+        toast.error('Por favor selecciona un archivo de imagen válido (JPEG, PNG, GIF, WebP)');
         return;
       }
 
-      // Validar tamaño (máximo 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('La imagen debe ser menor a 5MB');
+      // Validar tamaño (máximo 10MB para el archivo original)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('La imagen debe ser menor a 10MB');
         return;
       }
 
-      // Generar nombre único para el archivo
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      // Convertir a WebP y comprimir
+      toast.info('Procesando imagen...');
+      const processedFile = await convertToWebP(file, {
+        quality: 0.85,
+        maxWidth: 1200,
+        maxHeight: 1200
+      });
+
+      // Mostrar información de compresión
+      const compressionInfo = getCompressionInfo(file, processedFile);
+      console.log('Compresión aplicada:', compressionInfo);
+      
+      if (compressionInfo.reduction > 0) {
+        toast.success(
+          `Imagen optimizada: ${formatFileSize(file.size)} → ${formatFileSize(processedFile.size)} (${compressionInfo.reduction}% reducción)`
+        );
+      }
+
+      // Generar nombre único para el archivo WebP
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.webp`;
       const filePath = `business-logos/${fileName}`;
 
-      // Subir archivo a Supabase Storage
+      // Subir archivo procesado a Supabase Storage
       const { error } = await supabase.storage
         .from('images')
-        .upload(filePath, file, {
+        .upload(filePath, processedFile, {
           cacheControl: '3600',
           upsert: false
         });
@@ -74,7 +92,7 @@ export function ImageUpload({
       toast.success('Imagen subida exitosamente');
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Error al subir la imagen');
+      toast.error('Error al procesar o subir la imagen');
     } finally {
       setUploading(false);
     }
@@ -100,7 +118,7 @@ export function ImageUpload({
       
       {value ? (
         <div className="relative">
-          <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
+          <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white">
             <Image
               src={value}
               alt="Imagen subida"

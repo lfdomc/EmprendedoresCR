@@ -151,6 +151,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
                   width={64}
                   height={64}
                   className="w-full h-full object-cover rounded-lg"
+                  priority
                 />
               ) : (
                 <Store className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />

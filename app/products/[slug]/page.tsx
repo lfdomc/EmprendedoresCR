@@ -136,7 +136,7 @@ export default function ProductPage({ params }: ProductPageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Product Image */}
             <div className="space-y-4">
-              <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-white">
                 {product.image_url ? (
                   <Image
                     src={product.image_url}
@@ -200,7 +200,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   <CardContent>
                     <div className="flex items-center gap-4">
                       {product.business.logo_url && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-muted">
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white">
                           <Image
                             src={product.business.logo_url}
                             alt={product.business.name}

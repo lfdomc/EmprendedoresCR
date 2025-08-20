@@ -54,78 +54,74 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
 
   if (viewMode === 'list') {
     return (
-      <Card className="hover:shadow-md transition-shadow duration-200">
-        <div className="flex flex-col sm:flex-row">
+      <Card className="hover:shadow-md transition-shadow duration-200 h-24 sm:h-28">
+        <div className="flex h-full">
           {/* Image */}
           <Link href={`/services/${serviceSlug}`}>
-            <div className="relative w-full sm:w-32 md:w-40 h-48 sm:h-24 md:h-32 flex-shrink-0 cursor-pointer">
-              <Image
-                src={getImageUrl()}
-                alt={service.name}
-                fill
-                className="object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-t-none"
-                onError={() => setImageError(true)}
-              />
-              {/* Featured badge removed - is_featured column no longer exists */}
-              <Badge className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-blue-500 text-xs">
-                Servicio
-              </Badge>
-            </div>
-          </Link>
+             <div className="relative w-20 sm:w-24 h-full flex-shrink-0 cursor-pointer bg-white">
+               <Image
+                 src={getImageUrl()}
+                 alt={service.name}
+                 fill
+                 className="object-cover rounded-l-lg"
+                 onError={() => setImageError(true)}
+               />
+               {/* Service badge */}
+               <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-blue-500 text-white px-2.5 py-0.5 rounded-md text-xs font-semibold">
+                 Servicio
+               </div>
+             </div>
+           </Link>
 
           {/* Content */}
-          <div className="flex-1 p-3">
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex-1">
+          <div className="flex-1 p-2 sm:p-3 min-w-0 flex">
+            <div className="flex-1 flex flex-col justify-between min-w-0">
+              <div className="min-w-0">
                 {service.category && (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
+                  <div className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1 truncate">
                     <span>{service.category.icon}</span>
-                    <span>{service.category.name}</span>
+                    <span className="ml-1">{service.category.name}</span>
                   </div>
                 )}
                 <Link href={`/services/${serviceSlug}`}>
-                  <h3 className="font-medium text-sm sm:text-base hover:text-primary transition-colors line-clamp-1">
+                  <h3 className="font-semibold text-sm sm:text-base hover:text-primary transition-colors line-clamp-1 mb-1">
                     {service.name}
                   </h3>
                 </Link>
                 {service.business && (
                   <Link href={`/businesses/${businessSlug}`}>
-                    <p className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    <p className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors truncate">
                       por {service.business.name}
                     </p>
                   </Link>
                 )}
               </div>
-
-            </div>
-
-
-
-
-
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <span className="text-base sm:text-lg font-bold text-primary">
-                {formatPrice(service.price)}
-              </span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1 sm:flex-none" asChild>
-                  <Link href={`/services/${serviceSlug}`}>
-                    <Eye className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">Ver</span>
-                  </Link>
-                </Button>
-                <WhatsAppServiceButton
-                  whatsappNumber={service.business?.whatsapp}
-                  serviceName={service.name}
-                  price={service.price}
-                  currency={service.currency}
-                  className="flex-1 sm:flex-none text-xs px-1 sm:px-3 h-8"
-                  showShortText={true}
-                  businessId={service.business?.id || ''}
-                  serviceId={service.id}
-                  serviceSlug={serviceSlug}
-                />
+              
+              <div className="flex items-center min-w-0">
+                <span className="text-sm sm:text-base font-bold text-primary truncate">
+                  {formatPrice(service.price)}
+                </span>
               </div>
+            </div>
+            
+            {/* Buttons - Vertical on the right */}
+            <div className="flex flex-col gap-1 justify-center ml-2 flex-shrink-0">
+              <Button variant="outline" size="sm" className="h-8 w-8 p-1" asChild>
+                <Link href={`/services/${serviceSlug}`}>
+                  <Eye className="h-5 w-5" />
+                </Link>
+              </Button>
+              <WhatsAppServiceButton
+                whatsappNumber={service.business?.whatsapp}
+                serviceName={service.name}
+                price={service.price}
+                currency={service.currency}
+                className="h-8 w-8 p-1 text-xs"
+                showShortText={false}
+                businessId={service.business?.id || ''}
+                serviceId={service.id}
+                serviceSlug={serviceSlug}
+              />
             </div>
           </div>
         </div>
@@ -137,11 +133,12 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
     <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       <div className="relative">
         <Link href={`/services/${serviceSlug}`}>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white">
             <Image
               src={getImageUrl()}
               alt={service.name}
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-200"
               onError={() => setImageError(true)}
             />

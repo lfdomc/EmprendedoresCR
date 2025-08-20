@@ -114,7 +114,7 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
         toast.success('¡Compartido exitosamente!');
       } else {
         // Fallback: copiar al portapapeles si está disponible
-        const shareText = `🌟 ¡Descubre ${business.name}! 🌟\n\n${business.description || 'Un increíble emprendimiento costarricense.'} 🇨🇷\n\n🔗 Ver más: ${window.location.href}\n\n#EmprendimientosCR #CostaRica`;
+        const shareText = `🌟 ¡Descubre ${business.name}! 🌟\n\n${business.description || 'Un increíble emprendimiento costarricense.'} 🇨🇷\n\n🔗 Ver más: ${window.location.href}\n\n#CostaRicaEmprende #CostaRica`;
         
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(shareText);
@@ -162,7 +162,7 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
         {/* Business Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 mb-6">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary/10 rounded-xl flex items-center justify-center overflow-hidden mx-auto sm:mx-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-xl flex items-center justify-center overflow-hidden mx-auto sm:mx-0">
               {business.logo_url ? (
                 <Image
                   src={business.logo_url}
@@ -170,6 +170,7 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                   width={96}
                   height={96}
                   className="w-full h-full object-cover rounded-xl"
+                  priority
                 />
               ) : (
                 <Store className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
