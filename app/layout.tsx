@@ -45,12 +45,21 @@ export const metadata: Metadata = {
     title: "Costa Rica Emprende - Marketplace de Emprendimientos",
     description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos, servicios especializados y apoya a emprendedores costarricenses.",
     siteName: "Costa Rica Emprende",
+    images: [
+      {
+        url: `${defaultUrl}/opengraph-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Costa Rica Emprende - Marketplace de Emprendimientos",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Costa Rica Emprende - Marketplace de Emprendimientos",
     description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos y servicios especializados.",
     creator: "@costaricaemprende",
+    images: [`${defaultUrl}/twitter-image.png`],
   },
   robots: {
     index: true,
