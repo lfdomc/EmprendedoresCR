@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { 
@@ -59,12 +60,30 @@ export function Header() {
       <div className="w-full px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <Store className="h-6 w-6 sm:h-8 sm:w-8 text-header-foreground" />
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-header-foreground">
-              <span className="hidden sm:inline">EmprendimientosCR</span>
-              <span className="sm:hidden">EmpCR</span>
-            </h1>
+          <Link href="/" className="flex items-center gap-0.5">
+              <Image
+                src="/logosmall.webp"
+                alt="EmprendimientosCR Logo"
+                width={80}
+                height={80}
+                className="h-12 w-12 sm:h-20 sm:w-20 object-contain"
+              />
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight">
+              <div className="hidden sm:block">
+                <div className="text-white leading-none">Costa Rica</div>
+                <div className="text-sm sm:text-base leading-none">
+                  <span className="text-green-500">emprende</span>
+                  <span className="text-yellow-500">.com</span>
+                </div>
+              </div>
+              <div className="sm:hidden">
+                <div className="text-white text-sm leading-none">CR</div>
+                <div className="text-sm leading-none">
+                  <span className="text-green-500">Emp</span>
+                  <span className="text-yellow-500">.com</span>
+                </div>
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

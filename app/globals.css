@@ -4,18 +4,18 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%; /* Fondo blanco tipo Amazon */
-    --foreground: 0 0% 3.9%;
+    --background: 0 0% 100%; /* Fondo blanco */
+    --foreground: 0 0% 9%; /* Texto negro para contraste en fondo blanco */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 0 0% 9%; /* Texto negro en tarjetas */
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover-foreground: 0 0% 9%; /* Texto negro en popovers */
     --primary: 45 100% 35%; /* Amarillo oscuro para botones */
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted-foreground: 0 0% 35%; /* Texto gris más oscuro para mejor contraste */
     --accent: 0 0% 96.1%;
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84.2% 60.2%;
@@ -23,7 +23,7 @@
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 45 100% 35%;
-    --header-bg: 210 15% 25%; /* Azul grisáceo oscuro para header/footer */
+    --header-bg: 240 100% 25%; /* Azul marino para header/footer */
     --header-foreground: 0 0% 98%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
