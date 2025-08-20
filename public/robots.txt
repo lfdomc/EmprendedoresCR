@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Allow WhatsApp to access images
+User-agent: WhatsApp
+Allow: /logo.png
+Allow: /cremprende-logo.png
+Allow: /logo.webp
+
+Sitemap: https://emprendimientoscr.com/sitemap.xml

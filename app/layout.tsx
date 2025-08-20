@@ -47,10 +47,16 @@ export const metadata: Metadata = {
     siteName: "Costa Rica Emprende",
     images: [
       {
-        url: "/cremprende-logo.png",
+        url: `${defaultUrl}/cremprende-logo.png`,
         width: 1200,
         height: 630,
         alt: "Costa Rica Emprende - Marketplace de Emprendimientos",
+      },
+      {
+        url: `${defaultUrl}/logo.png`,
+        width: 1200,
+        height: 1200,
+        alt: "Costa Rica Emprende - Logo",
       },
     ],
   },
@@ -58,7 +64,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Costa Rica Emprende - Marketplace de Emprendimientos",
     description: "Descubre y conecta con emprendimientos locales en Costa Rica. Encuentra productos únicos y servicios especializados.",
-    images: ["/cremprende-logo.png"],
+    images: [`${defaultUrl}/cremprende-logo.png`],
     creator: "@costaricaemprende",
   },
   robots: {
@@ -79,6 +85,13 @@ export const metadata: Metadata = {
     'google-site-verification': 'google-site-verification-code',
     'msvalidate.01': 'bing-site-verification-code',
     'yandex-verification': 'yandex-site-verification-code',
+    // WhatsApp specific meta tags
+    'og:image:type': 'image/png',
+    'og:image:secure_url': `${defaultUrl}/logo.png`,
+    'og:image:width': '1200',
+    'og:image:height': '1200',
+    'og:image:alt': 'Costa Rica Emprende - Logo',
+    'thumbnail': `${defaultUrl}/logo.png`,
   },
   category: 'business',
   classification: 'marketplace, emprendimientos, Costa Rica',
@@ -114,7 +127,7 @@ export default function RootLayout({
         >
           <GoogleAnalytics />
           <WebsiteStructuredData />
-          <Header />
+        <Header />
           {children}
           <Toaster richColors position="top-right" />
         </ThemeProvider>
