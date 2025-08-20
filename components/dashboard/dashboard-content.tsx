@@ -118,17 +118,17 @@ export function DashboardContent({ user }: DashboardContentProps) {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b bg-card">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Link href="/" className="inline-flex items-center text-xs sm:text-sm text-muted-foreground hover:text-primary">
-                <ArrowLeft className="h-4 w-4 mr-1" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
+                <ArrowLeft className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Volver al marketplace</span>
                 <span className="sm:hidden">Inicio</span>
               </Link>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="outline" size="sm" className="w-full sm:w-auto text-xs sm:text-sm" asChild>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto" asChild>
                 <Link href={`/businesses/${business.id}`}>
                   <span className="hidden sm:inline">Ver perfil público</span>
                   <span className="sm:hidden">Ver perfil</span>
@@ -139,45 +139,44 @@ export function DashboardContent({ user }: DashboardContentProps) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Business Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-start gap-3 sm:gap-4 mb-4">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary/10 rounded-lg flex items-center justify-center overflow-hidden">
+        <div className="mb-8">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
               {business.logo_url ? (
                 <Image 
                   src={business.logo_url} 
                   alt={`Logo de ${business.name}`}
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover rounded-lg"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover rounded-xl"
                   priority
                 />
               ) : (
-                <Store className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                <Store className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
               )}
             </div>
-            <div className="flex-1">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1">{business.name}</h1>
-              <p className="text-sm sm:text-base text-muted-foreground mb-2">{business.description}</p>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                <Badge variant={business.is_active ? 'default' : 'secondary'} className="w-fit">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 truncate">{business.name}</h1>
+              <p className="text-base sm:text-lg text-muted-foreground mb-3 line-clamp-2">{business.description}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <Badge variant={business.is_active ? 'default' : 'secondary'} className="text-sm px-3 py-1">
                   {business.is_active ? 'Activo' : 'Inactivo'}
                 </Badge>
-
               </div>
             </div>
           </div>
         </div>
 
         {/* Compact Stats & Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Stats */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Estadísticas</CardTitle>
+          <Card className="order-1">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold">Estadísticas</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-blue-600" />
@@ -202,65 +201,65 @@ export function DashboardContent({ user }: DashboardContentProps) {
           </Card>
 
           {/* Quick Actions */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Acciones Rápidas</CardTitle>
+          <Card className="order-2 md:order-3 lg:order-2">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold">Acciones Rápidas</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-3">
               <Button 
                 variant="outline" 
-                size="sm" 
-                className="w-full justify-start" 
+                size="default" 
+                className="w-full justify-start h-11" 
                 onClick={() => setActiveTab('products')}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Agregar Producto
+                <Plus className="h-5 w-5 mr-3" />
+                <span className="font-medium">Agregar Producto</span>
               </Button>
               <Button 
                 variant="outline" 
-                size="sm" 
-                className="w-full justify-start" 
+                size="default" 
+                className="w-full justify-start h-11" 
                 onClick={() => setActiveTab('services')}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Agregar Servicio
+                <Plus className="h-5 w-5 mr-3" />
+                <span className="font-medium">Agregar Servicio</span>
               </Button>
               <Button 
                 variant="outline" 
-                size="sm" 
-                className="w-full justify-start" 
+                size="default" 
+                className="w-full justify-start h-11" 
                 asChild
               >
                 <Link href={`/businesses/${business.id}`}>
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Ver Perfil Público
+                  <BarChart3 className="h-5 w-5 mr-3" />
+                  <span className="font-medium">Ver Perfil Público</span>
                 </Link>
               </Button>
             </CardContent>
           </Card>
 
           {/* Business Info */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Información</CardTitle>
+          <Card className="order-3 md:order-2 lg:order-3">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold">Información</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="text-sm">
-                <p className="text-muted-foreground">Estado</p>
-                <Badge variant={business.is_active ? 'default' : 'secondary'} className="text-xs">
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Estado</p>
+                <Badge variant={business.is_active ? 'default' : 'secondary'} className="text-sm px-3 py-1">
                   {business.is_active ? 'Activo' : 'Inactivo'}
                 </Badge>
               </div>
               {business.phone && (
-                <div className="text-sm">
-                  <p className="text-muted-foreground">Teléfono</p>
-                  <p className="truncate">{business.phone}</p>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Teléfono</p>
+                  <p className="text-base truncate">{business.phone}</p>
                 </div>
               )}
               {business.email && (
-                <div className="text-sm">
-                  <p className="text-muted-foreground">Email</p>
-                  <p className="truncate">{business.email}</p>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Email</p>
+                  <p className="text-base truncate">{business.email}</p>
                 </div>
               )}
             </CardContent>
@@ -268,35 +267,35 @@ export function DashboardContent({ user }: DashboardContentProps) {
         </div>
 
         {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
-            <TabsTrigger value="overview" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-1 h-14 sm:h-10 p-2 sm:p-1 relative z-10 mb-12 sm:mb-8">
+            <TabsTrigger value="overview" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
+              <BarChart3 className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
               <span className="hidden sm:inline">Resumen</span>
-              <span className="sm:hidden">Inicio</span>
+              <span className="sm:hidden text-xs font-semibold">Inicio</span>
             </TabsTrigger>
-            <TabsTrigger value="products" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <Package className="h-3 w-3 sm:h-4 sm:w-4" />
+            <TabsTrigger value="products" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
+              <Package className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
               <span className="hidden sm:inline">Productos</span>
-              <span className="sm:hidden">Prod.</span>
+              <span className="sm:hidden text-xs font-semibold">Prod.</span>
             </TabsTrigger>
-            <TabsTrigger value="services" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <Wrench className="h-3 w-3 sm:h-4 sm:w-4" />
+            <TabsTrigger value="services" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
+              <Wrench className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
               <span className="hidden sm:inline">Servicios</span>
-              <span className="sm:hidden">Serv.</span>
+              <span className="sm:hidden text-xs font-semibold">Serv.</span>
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-              <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+            <TabsTrigger value="settings" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
+              <Settings className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
               <span className="hidden sm:inline">Configuración</span>
-              <span className="sm:hidden">Config</span>
+              <span className="sm:hidden text-xs font-semibold">Config</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-6 relative z-0">
             <DashboardStats business={business} stats={stats} />
           </TabsContent>
 
-          <TabsContent value="products" className="space-y-4 sm:space-y-6">
+          <TabsContent value="products" className="space-y-4 sm:space-y-6 relative z-0">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">Gestión de Productos</h2>
@@ -306,7 +305,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
             <ProductsManager businessId={business.id} />
           </TabsContent>
 
-          <TabsContent value="services" className="space-y-4 sm:space-y-6">
+          <TabsContent value="services" className="space-y-4 sm:space-y-6 relative z-0">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">Gestión de Servicios</h2>
@@ -316,7 +315,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
             <ServicesManager businessId={business.id} />
           </TabsContent>
 
-          <TabsContent value="settings" className="space-y-4 sm:space-y-6">
+          <TabsContent value="settings" className="space-y-4 sm:space-y-6 relative z-0">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">Configuración del Emprendimiento</h2>

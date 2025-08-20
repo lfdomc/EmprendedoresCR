@@ -551,21 +551,20 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
               />
             </div>
 
-            <div className="flex justify-between items-center pt-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pt-6">
               {existingBusiness && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" disabled={isDeleting} className="h-10 sm:h-11">
+                    <Button variant="destructive" disabled={isDeleting} className="w-full sm:w-auto h-11">
                       {isDeleting ? (
-                        <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
-                        <Trash2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                        <Trash2 className="mr-2 h-4 w-4" />
                       )}
-                      <span className="hidden sm:inline">Eliminar Emprendimiento</span>
-                      <span className="sm:hidden">Eliminar</span>
+                      Eliminar Emprendimiento
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
+                  <AlertDialogContent className="mx-4 sm:mx-auto">
                     <AlertDialogHeader>
                       <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                       <AlertDialogDescription>
@@ -573,11 +572,11 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
                         y todos los datos asociados (productos, servicios).
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                      <AlertDialogCancel className="w-full sm:w-auto">Cancelar</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDeleteBusiness}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        className="w-full sm:w-auto bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
                         Eliminar
                       </AlertDialogAction>
@@ -586,11 +585,10 @@ export function BusinessSetup({ existingBusiness, onBusinessCreated }: BusinessS
                 </AlertDialog>
               )}
               
-              <div className="flex gap-3 sm:gap-4">
-                <Button type="submit" disabled={loading} className="h-10 sm:h-11">
-                  {loading && <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />}
-                  <span className="hidden sm:inline">{existingBusiness ? 'Actualizar Emprendimiento' : 'Crear Emprendimiento'}</span>
-                  <span className="sm:hidden">{existingBusiness ? 'Actualizar' : 'Crear'}</span>
+              <div className="flex gap-3">
+                <Button type="submit" disabled={loading} className="flex-1 sm:flex-none h-11">
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {existingBusiness ? 'Actualizar Emprendimiento' : 'Crear Emprendimiento'}
                 </Button>
               </div>
             </div>

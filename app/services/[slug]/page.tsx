@@ -10,6 +10,8 @@ import Image from 'next/image';
 import { generateBusinessSlug } from '@/lib/utils/slug';
 import { WhatsAppServiceButton } from '@/components/ui/whatsapp-service-button';
 import { ServiceWithDetails } from '@/lib/types/database';
+import { ServiceStructuredData } from '@/components/seo/structured-data';
+import type { Metadata } from 'next';
 
 interface ServicePageProps {
   params: Promise<{
@@ -51,6 +53,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
     return (
       <div className="min-h-screen bg-background">
+        <ServiceStructuredData service={service} business={service.business} />
         <div className="container mx-auto px-4 py-8">
           {/* Back button */}
           <div className="mb-6">
@@ -163,7 +166,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   }
 }
 
-export async function generateMetadata({ params }: ServicePageProps) {
+export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params;
   
   try {
@@ -181,9 +184,103 @@ export async function generateMetadata({ params }: ServicePageProps) {
       };
     }
 
+    const formatPrice = (price?: number) => {
+      if (!price) return 'Precio a consultar';
+      return new Intl.NumberFormat('es-CR', {
+        style: 'currency',
+        currency: service.currency || 'CRC',
+        minimumFractionDigits: 0
+      }).format(price);
+    };
+
+    const priceText = formatPrice(service.price);
+    const businessName = service.business?.name || 'Emprendimiento';
+    const location = [service.canton, service.provincia].filter(Boolean).join(', ');
+    const locationText = location ? ` en ${location}` : '';
+    const title = `${service.name} - ${priceText} | ${businessName} - Costa Rica Emprende`;
+    const description = service.description 
+      ? `${service.description.substring(0, 150)}... Disponible${locationText}. Contacta al proveedor vía WhatsApp.`
+      : `${service.name} disponible por ${priceText}${locationText}. Contacta a ${businessName} vía WhatsApp para más información.`;
+
+    const defaultUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
+
+    // Get the service image
+    const serviceImage = service.image_url || null;
+
     return {
-      title: `${service.name} - Costa Rica Emprende`,
-      description: service.description || `Conoce más sobre ${service.name} y contacta al proveedor.`,
+      title,
+      description,
+      keywords: [
+        service.name,
+        businessName,
+        'servicio',
+        'Costa Rica',
+        'emprendimiento',
+        'marketplace',
+        service.category?.name || '',
+        service.canton || '',
+        service.provincia || '',
+        'WhatsApp',
+        'contratar',
+        'profesional',
+        'local',
+        'especializado',
+        'pyme',
+        'freelancer',
+        'consultoría'
+      ].filter(Boolean),
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+        url: `${defaultUrl}/services/${slug}`,
+        images: serviceImage ? [
+          {
+            url: serviceImage,
+            width: 800,
+            height: 600,
+            alt: service.name,
+          }
+        ] : [
+          {
+            url: '/opengraph-image.png',
+            width: 1200,
+            height: 630,
+            alt: 'Costa Rica Emprende - Marketplace de Emprendimientos',
+          }
+        ],
+        siteName: 'Costa Rica Emprende',
+        locale: 'es_CR',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: serviceImage ? [serviceImage] : ['/twitter-image.png'],
+      },
+      alternates: {
+        canonical: `${defaultUrl}/services/${slug}`,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      },
+      other: {
+        'service:price:amount': service.price?.toString() || '0',
+        'service:price:currency': service.currency || 'CRC',
+        'service:availability': 'available',
+        'service:area_served': `${service.canton}, ${service.provincia}, Costa Rica`,
+        'service:provider': businessName,
+      },
     };
   } catch {
     return {

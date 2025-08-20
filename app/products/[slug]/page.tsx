@@ -1,19 +1,16 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import { getProductBySlug, getProductById } from '@/lib/supabase/database';
 import { notFound } from 'next/navigation';
 import { extractIdFromSlug } from '@/lib/utils/slug';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Package, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { generateBusinessSlug } from '@/lib/utils/slug';
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
-import { toast } from 'sonner';
 import { ProductWithDetails } from '@/lib/types/database';
+import { ProductStructuredData } from '@/components/seo/structured-data';
+import type { Metadata } from 'next';
 
 interface ProductPageProps {
   params: Promise<{
@@ -21,93 +18,24 @@ interface ProductPageProps {
   }>;
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const [product, setProduct] = useState<ProductWithDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [slug, setSlug] = useState<string>('');
-
-  useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        const resolvedParams = await params;
-        const productSlug = resolvedParams.slug;
-        setSlug(productSlug);
-        
-        // First try to get product by slug, if not found try by ID (for backward compatibility)
-        let productData = await getProductBySlug(productSlug);
-        
-        if (!productData) {
-          // Try to extract ID from slug for backward compatibility
-          const possibleId = extractIdFromSlug(productSlug);
-          productData = await getProductById(possibleId);
-        }
-        
-        if (!productData) {
-          notFound();
-        }
-        
-        setProduct(productData);
-      } catch (error) {
-        console.error('Error loading product:', error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProduct();
-  }, [params]);
-
-  // Función para manejar el compartir
-  const handleShare = async () => {
-    if (!product) return;
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { slug } = await params;
+  
+  try {
+    // First try to get product by slug, if not found try by ID (for backward compatibility)
+    let product: ProductWithDetails | null = await getProductBySlug(slug);
     
-    const shareData = {
-      title: `${product.name} - Producto en Costa Rica`,
-      text: `🛍️ ¡Mira este producto! ${product.name} ${product.description ? '- ' + product.description.substring(0, 100) + '...' : ''} 🇨🇷`,
-      url: window.location.href
-    };
-
-    try {
-      // Verificar si el navegador soporta la Web Share API
-      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
-        toast.success('¡Compartido exitosamente!');
-      } else {
-        // Fallback: copiar al portapapeles si está disponible
-        const shareText = `🛍️ ¡Mira este producto! 🛍️\n\n${product.name}\n${product.description || 'Un increíble producto disponible en Costa Rica.'} 🇨🇷\n\n🔗 Ver más: ${window.location.href}\n\n#ProductosCR #CostaRica`;
-        
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(shareText);
-          toast.success('¡Enlace copiado al portapapeles! 📋');
-        } else {
-          // Fallback final: mostrar el texto para copiar manualmente
-          toast.info('Copia este enlace: ' + window.location.href);
-        }
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-      // Fallback de emergencia
-      toast.info('Copia este enlace: ' + window.location.href);
+    if (!product) {
+      // Try to extract ID from slug for backward compatibility
+      const possibleId = extractIdFromSlug(slug);
+      product = await getProductById(possibleId);
     }
-  };
+    
+    if (!product) {
+      notFound();
+    }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Cargando producto...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!product) {
-    notFound();
-  }
-
-  const businessSlug = generateBusinessSlug(product.business?.name, product.business?.id);
+    const businessSlug = generateBusinessSlug(product.business?.name, product.business?.id);
 
     const formatPrice = (price?: number) => {
       if (!price) return 'Precio a consultar';
@@ -118,50 +46,43 @@ export default function ProductPage({ params }: ProductPageProps) {
       }).format(price);
     };
 
-
-
     return (
       <div className="min-h-screen bg-background">
+        <ProductStructuredData product={product} business={product.business} />
         <div className="container mx-auto px-4 py-8">
-          {/* Back button */}
+          {/* Back Button */}
           <div className="mb-6">
-            <Button variant="ghost" asChild>
-              <Link href="/" className="flex items-center gap-2">
+            <Link href="/">
+              <Button variant="ghost" className="gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 Volver al marketplace
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Product Image */}
             <div className="space-y-4">
-              <div className="relative aspect-square overflow-hidden rounded-lg bg-white">
+              <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
                 {product.image_url ? (
                   <Image
                     src={product.image_url}
                     alt={product.name}
                     fill
                     className="object-cover"
+                    priority
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
-                    <Package className="h-16 w-16 text-muted-foreground" />
+                    <Package className="h-24 w-24 text-gray-400" />
                   </div>
                 )}
               </div>
-              
-
             </div>
 
             {/* Product Details */}
             <div className="space-y-6">
               <div>
-                {product.category && (
-                  <Badge variant="outline" className="mb-2">
-                    {product.category.name}
-                  </Badge>
-                )}
                 <h1 className="text-3xl font-bold">{product.name}</h1>
                 <p className="text-2xl font-bold text-primary mt-2">
                   {formatPrice(product.price)}
@@ -200,7 +121,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   <CardContent>
                     <div className="flex items-center gap-4">
                       {product.business.logo_url && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white">
+                        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100">
                           <Image
                             src={product.business.logo_url}
                             alt={product.business.name}
@@ -210,42 +131,165 @@ export default function ProductPage({ params }: ProductPageProps) {
                         </div>
                       )}
                       <div className="flex-1">
-                        <Link href={`/businesses/${businessSlug}`}>
-                          <h4 className="font-semibold hover:text-primary transition-colors">
-                            {product.business.name}
-                          </h4>
-                        </Link>
+                        <h4 className="font-semibold">{product.business.name}</h4>
+                        {product.business.description && (
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {product.business.description}
+                          </p>
+                        )}
+                        <div className="flex gap-2 mt-2">
+                          <Link href={`/businesses/${businessSlug}`}>
+                            <Button variant="outline" size="sm">
+                              Ver emprendimiento
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               )}
 
-              {/* Action Buttons */}
-              <div className="space-y-3">
-                <WhatsAppButton 
+              {/* Contact Button */}
+              <div className="space-y-4">
+                <WhatsAppButton
                   whatsappNumber={product.business?.whatsapp}
                   productName={product.name}
                   price={product.price}
                   currency={product.currency}
-                  className="w-full"
                   businessId={product.business?.id || ''}
                   productId={product.id}
-                  productSlug={slug}
+                  className="w-full"
                 />
-                
-                <Button 
-                  variant="default" 
-                  size="lg" 
-                  className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={handleShare}
-                >
-                  Compartir Producto
-                </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
     );
+  } catch (error) {
+    console.error('Error loading product:', error);
+    notFound();
+  }
+}
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  
+  try {
+    let product = await getProductBySlug(slug);
+    
+    if (!product) {
+      const possibleId = extractIdFromSlug(slug);
+      product = await getProductById(possibleId);
+    }
+    
+    if (!product) {
+      return {
+        title: 'Producto no encontrado - Costa Rica Emprende',
+        description: 'El producto que buscas no existe o no está disponible.',
+      };
+    }
+
+    const formatPrice = (price?: number) => {
+      if (!price) return 'Precio a consultar';
+      return new Intl.NumberFormat('es-CR', {
+        style: 'currency',
+        currency: product.currency || 'CRC',
+        minimumFractionDigits: 0
+      }).format(price);
+    };
+
+    const priceText = formatPrice(product.price);
+    const businessName = product.business?.name || 'Emprendimiento';
+    const location = [product.canton, product.provincia].filter(Boolean).join(', ');
+    const locationText = location ? ` en ${location}` : '';
+    
+    const title = `${product.name} - ${priceText} | ${businessName} - Costa Rica Emprende`;
+    const description = product.description 
+      ? `${product.description.substring(0, 150)}... Disponible${locationText}. Contacta al vendedor vía WhatsApp.`
+      : `${product.name} disponible por ${priceText}${locationText}. Contacta a ${businessName} vía WhatsApp para más información.`;
+
+    const defaultUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
+
+    return {
+      title,
+      description,
+      keywords: [
+        product.name,
+        businessName,
+        'producto',
+        'Costa Rica',
+        'emprendimiento',
+        'marketplace',
+        product.category?.name || '',
+        product.canton || '',
+        product.provincia || '',
+        'WhatsApp',
+        'comprar',
+        'local',
+        'artesanal',
+        'hecho en Costa Rica',
+        'pyme',
+        'startup'
+      ].filter(Boolean),
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+        url: `${defaultUrl}/products/${slug}`,
+        images: product.image_url ? [
+          {
+            url: product.image_url,
+            width: 800,
+            height: 600,
+            alt: product.name,
+          }
+        ] : [
+          {
+            url: '/opengraph-image.png',
+            width: 1200,
+            height: 630,
+            alt: 'Costa Rica Emprende - Marketplace de Emprendimientos',
+          }
+        ],
+        siteName: 'Costa Rica Emprende',
+        locale: 'es_CR',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: product.image_url ? [product.image_url] : ['/twitter-image.png'],
+      },
+      alternates: {
+        canonical: `${defaultUrl}/products/${slug}`,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
+      },
+      other: {
+        'product:price:amount': product.price?.toString() || '0',
+        'product:price:currency': product.currency || 'CRC',
+        'product:availability': 'in stock',
+        'product:condition': 'new',
+        'product:retailer_item_id': product.id,
+      },
+    };
+  } catch {
+    return {
+      title: 'Error - Costa Rica Emprende',
+      description: 'Ocurrió un error al cargar la información del producto.',
+    };
+  }
 }

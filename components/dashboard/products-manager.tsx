@@ -232,20 +232,20 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Search className="h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar productos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-64"
+              className="pl-10 w-full sm:w-64"
             />
           </div>
           
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-full sm:w-48">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
@@ -267,12 +267,12 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
               Agregar Producto
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
+          <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto mx-4 sm:mx-auto">
+            <DialogHeader className="pb-4">
+              <DialogTitle className="text-xl sm:text-2xl">
                 {editingProduct ? 'Editar Producto' : 'Agregar Nuevo Producto'}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-base">
                 {editingProduct 
                   ? 'Actualiza la información del producto'
                   : 'Completa la información del nuevo producto'
@@ -281,8 +281,8 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
             </DialogHeader>
             
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
                     name="name"
@@ -492,15 +492,16 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
                   )}
                 />
                 
-                <div className="flex justify-end gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6">
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setIsDialogOpen(false)}
+                    className="w-full sm:w-auto order-2 sm:order-1"
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" disabled={submitting}>
+                  <Button type="submit" disabled={submitting} className="w-full sm:w-auto order-1 sm:order-2">
                     {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {editingProduct ? 'Actualizar' : 'Crear'} Producto
                   </Button>

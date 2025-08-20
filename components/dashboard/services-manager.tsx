@@ -257,20 +257,20 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Search className="h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar servicios..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-64"
+              className="pl-10 w-full sm:w-64"
             />
           </div>
           
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-full sm:w-48">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
@@ -292,12 +292,12 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
               Agregar Servicio
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
+          <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto mx-4 sm:mx-auto">
+            <DialogHeader className="pb-4">
+              <DialogTitle className="text-xl sm:text-2xl">
                 {editingService ? 'Editar Servicio' : 'Agregar Nuevo Servicio'}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-base">
                 {editingService 
                   ? 'Actualiza la información del servicio'
                   : 'Completa la información del nuevo servicio'
@@ -306,8 +306,8 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
             </DialogHeader>
             
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <FormField
                     control={form.control}
                     name="name"
@@ -479,15 +479,16 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
                   )}
                 />
                 
-                <div className="flex justify-end gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6">
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setIsDialogOpen(false)}
+                    className="w-full sm:w-auto order-2 sm:order-1"
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" disabled={submitting}>
+                  <Button type="submit" disabled={submitting} className="w-full sm:w-auto order-1 sm:order-2">
                     {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {editingService ? 'Actualizar' : 'Crear'} Servicio
                   </Button>
@@ -519,87 +520,87 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {filteredServices.map((service) => {
             const category = categories.find(c => c.id === service.category_id);
             return (
-              <Card key={service.id} className="overflow-hidden">
-                <div className="aspect-video bg-muted relative">
+              <Card key={service.id} className="overflow-hidden hover:shadow-md transition-shadow w-full">
+                <div className="aspect-[4/3] bg-muted relative h-24">
                   {service.image_url ? (
                     <Image 
                       src={service.image_url} 
                       alt={service.name}
-                      width={320}
-                      height={180}
+                      width={96}
+                      height={96}
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Wrench className="h-12 w-12 text-muted-foreground" />
+                      <Wrench className="h-4 w-4 text-muted-foreground" />
                     </div>
                   )}
                   
-                  <div className="absolute top-2 left-2 flex gap-1">
+                  <div className="absolute top-0.5 left-0.5 flex gap-0.5">
                     {!service.is_active && (
-                      <Badge key={`${service.id}-inactive`} variant="secondary">Inactivo</Badge>
+                      <Badge key={`${service.id}-inactive`} variant="secondary" className="text-xs px-1 py-0">Inactivo</Badge>
                     )}
                   </div>
                   
-
+                  <div className="absolute top-0.5 right-0.5 flex gap-0.5">
+                    <Button
+                       variant="ghost"
+                       size="sm"
+                       className="h-5 w-5 p-0 bg-white/80 hover:bg-white text-black"
+                       onClick={() => handleEdit(service)}
+                     >
+                       <Edit className="h-2.5 w-2.5" />
+                     </Button>
+                     <AlertDialog>
+                       <AlertDialogTrigger asChild>
+                         <Button variant="ghost" size="sm" className="h-5 w-5 p-0 bg-white/80 hover:bg-white text-black">
+                           <Trash2 className="h-2.5 w-2.5" />
+                         </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>¿Eliminar servicio?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Esta acción no se puede deshacer. El servicio será eliminado permanentemente.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(service.id)}>
+                            Eliminar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
                 
-                <CardContent className="p-4">
+                <CardContent className="p-3">
                   <div className="space-y-2">
-                    <div className="flex items-start justify-between">
-                      <h3 className="font-semibold line-clamp-1">{service.name}</h3>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          key={`${service.id}-edit`}
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(service)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog key={`${service.id}-delete`}>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>¿Eliminar servicio?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Esta acción no se puede deshacer. El servicio será eliminado permanentemente.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDelete(service.id)}>
-                                Eliminar
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                    <div className="space-y-1">
+                      <h3 className="font-semibold text-sm line-clamp-2 leading-tight">{service.name}</h3>
+                      {category && (
+                        <Badge variant="secondary" className="text-xs px-2 py-0.5 w-fit">
+                          {category.name.length > 10 ? category.name.substring(0, 10) + '...' : category.name}
+                        </Badge>
+                      )}
                     </div>
                     
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {service.description}
-                    </p>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <p className="line-clamp-2">
+                        {service.description}
+                      </p>
+                    </div>
                     
                     <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-lg">
-                          {service.currency === 'USD' ? '$' : '₡'}
-                          {(service.price || 0).toLocaleString()}
-                        </p>
-
-                      </div>
-                      <Badge variant="outline">
-                        {category?.name}
-                      </Badge>
+                      <p className="font-semibold text-sm">
+                        {service.currency === 'USD' ? '$' : '₡'}
+                        {(service.price || 0).toLocaleString()}
+                      </p>
                     </div>
                   </div>
                 </CardContent>

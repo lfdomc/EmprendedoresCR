@@ -312,7 +312,7 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
   return data || [];
 }
 
-export async function getProductById(id: string): Promise<Product | null> {
+export async function getProductById(id: string): Promise<ProductWithDetails | null> {
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -328,7 +328,7 @@ export async function getProductById(id: string): Promise<Product | null> {
   return data;
 }
 
-export async function getProductBySlug(slug: string): Promise<Product | null> {
+export async function getProductBySlug(slug: string): Promise<ProductWithDetails | null> {
   const { data: products, error } = await supabase
     .from('products')
     .select(`
@@ -451,7 +451,7 @@ export async function getServices(filters?: ServiceFilters): Promise<Service[]> 
   return data || [];
 }
 
-export async function getServiceById(id: string): Promise<Service | null> {
+export async function getServiceById(id: string): Promise<ServiceWithDetails | null> {
   const { data, error } = await supabase
     .from('services')
     .select(`
@@ -467,7 +467,7 @@ export async function getServiceById(id: string): Promise<Service | null> {
   return data;
 }
 
-export async function getServiceBySlug(slug: string): Promise<Service | null> {
+export async function getServiceBySlug(slug: string): Promise<ServiceWithDetails | null> {
   const { data: services, error } = await supabase
     .from('services')
     .select(`
