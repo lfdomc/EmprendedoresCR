@@ -26,7 +26,7 @@ export const getImageUrl = (path: string) => {
   return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`
 }
 
-// Configuración de metadatos
+// Configuración de metadatos del sitio
 export const siteConfig = {
   name: 'Costa Rica Emprende',
   title: 'Costa Rica Emprende - Marketplace de Emprendimientos',
