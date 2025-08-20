@@ -121,12 +121,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <CardContent>
                     <div className="flex items-center gap-4">
                       {product.business.logo_url && (
-                        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100">
+                        <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white border border-gray-200 shadow-sm">
                           <Image
                             src={product.business.logo_url}
                             alt={product.business.name}
                             fill
-                            className="object-cover"
+                            className="object-contain p-2 hover:scale-105 transition-transform duration-300"
                           />
                         </div>
                       )}

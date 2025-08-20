@@ -462,11 +462,11 @@ export async function getServices(filters?: ServiceFilters): Promise<Service[]> 
 
   // Location filters
   if (filters?.provincia) {
-    query = query.eq('business.provincia', filters.provincia);
+    query = query.eq('provincia', filters.provincia);
   }
 
   if (filters?.canton) {
-    query = query.eq('business.canton', filters.canton);
+    query = query.eq('canton', filters.canton);
   }
 
   // Pagination

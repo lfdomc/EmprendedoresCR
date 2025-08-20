@@ -116,12 +116,12 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   <CardContent>
                     <div className="flex items-center gap-4">
                       {service.business.logo_url && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white">
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white border border-gray-200 shadow-sm">
                           <Image
                             src={service.business.logo_url}
                             alt={service.business.name}
                             fill
-                            className="object-cover"
+                            className="object-contain p-2 hover:scale-105 transition-transform duration-300"
                           />
                         </div>
                       )}

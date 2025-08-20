@@ -20,6 +20,7 @@ export function UpdatePasswordForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -30,13 +31,27 @@ export function UpdatePasswordForm({
     setIsLoading(true);
     setError(null);
 
+    // Validar que las contraseñas coincidan
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      setIsLoading(false);
+      return;
+    }
+
+    // Validar longitud mínima de contraseña
+    if (password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/dashboard");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error instanceof Error ? error.message : "Ocurrió un error");
     } finally {
       setIsLoading(false);
     }
@@ -48,8 +63,8 @@ export function UpdatePasswordForm({
         <CardHeader>
           <CardTitle className="text-2xl">Restablecer tu contraseña</CardTitle>
           <CardDescription>
-            Por favor ingresa tu nueva contraseña a continuación.
-          </CardDescription>
+          Por favor ingresa tu nueva contraseña dos veces para confirmar el cambio.
+        </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleForgotPassword}>
@@ -63,6 +78,17 @@ export function UpdatePasswordForm({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirmar nueva contraseña</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirmar nueva contraseña"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}

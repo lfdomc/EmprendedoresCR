@@ -7,6 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { User, Mail, Calendar, Shield, Settings, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { Business, Category } from '@/lib/types/database';
+
+// Tipo para business con categoría incluida
+type BusinessWithCategory = Business & {
+  categories?: Category | null;
+};
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -20,9 +26,17 @@ export default async function SettingsPage() {
   }
 
   // Obtener información del negocio del usuario
-  const { data: business } = await supabase
+  const { data: business }: { data: BusinessWithCategory | null } = await supabase
     .from('businesses')
-    .select('*')
+    .select(`
+      *,
+      categories (
+        id,
+        name,
+        description,
+        icon
+      )
+    `)
     .eq('user_id', user.id)
     .single();
 
@@ -141,7 +155,7 @@ export default async function SettingsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="font-medium">Categoría:</span>
-                    <p className="text-muted-foreground">{business.category || 'No especificada'}</p>
+                    <p className="text-muted-foreground">{business.categories?.name || 'No especificada'}</p>
                   </div>
                   <div>
                     <span className="font-medium">Ubicación:</span>
