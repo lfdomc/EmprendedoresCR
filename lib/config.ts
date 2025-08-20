@@ -35,4 +35,5 @@ export const siteConfig = {
   ogImage: `${getBaseUrl()}/opengraph-image.png`,
   logo: getImageUrl('/logo.png'),
   logoWebp: getImageUrl('/logo.webp'),
+  logoJpeg: getImageUrl('/logosmall.jpg'),
 }
