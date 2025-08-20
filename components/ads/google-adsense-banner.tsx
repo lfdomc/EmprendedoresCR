@@ -19,22 +19,59 @@ export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBan
   useEffect(() => {
     if (!mounted || !containerRef.current || adLoaded) return;
 
+    const checkAndLoadAd = () => {
+      if (!containerRef.current || adLoaded) return false;
+      
+      const rect = containerRef.current.getBoundingClientRect();
+      const computedStyle = window.getComputedStyle(containerRef.current);
+      
+      // Verificar múltiples condiciones para asegurar que el elemento tenga dimensiones válidas
+      const hasValidDimensions = 
+        rect.width > 0 && 
+        rect.height > 0 && 
+        containerRef.current.offsetWidth > 0 && 
+        containerRef.current.offsetHeight > 0 &&
+        computedStyle.display !== 'none' &&
+        computedStyle.visibility !== 'hidden';
+      
+      if (hasValidDimensions) {
+        try {
+          (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle = 
+            (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle || [];
+          (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle.push({});
+          setAdLoaded(true);
+          return true;
+        } catch (error) {
+          console.error('Error loading AdSense ad:', error);
+          return false;
+        }
+      }
+      return false;
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.boundingClientRect.width > 0) {
+          if (entry.isIntersecting) {
+            // Intentar cargar inmediatamente
+            if (checkAndLoadAd()) {
+              observer.disconnect();
+              return;
+            }
+            
+            // Si no se pudo cargar, intentar después de un delay
             setTimeout(() => {
-              if (containerRef.current && containerRef.current.offsetWidth > 0) {
-                try {
-                  (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle = 
-                    (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle || [];
-                  (window as unknown as { adsbygoogle: unknown[] }).adsbygoogle.push({});
-                  setAdLoaded(true);
-                  observer.disconnect();
-                } catch (error) {
-                  console.error('Error loading AdSense ad:', error);
-                }
+              if (checkAndLoadAd()) {
+                observer.disconnect();
+                return;
               }
+              
+              // Último intento después de más tiempo
+              setTimeout(() => {
+                if (checkAndLoadAd()) {
+                  observer.disconnect();
+                }
+              }, 800);
             }, 300);
           }
         });
