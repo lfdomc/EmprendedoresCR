@@ -12,7 +12,7 @@ declare global {
 }
 
 // Google Analytics ID - reemplazar con el ID real
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX'
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-BJ9XHM171M'
 
 // Función para enviar eventos a Google Analytics
 export const gtag = (...args: unknown[]) => {
