@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ interface FilterSidebarProps {
     max_price?: number;
     provincia?: string;
     canton?: string;
+    sort_by?: 'random' | 'popularity' | 'newest';
   };
   onFilterChange: (filters: {
     category_id?: string;
@@ -25,6 +26,7 @@ interface FilterSidebarProps {
     max_price?: number;
     provincia?: string;
     canton?: string;
+    sort_by?: 'random' | 'popularity' | 'newest';
   }) => void;
   onClearFilters: () => void;
   onClose?: () => void;
@@ -41,8 +43,16 @@ export function FilterSidebar({
     categories: true,
     location: true,
     price: true,
-    features: true
+    sorting: false
   });
+
+  // Set sorting section to expanded after hydration to avoid hydration mismatch
+  useEffect(() => {
+    setExpandedSections(prev => ({
+      ...prev,
+      sorting: true
+    }));
+  }, []);
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections(prev => ({
@@ -66,12 +76,7 @@ export function FilterSidebar({
     });
   };
 
-  const handleFeaturedChange = () => {
-    onFilterChange({
-      ...filters,
-      // is_featured filter removed
-    });
-  };
+
 
   const handleProvinciaChange = (provincia: string) => {
     onFilterChange({
@@ -85,6 +90,13 @@ export function FilterSidebar({
     onFilterChange({
       ...filters,
       canton: filters.canton === canton ? undefined : canton
+    });
+  };
+
+  const handleSortChange = (sortBy: 'random' | 'popularity' | 'newest') => {
+    onFilterChange({
+      ...filters,
+      sort_by: sortBy
     });
   };
 
@@ -335,40 +347,72 @@ export function FilterSidebar({
 
         <Separator />
 
-        {/* Features */}
+        {/* Sorting */}
         <div>
           <button
-            onClick={() => toggleSection('features')}
+            onClick={() => toggleSection('sorting')}
             className="flex items-center justify-between w-full text-left font-medium mb-2 sm:mb-3 hover:text-primary transition-colors"
           >
-            <span className="text-sm sm:text-base">Características</span>
-            {expandedSections.features ? (
+            <span className="text-sm sm:text-base">Ordenar por</span>
+            {expandedSections.sorting ? (
               <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
             ) : (
               <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
             )}
           </button>
           
-          {expandedSections.features && (
+          {expandedSections.sorting && (
             <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <Checkbox
-                  id="featured"
-                  checked={false}
-                  onCheckedChange={handleFeaturedChange}
+                  id="sort-random"
+                  checked={!filters.sort_by || filters.sort_by === 'random'}
+                  onCheckedChange={() => handleSortChange('random')}
                   className="h-3 w-3 sm:h-4 sm:w-4"
                 />
                 <Label
-                  htmlFor="featured"
+                  htmlFor="sort-random"
                   className="text-xs sm:text-sm font-normal cursor-pointer flex items-center gap-1 sm:gap-2"
                 >
-                  <span>⭐</span>
-                  <span>Destacados</span>
+                  <span>🎲</span>
+                  <span>Aleatorio</span>
+                </Label>
+              </div>
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <Checkbox
+                  id="sort-popularity"
+                  checked={filters.sort_by === 'popularity'}
+                  onCheckedChange={() => handleSortChange('popularity')}
+                  className="h-3 w-3 sm:h-4 sm:w-4"
+                />
+                <Label
+                  htmlFor="sort-popularity"
+                  className="text-xs sm:text-sm font-normal cursor-pointer flex items-center gap-1 sm:gap-2"
+                >
+                  <span>📱</span>
+                  <span>Más populares</span>
+                </Label>
+              </div>
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <Checkbox
+                  id="sort-newest"
+                  checked={filters.sort_by === 'newest'}
+                  onCheckedChange={() => handleSortChange('newest')}
+                  className="h-3 w-3 sm:h-4 sm:w-4"
+                />
+                <Label
+                  htmlFor="sort-newest"
+                  className="text-xs sm:text-sm font-normal cursor-pointer flex items-center gap-1 sm:gap-2"
+                >
+                  <span>🆕</span>
+                  <span>Más recientes</span>
                 </Label>
               </div>
             </div>
           )}
         </div>
+
+
 
         {/* Clear All Filters */}
         {activeFiltersCount > 0 && (

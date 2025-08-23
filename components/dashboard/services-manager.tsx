@@ -56,9 +56,17 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 interface ServicesManagerProps {
   businessId: string;
+  hideAddButton?: boolean;
+  isDialogOpen?: boolean;
+  setIsDialogOpen?: (open: boolean) => void;
 }
 
-export function ServicesManager({ businessId }: ServicesManagerProps) {
+export function ServicesManager({ 
+  businessId, 
+  hideAddButton = false, 
+  isDialogOpen: externalIsDialogOpen, 
+  setIsDialogOpen: externalSetIsDialogOpen 
+}: ServicesManagerProps) {
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [business, setBusiness] = useState<Business | null>(null);
@@ -66,7 +74,11 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [internalIsDialogOpen, setInternalIsDialogOpen] = useState(false);
+  
+  // Use external state if provided, otherwise use internal state
+  const isDialogOpen = externalIsDialogOpen !== undefined ? externalIsDialogOpen : internalIsDialogOpen;
+  const setIsDialogOpen = externalSetIsDialogOpen || setInternalIsDialogOpen;
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
 
@@ -324,13 +336,18 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
           </Select>
         </div>
         
+        {!hideAddButton && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleNewService}>
+                <Plus className="h-4 w-4 mr-2" />
+                Agregar Servicio
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+        )}
+        
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleNewService}>
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Servicio
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto mx-4 sm:mx-auto">
             <DialogHeader className="pb-4">
               <DialogTitle className="text-xl sm:text-2xl">
@@ -549,7 +566,7 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
                     type="button" 
                     variant="outline" 
                     onClick={() => setIsDialogOpen(false)}
-                    className="w-full sm:w-auto order-2 sm:order-1"
+                    className="w-full sm:w-auto order-2 sm:order-1 h-12 bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
                   >
                     Cancelar
                   </Button>
@@ -595,8 +612,7 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
                     <Image 
                       src={service.image_url} 
                       alt={service.name}
-                      width={96}
-                      height={96}
+                      fill
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -611,19 +627,22 @@ export function ServicesManager({ businessId }: ServicesManagerProps) {
                     )}
                   </div>
                   
-                  <div className="absolute top-0.5 right-0.5 flex gap-0.5">
+                  <div className="absolute top-0.5 left-0.5 flex gap-0.5">
                     <Button
                        variant="ghost"
                        size="sm"
-                       className="h-5 w-5 p-0 bg-white/80 hover:bg-white text-black"
+                       className="h-7 w-7 p-0 bg-white/80 hover:bg-white text-black"
                        onClick={() => handleEdit(service)}
                      >
-                       <Edit className="h-2.5 w-2.5" />
+                       <Edit className="h-4 w-4" />
                      </Button>
+                  </div>
+                  
+                  <div className="absolute bottom-0.5 left-0.5 flex gap-0.5">
                      <AlertDialog>
                        <AlertDialogTrigger asChild>
-                         <Button variant="ghost" size="sm" className="h-5 w-5 p-0 bg-white/80 hover:bg-white text-black">
-                           <Trash2 className="h-2.5 w-2.5" />
+                         <Button variant="ghost" size="sm" className="h-6 w-6 sm:h-7 sm:w-7 p-0 bg-white/80 hover:bg-white text-black">
+                           <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                          </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

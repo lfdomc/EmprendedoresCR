@@ -16,6 +16,14 @@ import {
   BusinessFilters,
   ApiResponse
 } from '@/lib/types/database';
+
+// Tipos para elementos con estadísticas de WhatsApp
+type ItemWithWhatsAppStats = {
+  whatsapp_stats?: Array<{ contact_count: number }>;
+};
+
+type ProductWithWhatsAppStats = Product & ItemWithWhatsAppStats;
+type ServiceWithWhatsAppStats = Service & ItemWithWhatsAppStats;
 import { generateBusinessSlug, generateProductSlug, generateServiceSlug } from '@/lib/utils/slug';
 
 // Cliente para operaciones del lado del cliente
@@ -71,10 +79,53 @@ export async function getBusinesses(filters?: BusinessFilters): Promise<Business
 
   query = query.range(from, to);
 
-  const { data, error } = await query.order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data || [];
+  // Determinar el tipo de ordenamiento
+  const sortBy = filters?.sort_by || 'random';
+  
+  if (sortBy === 'popularity') {
+    // Obtener datos con estadísticas de WhatsApp y ordenar en el cliente
+    const { data, error } = await query
+      .select(`
+        *,
+        business:businesses(*),
+        category:categories(*),
+        whatsapp_stats!left(
+          contact_count
+        )
+      `);
+    
+    if (error) throw error;
+    
+    // Ordenar por popularidad en el cliente (JavaScript)
+    const sortedData = (data || []).sort((a: ProductWithWhatsAppStats, b: ProductWithWhatsAppStats) => {
+      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
+      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
+      return bCount - aCount; // Descendente (más popular primero)
+    });
+    
+    return sortedData;
+  } else if (sortBy === 'newest') {
+    // Ordenar por fecha de creación (más recientes primero)
+    const { data, error } = await query.order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } else {
+    // Ordenamiento aleatorio por defecto (solo cuando no hay búsqueda específica)
+    if (!filters?.search) {
+      // Obtener datos sin ordenar y mezclar en el cliente
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      
+      // Mezclar aleatoriamente los resultados en el cliente
+      const shuffledData = (data || []).sort(() => Math.random() - 0.5);
+      return shuffledData;
+    } else {
+      // Mantener ordenamiento por relevancia cuando hay búsqueda
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    }
+  }
 }
 
 export async function getBusinessById(id: string, includeInactive: boolean = false): Promise<Business | null> {
@@ -330,10 +381,53 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
 
   query = query.range(from, to);
 
-  const { data, error } = await query.order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data || [];
+  // Determinar el tipo de ordenamiento
+  const sortBy = filters?.sort_by || 'random';
+  
+  if (sortBy === 'popularity') {
+    // Obtener datos con estadísticas de WhatsApp y ordenar en el cliente
+    const { data, error } = await query
+      .select(`
+        *,
+        business:businesses(*),
+        category:categories(*),
+        whatsapp_stats!left(
+          contact_count
+        )
+      `);
+    
+    if (error) throw error;
+    
+    // Ordenar por popularidad en el cliente (JavaScript)
+    const sortedData = (data || []).sort((a: ServiceWithWhatsAppStats, b: ServiceWithWhatsAppStats) => {
+      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
+      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
+      return bCount - aCount; // Descendente (más popular primero)
+    });
+    
+    return sortedData;
+  } else if (sortBy === 'newest') {
+    // Ordenar por fecha de creación (más recientes primero)
+    const { data, error } = await query.order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } else {
+    // Ordenamiento aleatorio por defecto (solo cuando no hay búsqueda específica)
+    if (!filters?.search) {
+      // Obtener datos sin ordenar y mezclar en el cliente
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      
+      // Mezclar aleatoriamente los resultados en el cliente
+      const shuffledData = (data || []).sort(() => Math.random() - 0.5);
+      return shuffledData;
+    } else {
+      // Mantener ordenamiento por relevancia cuando hay búsqueda
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    }
+  }
 }
 
 export async function getProductById(id: string): Promise<ProductWithDetails | null> {
@@ -477,10 +571,53 @@ export async function getServices(filters?: ServiceFilters): Promise<Service[]> 
 
   query = query.range(from, to);
 
-  const { data, error } = await query.order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data || [];
+  // Determinar el tipo de ordenamiento
+  const sortBy = filters?.sort_by || 'random';
+  
+  if (sortBy === 'popularity') {
+    // Obtener datos con estadísticas de WhatsApp y ordenar en el cliente
+    const { data, error } = await query
+      .select(`
+        *,
+        business:businesses(*),
+        category:categories(*),
+        whatsapp_stats!left(
+          contact_count
+        )
+      `);
+    
+    if (error) throw error;
+    
+    // Ordenar por popularidad en el cliente (JavaScript)
+    const sortedData = (data || []).sort((a: ServiceWithWhatsAppStats, b: ServiceWithWhatsAppStats) => {
+      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
+      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
+      return bCount - aCount; // Descendente (más popular primero)
+    });
+    
+    return sortedData;
+  } else if (sortBy === 'newest') {
+    // Ordenar por fecha de creación (más recientes primero)
+    const { data, error } = await query.order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } else {
+    // Ordenamiento aleatorio por defecto (solo cuando no hay búsqueda específica)
+    if (!filters?.search) {
+      // Obtener datos sin ordenar y mezclar en el cliente
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      
+      // Mezclar aleatoriamente los resultados en el cliente
+      const shuffledData = (data || []).sort(() => Math.random() - 0.5);
+      return shuffledData;
+    } else {
+      // Mantener ordenamiento por relevancia cuando hay búsqueda
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    }
+  }
 }
 
 export async function getServiceById(id: string): Promise<ServiceWithDetails | null> {
@@ -726,6 +863,75 @@ export async function getPublicServicesByBusinessId(businessId: string): Promise
   }
 
   return data || [];
+}
+
+// Funciones para obtener productos y servicios más populares por WhatsApp
+export async function getPopularProducts(limit: number = 50): Promise<Product[]> {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        *,
+        business:businesses(*),
+        category:categories(*),
+        whatsapp_stats!inner(
+          contact_count
+        )
+      `)
+      .eq('is_active', true)
+      .eq('business.is_active', true);
+
+    if (error) {
+      console.error('Error fetching popular products:', error);
+      return [];
+    }
+
+    // Ordenar por popularidad en el cliente y limitar
+    const sortedData = (data || []).sort((a: ProductWithWhatsAppStats, b: ProductWithWhatsAppStats) => {
+      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
+      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
+      return bCount - aCount; // Descendente (más popular primero)
+    }).slice(0, limit);
+
+    return sortedData;
+  } catch (error) {
+    console.error('Error fetching popular products:', error);
+    return [];
+  }
+}
+
+export async function getPopularServices(limit: number = 50): Promise<Service[]> {
+  try {
+    const { data, error } = await supabase
+      .from('services')
+      .select(`
+        *,
+        business:businesses(*),
+        category:categories(*),
+        whatsapp_stats!inner(
+          contact_count
+        )
+      `)
+      .eq('is_active', true)
+      .eq('business.is_active', true);
+
+    if (error) {
+      console.error('Error fetching popular services:', error);
+      return [];
+    }
+
+    // Ordenar por popularidad en el cliente y limitar
+    const sortedData = (data || []).sort((a: ServiceWithWhatsAppStats, b: ServiceWithWhatsAppStats) => {
+      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
+      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
+      return bCount - aCount; // Descendente (más popular primero)
+    }).slice(0, limit);
+
+    return sortedData;
+  } catch (error) {
+    console.error('Error fetching popular services:', error);
+    return [];
+  }
 }
 
 // Funciones para estadísticas de WhatsApp

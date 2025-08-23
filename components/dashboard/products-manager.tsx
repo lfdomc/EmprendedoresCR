@@ -53,9 +53,17 @@ type ProductFormValues = z.infer<typeof productSchema>;
 
 interface ProductsManagerProps {
   businessId: string;
+  hideAddButton?: boolean;
+  isDialogOpen?: boolean;
+  setIsDialogOpen?: (open: boolean) => void;
 }
 
-export function ProductsManager({ businessId }: ProductsManagerProps) {
+export function ProductsManager({ 
+  businessId, 
+  hideAddButton = false, 
+  isDialogOpen: externalIsDialogOpen, 
+  setIsDialogOpen: externalSetIsDialogOpen 
+}: ProductsManagerProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [business, setBusiness] = useState<Business | null>(null);
@@ -63,7 +71,11 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [internalIsDialogOpen, setInternalIsDialogOpen] = useState(false);
+  
+  // Use external state if provided, otherwise use internal state
+  const isDialogOpen = externalIsDialogOpen !== undefined ? externalIsDialogOpen : internalIsDialogOpen;
+  const setIsDialogOpen = externalSetIsDialogOpen || setInternalIsDialogOpen;
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const form = useForm({
@@ -260,13 +272,18 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
           </Select>
         </div>
         
+        {!hideAddButton && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleNewProduct}>
+                <Plus className="h-4 w-4 mr-2" />
+                Agregar Producto
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+        )}
+        
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleNewProduct}>
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Producto
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto mx-4 sm:mx-auto">
             <DialogHeader className="pb-4">
               <DialogTitle className="text-xl sm:text-2xl">
@@ -510,7 +527,7 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
                     type="button" 
                     variant="outline" 
                     onClick={() => setIsDialogOpen(false)}
-                    className="w-full sm:w-auto order-2 sm:order-1"
+                    className="w-full sm:w-auto order-2 sm:order-1 h-12 bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
                   >
                     Cancelar
                   </Button>
@@ -573,19 +590,22 @@ export function ProductsManager({ businessId }: ProductsManagerProps) {
 
                   </div>
                   
-                  <div className="absolute top-0.5 right-0.5 flex gap-0.5">
+                  <div className="absolute top-0.5 left-0.5 flex gap-0.5">
                     <Button
                        variant="ghost"
                        size="sm"
-                       className="h-5 w-5 p-0 bg-white/80 hover:bg-white text-black"
+                       className="h-7 w-7 p-0 bg-white/80 hover:bg-white text-black"
                        onClick={() => handleEdit(product)}
                      >
-                       <Edit className="h-2.5 w-2.5" />
+                       <Edit className="h-4 w-4" />
                      </Button>
+                  </div>
+                  
+                  <div className="absolute bottom-0.5 left-0.5 flex gap-0.5">
                      <AlertDialog>
                        <AlertDialogTrigger asChild>
-                         <Button variant="ghost" size="sm" className="h-5 w-5 p-0 bg-white/80 hover:bg-white text-black">
-                           <Trash2 className="h-2.5 w-2.5" />
+                         <Button variant="ghost" size="sm" className="h-6 w-6 sm:h-7 sm:w-7 p-0 bg-white/80 hover:bg-white text-black">
+                           <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                          </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

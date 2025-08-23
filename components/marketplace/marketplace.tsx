@@ -35,6 +35,7 @@ export function Marketplace() {
     // is_featured filter removed
     provincia?: string;
     canton?: string;
+    sort_by?: 'random' | 'popularity' | 'newest';
   }>({});
   const observerRef = useRef<HTMLDivElement>(null);
 

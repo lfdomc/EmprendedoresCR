@@ -56,7 +56,7 @@ export default async function SettingsPage() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Settings className="h-8 w-8" />
@@ -66,8 +66,8 @@ export default async function SettingsPage() {
               Administra tu cuenta y preferencias
             </p>
           </div>
-          <Link href="/dashboard">
-            <Button variant="outline">
+          <Link href="/dashboard" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">
               Volver al Dashboard
             </Button>
           </Link>
@@ -171,14 +171,14 @@ export default async function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <Link href="/dashboard">
-                    <Button variant="outline" size="sm">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Link href="/dashboard" className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full">
                       Editar Emprendimiento
                     </Button>
                   </Link>
-                  <Link href={`/businesses/${business.id}`}>
-                    <Button variant="outline" size="sm">
+                  <Link href={`/businesses/${business.id}`} className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Ver Perfil Público
                     </Button>

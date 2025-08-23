@@ -32,23 +32,29 @@ export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBan
           const computedStyle = window.getComputedStyle(container);
           const parentRect = container.parentElement?.getBoundingClientRect();
           
-          // Verificaciones más estrictas
-          const hasValidDimensions = rect.width >= 100 && rect.height >= 100;
-          const hasValidParent = parentRect && parentRect.width >= 100 && parentRect.height >= 100;
+          // Verificaciones más estrictas para evitar el error de availableWidth=0
+          const hasValidDimensions = rect.width > 0 && rect.height > 0;
+          const hasMinimumSize = rect.width >= 300 && rect.height >= 100; // Tamaño mínimo para anuncios
+          const hasValidParent = parentRect && parentRect.width > 0 && parentRect.height > 0;
           const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
           const isDisplayed = computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
+          const hasAvailableWidth = rect.width > 0; // Verificación específica para availableWidth
           
           console.log('AdSense validation:', {
             width: rect.width,
             height: rect.height,
             parentWidth: parentRect?.width,
             parentHeight: parentRect?.height,
+            hasValidDimensions,
+            hasMinimumSize,
+            hasValidParent,
             isVisible,
             isDisplayed,
+            hasAvailableWidth,
             retryCount
           });
           
-          if (hasValidDimensions && hasValidParent && isVisible && isDisplayed) {
+          if (hasValidDimensions && hasMinimumSize && hasValidParent && isVisible && isDisplayed && hasAvailableWidth) {
             // Esperar un poco más para asegurar que el layout esté estable
             timeoutId = setTimeout(() => {
               try {
@@ -114,10 +120,10 @@ export function GoogleAdsenseBanner({ adSlot, className = "" }: GoogleAdsenseBan
   }
 
   return (
-    <div ref={adRef} className={`w-full ${className}`} style={{ minHeight: '100px' }}>
+    <div ref={adRef} className={`w-full ${className}`} style={{ minHeight: '100px', minWidth: '300px', width: '100%' }}>
       <ins 
         className="adsbygoogle"
-        style={{ display: 'block', width: '100%' }}
+        style={{ display: 'block', width: '100%', minWidth: '300px' }}
         data-ad-client="ca-pub-4334054982108939"
         data-ad-slot={adSlot}
         data-ad-format="auto"

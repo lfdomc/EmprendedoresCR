@@ -74,7 +74,7 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
       hour12: true
     });
     
-    const message = ` *¡Hola! Estoy interesado/a en este producto* \n\n` +
+    const message = ` ¡Hola! Estoy interesado/a en este producto \n\n` +
       `📦 *Producto:* ${product.name}\n` +
       `💰 *Precio:* ${formatPrice(product.price)}\n\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
@@ -168,13 +168,13 @@ export function ProductCard({ product, viewMode, priority = false }: ProductCard
     <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       <div className="relative">
         <SafeLink href={`/products/${productSlug}`}>
-           <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white">
+           <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white w-full">
              <Image
                src={getImageUrl()}
                alt={product.name}
                fill
                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-               className="object-cover group-hover:scale-105 transition-transform duration-200"
+               className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200"
                onError={() => setImageError(true)}
                priority={priority}
              />

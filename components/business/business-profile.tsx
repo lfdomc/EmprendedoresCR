@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// Removed Tabs import - converting to separate visible components
 
 import {
   AlertDialog,
@@ -42,6 +42,7 @@ import { Business, Product, Service } from '@/lib/types/database';
 import { ProductCard } from '@/components/marketplace/product-card';
 import { ServiceCard } from '@/components/marketplace/service-card';
 import { deleteBusiness, isBusinessOwner } from '@/lib/supabase/database';
+import { WhatsAppBusinessButton } from '@/components/ui/whatsapp-business-button';
 
 interface BusinessProfileProps {
   business: Business;
@@ -50,16 +51,12 @@ interface BusinessProfileProps {
 }
 
 export function BusinessProfile({ business, products, services }: BusinessProfileProps) {
-  const [activeTab, setActiveTab] = useState('overview');
   const [isOwner, setIsOwner] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const activeProducts = products.filter(p => p.is_active);
   const activeServices = services.filter(s => s.is_active);
-  // Featured functionality removed - showing all active products/services
-  const featuredProducts = activeProducts;
-  const featuredServices = activeServices;
 
   // Verificar si el usuario actual es propietario del emprendimiento
   useEffect(() => {
@@ -145,7 +142,12 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
               <span className="sm:hidden">Inicio</span>
             </Link>
             <div className="flex items-center gap-2">
-
+              <WhatsAppBusinessButton
+                whatsappNumber={business.whatsapp}
+                businessName={business.name}
+                businessDescription={business.description}
+                className="flex-1 sm:flex-none"
+              />
               <Button 
                 variant="default" 
                 size="lg" 
@@ -212,70 +214,57 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
           </div>
         </div>
 
-        {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 gap-1">
-            <TabsTrigger value="overview" className="text-xs sm:text-sm">
-              <span className="hidden sm:inline">Resumen</span>
-              <span className="sm:hidden">Info</span>
-            </TabsTrigger>
-            <TabsTrigger value="products" className="text-xs sm:text-sm">
-              <span className="hidden sm:inline">Productos ({activeProducts.length})</span>
-              <span className="sm:hidden">Prod. ({activeProducts.length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="services" className="text-xs sm:text-sm">
-              <span className="hidden sm:inline">Servicios ({activeServices.length})</span>
-              <span className="sm:hidden">Serv. ({activeServices.length})</span>
-            </TabsTrigger>
-          </TabsList>
+        {/* Main Content - All sections visible */}
+        <div className="space-y-8">
 
-          <TabsContent value="overview" className="space-y-8">
+          {/* Overview Section */}
+          <div className="space-y-8">
             {/* Contact Information */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg sm:text-xl">Información de Contacto</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {/* Información de Contacto Principal */}
-                  <div className="space-y-4">
-                    <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">Contacto</h4>
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">Teléfono</p>
-                        <p className="text-muted-foreground">{business.phone}</p>
+                  <div className="space-y-3 sm:space-y-4">
+                    <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground uppercase tracking-wide mb-2 sm:mb-3">Contacto</h4>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm sm:text-base">Teléfono</p>
+                        <p className="text-muted-foreground text-sm sm:text-base truncate">{business.phone}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Mail className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">Email</p>
-                        <p className="text-muted-foreground break-all">{business.email}</p>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm sm:text-base">Email</p>
+                        <p className="text-muted-foreground text-sm sm:text-base break-all">{business.email}</p>
                       </div>
                     </div>
                     {business.whatsapp && (
-                      <div className="flex items-center gap-3">
-                        <MessageSquare className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="font-medium">WhatsApp</p>
-                          <p className="text-muted-foreground">{business.whatsapp}</p>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base">WhatsApp</p>
+                          <p className="text-muted-foreground text-sm sm:text-base truncate">{business.whatsapp}</p>
                         </div>
                       </div>
                     )}
                     {business.website && (
-                      <div className="flex items-center gap-3">
-                        <Globe className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="font-medium">Sitio Web</p>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base">Sitio Web</p>
                           <a 
                             href={business.website} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-primary hover:underline flex items-center gap-1"
+                            className="text-primary hover:underline flex items-center gap-1 text-sm sm:text-base"
                           >
-                            Visitar sitio
-                            <ExternalLink className="h-3 w-3" />
+                            <span className="truncate">Visitar sitio</span>
+                            <ExternalLink className="h-3 w-3 flex-shrink-0" />
                           </a>
                         </div>
                       </div>
@@ -283,42 +272,42 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                   </div>
 
                   {/* Ubicación y Horarios */}
-                  <div className="space-y-4">
-                    <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">Ubicación</h4>
+                  <div className="space-y-3 sm:space-y-4">
+                    <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground uppercase tracking-wide mb-2 sm:mb-3">Ubicación</h4>
                     {(business.provincia || business.canton) && (
-                      <div className="flex items-center gap-3">
-                        <MapPin className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="font-medium">Provincia y Cantón</p>
-                          <p className="text-muted-foreground">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base">Provincia y Cantón</p>
+                          <p className="text-muted-foreground text-sm sm:text-base">
                             {[business.canton, business.provincia].filter(Boolean).join(', ')}
                           </p>
                         </div>
                       </div>
                     )}
                     {business.google_maps_link && (
-                      <div className="flex items-center gap-3">
-                        <MapPin className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="font-medium">Google Maps</p>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base">Google Maps</p>
                           <a 
                             href={business.google_maps_link} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-primary hover:underline flex items-center gap-1"
+                            className="text-primary hover:underline flex items-center gap-1 text-sm sm:text-base"
                           >
-                            Ver ubicación
-                            <ExternalLink className="h-3 w-3" />
+                            <span className="truncate">Ver ubicación</span>
+                            <ExternalLink className="h-3 w-3 flex-shrink-0" />
                           </a>
                         </div>
                       </div>
                     )}
                     {business.opening_hours && (
-                      <div className="flex items-start gap-3">
-                        <Clock className="h-5 w-5 text-primary mt-0.5" />
-                        <div>
-                          <p className="font-medium">Horarios</p>
-                          <p className="text-muted-foreground whitespace-pre-line text-sm">
+                      <div className="flex items-start gap-2 sm:gap-3">
+                        <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm sm:text-base">Horarios</p>
+                          <p className="text-muted-foreground whitespace-pre-line text-xs sm:text-sm">
                             {business.opening_hours}
                           </p>
                         </div>
@@ -328,38 +317,38 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
 
                   {/* Redes Sociales */}
                   {(business.facebook || business.instagram) && (
-                    <div className="space-y-4">
-                      <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">Redes Sociales</h4>
+                    <div className="space-y-3 sm:space-y-4">
+                      <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground uppercase tracking-wide mb-2 sm:mb-3">Redes Sociales</h4>
                       {business.facebook && (
-                        <div className="flex items-center gap-3">
-                          <Facebook className="h-5 w-5 text-primary" />
-                          <div>
-                            <p className="font-medium">Facebook</p>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <Facebook className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-sm sm:text-base">Facebook</p>
                             <a 
                               href={business.facebook} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-primary hover:underline flex items-center gap-1"
+                              className="text-primary hover:underline flex items-center gap-1 text-sm sm:text-base"
                             >
-                              Visitar página
-                              <ExternalLink className="h-3 w-3" />
+                              <span className="truncate">Visitar página</span>
+                              <ExternalLink className="h-3 w-3 flex-shrink-0" />
                             </a>
                           </div>
                         </div>
                       )}
                       {business.instagram && (
-                        <div className="flex items-center gap-3">
-                          <Instagram className="h-5 w-5 text-primary" />
-                          <div>
-                            <p className="font-medium">Instagram</p>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <Instagram className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-sm sm:text-base">Instagram</p>
                             <a 
                               href={business.instagram} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-primary hover:underline flex items-center gap-1"
+                              className="text-primary hover:underline flex items-center gap-1 text-sm sm:text-base"
                             >
-                              Visitar perfil
-                              <ExternalLink className="h-3 w-3" />
+                              <span className="truncate">Visitar perfil</span>
+                              <ExternalLink className="h-3 w-3 flex-shrink-0" />
                             </a>
                           </div>
                         </div>
@@ -370,46 +359,14 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
               </CardContent>
             </Card>
 
-            {/* Featured Products */}
-            {featuredProducts.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold">Productos Destacados</h2>
-                  {activeProducts.length > featuredProducts.length && (
-                    <Button variant="outline" onClick={() => setActiveTab('products')}>
-                      Ver todos los productos
-                    </Button>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {featuredProducts.slice(0, 6).map((product) => (
-                    <ProductCard key={product.id} product={product} viewMode="grid" />
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {/* Featured Services */}
-            {featuredServices.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold">Servicios Destacados</h2>
-                  {activeServices.length > featuredServices.length && (
-                    <Button variant="outline" onClick={() => setActiveTab('services')}>
-                      Ver todos los servicios
-                    </Button>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {featuredServices.slice(0, 6).map((service) => (
-                    <ServiceCard key={service.id} service={service} viewMode="grid" />
-                  ))}
-                </div>
-              </div>
-            )}
-          </TabsContent>
+          </div>
 
-          <TabsContent value="products" className="space-y-6">
+          {/* Products Section */}
+          <div id="products-section" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Productos ({activeProducts.length})</h2>
+            </div>
             {activeProducts.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
@@ -427,9 +384,13 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                 ))}
               </div>
             )}
-          </TabsContent>
+          </div>
 
-          <TabsContent value="services" className="space-y-6">
+          {/* Services Section */}
+          <div id="services-section" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Servicios ({activeServices.length})</h2>
+            </div>
             {activeServices.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
@@ -447,10 +408,8 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                 ))}
               </div>
             )}
-          </TabsContent>
-
-
-        </Tabs>
+          </div>
+        </div>
 
         {/* Botón de eliminar emprendimiento (solo para propietarios) */}
         {isOwner && (

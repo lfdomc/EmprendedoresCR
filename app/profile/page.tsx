@@ -115,12 +115,12 @@ export default async function ProfilePage() {
                   </Badge>
                 </div>
 
-                <div className="flex space-x-2 pt-4">
-                  <Link href={`/businesses/${business.slug}`}>
-                    <Button variant="outline">Ver Perfil Público</Button>
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
+                  <Link href={`/businesses/${business.slug}`} className="w-full sm:w-auto">
+                    <Button variant="outline" className="w-full">Ver Perfil Público</Button>
                   </Link>
-                  <Link href="/dashboard">
-                    <Button>Editar Negocio</Button>
+                  <Link href="/dashboard" className="w-full sm:w-auto">
+                    <Button className="w-full">Editar Negocio</Button>
                   </Link>
                 </div>
               </div>

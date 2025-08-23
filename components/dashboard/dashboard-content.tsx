@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
@@ -15,13 +15,16 @@ import {
   BarChart3, 
   Plus, 
   Settings,
-  ArrowLeft
+  ArrowLeft,
+  ChevronDown,
+  ChevronRight,
+  MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
 import { BusinessSetup } from '@/components/dashboard/business-setup';
 import { ProductsManager } from './products-manager';
 import { ServicesManager } from '@/components/dashboard/services-manager';
-import { DashboardStats } from '@/components/dashboard/dashboard-stats';
+// DashboardStats component removed
 import { getBusinessByUserId, getDashboardStats } from '@/lib/supabase/database';
 import { Business } from '@/lib/types/database';
 
@@ -32,9 +35,8 @@ interface DashboardContentProps {
 export function DashboardContent({ user }: DashboardContentProps) {
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
-  const [stats, setStats] = useState({
-    totalProducts: 0,
+  const [stats, setStats] = useState({ 
+    totalProducts: 0, 
     totalServices: 0,
     whatsappStats: {
       totalContacts: 0,
@@ -42,6 +44,11 @@ export function DashboardContent({ user }: DashboardContentProps) {
       serviceContacts: 0
     }
   });
+  const [isConfigExpanded, setIsConfigExpanded] = useState(false);
+  const [isProductsExpanded, setIsProductsExpanded] = useState(false);
+  const [isServicesExpanded, setIsServicesExpanded] = useState(false);
+  const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [isServiceDialogOpen, setIsServiceDialogOpen] = useState(false);
 
   const loadBusiness = useCallback(async () => {
     try {
@@ -169,10 +176,181 @@ export function DashboardContent({ user }: DashboardContentProps) {
           </div>
         </div>
 
-        {/* Compact Stats & Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Stats */}
-          <Card className="order-1">
+
+
+        {/* Main Content - Modules */}
+        <div className="space-y-8">
+          {/* Productos Module */}
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5 flex-shrink-0" />
+                    <span className="truncate">Gestión de Productos</span>
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">Administra tu catálogo de productos</p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button 
+                    onClick={() => {
+                      setIsProductsExpanded(true);
+                      setIsProductDialogOpen(true);
+                    }}
+                    className="flex-1 sm:flex-none"
+                    size="sm"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Agregar Producto</span>
+                    <span className="sm:hidden">Agregar</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsProductsExpanded(!isProductsExpanded)}
+                    className="bg-gray-600 hover:bg-gray-700 text-white flex-shrink-0"
+                  >
+                    {isProductsExpanded ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            {isProductsExpanded && (
+              <CardContent>
+                <ProductsManager 
+                  businessId={business.id} 
+                  hideAddButton={true}
+                  isDialogOpen={isProductDialogOpen}
+                  setIsDialogOpen={setIsProductDialogOpen}
+                />
+              </CardContent>
+            )}
+          </Card>
+
+          {/* Servicios Module */}
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="flex items-center gap-2">
+                    <Wrench className="h-5 w-5 flex-shrink-0" />
+                    <span className="truncate">Gestión de Servicios</span>
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">Administra tu catálogo de servicios</p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button 
+                    onClick={() => {
+                      setIsServicesExpanded(true);
+                      setIsServiceDialogOpen(true);
+                    }}
+                    className="flex-1 sm:flex-none"
+                    size="sm"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Agregar Servicio</span>
+                    <span className="sm:hidden">Agregar</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsServicesExpanded(!isServicesExpanded)}
+                    className="bg-gray-600 hover:bg-gray-700 text-white flex-shrink-0"
+                  >
+                    {isServicesExpanded ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            {isServicesExpanded && (
+              <CardContent>
+                <ServicesManager 
+                  businessId={business.id} 
+                  hideAddButton={true}
+                  isDialogOpen={isServiceDialogOpen}
+                  setIsDialogOpen={setIsServiceDialogOpen}
+                />
+              </CardContent>
+            )}
+          </Card>
+
+          {/* Configuración Module */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Configuración del Emprendimiento
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">Actualiza la información de tu emprendimiento</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsConfigExpanded(!isConfigExpanded)}
+                  className="bg-gray-600 hover:bg-gray-700 text-white"
+                >
+                  {isConfigExpanded ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </CardHeader>
+            {isConfigExpanded && (
+              <CardContent>
+                <BusinessSetup 
+                  existingBusiness={business} 
+                  onBusinessCreated={handleBusinessCreated}
+                />
+              </CardContent>
+            )}
+          </Card>
+
+          {/* WhatsApp Statistics Module */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Estadísticas de WhatsApp
+              </CardTitle>
+              <CardDescription>
+                Solicitudes de información recibidas por WhatsApp
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <MessageSquare className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-green-600">{stats.whatsappStats.totalContacts}</p>
+                  <p className="text-sm text-muted-foreground">Total Contactos</p>
+                </div>
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <Package className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-blue-600">{stats.whatsappStats.productContacts}</p>
+                  <p className="text-sm text-muted-foreground">Por Productos</p>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <Wrench className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-purple-600">{stats.whatsappStats.serviceContacts}</p>
+                  <p className="text-sm text-muted-foreground">Por Servicios</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stats Module */}
+          <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold">Estadísticas</CardTitle>
             </CardHeader>
@@ -199,135 +377,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
               </div>
             </CardContent>
           </Card>
-
-          {/* Quick Actions */}
-          <Card className="order-2 md:order-3 lg:order-2">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold">Acciones Rápidas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button 
-                variant="outline" 
-                size="default" 
-                className="w-full justify-start h-11" 
-                onClick={() => setActiveTab('products')}
-              >
-                <Plus className="h-5 w-5 mr-3" />
-                <span className="font-medium">Agregar Producto</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="default" 
-                className="w-full justify-start h-11" 
-                onClick={() => setActiveTab('services')}
-              >
-                <Plus className="h-5 w-5 mr-3" />
-                <span className="font-medium">Agregar Servicio</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="default" 
-                className="w-full justify-start h-11" 
-                asChild
-              >
-                <Link href={`/businesses/${business.id}`}>
-                  <BarChart3 className="h-5 w-5 mr-3" />
-                  <span className="font-medium">Ver Perfil Público</span>
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Business Info */}
-          <Card className="order-3 md:order-2 lg:order-3">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold">Información</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">Estado</p>
-                <Badge variant={business.is_active ? 'default' : 'secondary'} className="text-sm px-3 py-1">
-                  {business.is_active ? 'Activo' : 'Inactivo'}
-                </Badge>
-              </div>
-              {business.phone && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Teléfono</p>
-                  <p className="text-base truncate">{business.phone}</p>
-                </div>
-              )}
-              {business.email && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Email</p>
-                  <p className="text-base truncate">{business.email}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </div>
-
-        {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-1 h-14 sm:h-10 p-2 sm:p-1 relative z-10 mb-12 sm:mb-8">
-            <TabsTrigger value="overview" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
-              <BarChart3 className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="hidden sm:inline">Resumen</span>
-              <span className="sm:hidden text-xs font-semibold">Inicio</span>
-            </TabsTrigger>
-            <TabsTrigger value="products" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
-              <Package className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="hidden sm:inline">Productos</span>
-              <span className="sm:hidden text-xs font-semibold">Prod.</span>
-            </TabsTrigger>
-            <TabsTrigger value="services" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
-              <Wrench className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="hidden sm:inline">Servicios</span>
-              <span className="sm:hidden text-xs font-semibold">Serv.</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center justify-center gap-1 sm:gap-2 text-sm sm:text-sm px-2 py-2 sm:py-1.5 min-h-[40px] sm:min-h-[36px] font-medium">
-              <Settings className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="hidden sm:inline">Configuración</span>
-              <span className="sm:hidden text-xs font-semibold">Config</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6 relative z-0">
-            <DashboardStats business={business} stats={stats} />
-          </TabsContent>
-
-          <TabsContent value="products" className="space-y-4 sm:space-y-6 relative z-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">Gestión de Productos</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">Administra tu catálogo de productos</p>
-              </div>
-            </div>
-            <ProductsManager businessId={business.id} />
-          </TabsContent>
-
-          <TabsContent value="services" className="space-y-4 sm:space-y-6 relative z-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">Gestión de Servicios</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">Administra tu catálogo de servicios</p>
-              </div>
-            </div>
-            <ServicesManager businessId={business.id} />
-          </TabsContent>
-
-          <TabsContent value="settings" className="space-y-4 sm:space-y-6 relative z-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">Configuración del Emprendimiento</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">Actualiza la información de tu emprendimiento</p>
-              </div>
-            </div>
-            <BusinessSetup 
-              existingBusiness={business} 
-              onBusinessCreated={handleBusinessCreated}
-            />
-          </TabsContent>
-        </Tabs>
       </div>
     </div>
   );

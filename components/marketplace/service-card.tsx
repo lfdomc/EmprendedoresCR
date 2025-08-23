@@ -133,13 +133,13 @@ export function ServiceCard({ service, viewMode }: ServiceCardProps) {
     <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       <div className="relative">
         <SafeLink href={`/services/${serviceSlug}`}>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg cursor-pointer bg-white w-full">
             <Image
               src={getImageUrl()}
               alt={service.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-200"
+              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200"
               onError={() => setImageError(true)}
             />
             {/* Featured badge removed - is_featured column no longer exists */}

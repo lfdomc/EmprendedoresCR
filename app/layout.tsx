@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 import { Toaster } from "sonner";
 import { WebsiteStructuredData } from "@/components/seo/structured-data";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { siteConfig } from "@/lib/config";
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -119,7 +121,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className={`${geistSans.className} antialiased flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -128,8 +130,12 @@ export default function RootLayout({
         >
           <GoogleAnalytics />
           <WebsiteStructuredData />
-        <Header />
-          {children}
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <Analytics />
           <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>

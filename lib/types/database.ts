@@ -186,6 +186,7 @@ export interface ProductFilters {
   country?: string;
   page?: number;
   limit?: number;
+  sort_by?: 'random' | 'popularity' | 'newest';
 }
 
 export interface ServiceFilters {
@@ -201,6 +202,7 @@ export interface ServiceFilters {
   country?: string;
   page?: number;
   limit?: number;
+  sort_by?: 'random' | 'popularity' | 'newest';
 }
 
 export interface BusinessFilters {
@@ -215,6 +217,7 @@ export interface BusinessFilters {
   has_services?: boolean;
   page?: number;
   limit?: number;
+  sort_by?: 'random' | 'popularity' | 'newest';
 }
 
 // Interfaces para estadísticas

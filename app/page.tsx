@@ -29,15 +29,6 @@ export default function Home() {
           />
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="border-t bg-header mt-8">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="text-center text-sm text-header-foreground">
-            <p>&copy; 2024 Costa Rica Emprende. Todos los derechos reservados.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
