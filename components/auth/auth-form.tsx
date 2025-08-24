@@ -67,8 +67,17 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
     const confirmPassword = formData.get('confirmPassword') as string;
     const fullName = formData.get('fullName') as string;
 
+    // Validaciones básicas
     if (!email || !password || !confirmPassword || !fullName) {
       setError('Por favor completa todos los campos');
+      setIsLoading(false);
+      return;
+    }
+
+    // Validación de formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Por favor ingresa un email válido');
       setIsLoading(false);
       return;
     }
@@ -85,24 +94,56 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
       return;
     }
 
+    // Validación de seguridad de contraseña
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    
+    if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
+      setError('La contraseña debe contener al menos una mayúscula, una minúscula y un número');
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      // Nota: Supabase maneja automáticamente la verificación de usuarios duplicados
+      // durante el proceso de signUp, por lo que no necesitamos verificación previa
+
+      // Intentar crear la cuenta
       const { error } = await supabase.auth.signUp({
-        email,
+        email: email.toLowerCase(),
         password,
         options: {
           data: {
-            full_name: fullName,
+            full_name: fullName.trim(),
           },
         },
       });
 
       if (error) {
-        setError(error.message);
+        // Manejar errores específicos de Supabase
+        if (error.message.includes('User already registered') || 
+            error.message.includes('already been registered') ||
+            error.message.includes('email address is already registered')) {
+          setError('Este email ya está registrado. Por favor inicia sesión o usa otro email.');
+        } else if (error.message.includes('Invalid email') || 
+                   error.message.includes('email format')) {
+          setError('El formato del email no es válido.');
+        } else if (error.message.includes('Password') || 
+                   error.message.includes('password')) {
+          setError('La contraseña no cumple con los requisitos de seguridad.');
+        } else if (error.message.includes('rate limit') || 
+                   error.message.includes('too many')) {
+          setError('Demasiados intentos. Por favor espera unos minutos antes de intentar de nuevo.');
+        } else {
+          setError(`Error: ${error.message}`);
+        }
       } else {
         toast.success('¡Cuenta creada exitosamente! Revisa tu email para confirmar tu cuenta.');
         setActiveTab('login');
       }
-    } catch {
+    } catch (error) {
+      console.error('Unexpected error during signup:', error);
       setError('Error inesperado. Inténtalo de nuevo.');
     } finally {
       setIsLoading(false);

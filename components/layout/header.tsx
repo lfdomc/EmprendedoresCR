@@ -320,7 +320,7 @@ function HeaderComponent() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-6">
                     <Link href="/auth/register?tab=login" onClick={() => setIsMenuOpen(false)}>
                       <Button variant="ghost" size="sm" className="w-full justify-center text-gray-700 hover:text-orange-500 hover:bg-gray-50 border border-gray-300">
                         Iniciar Sesión
