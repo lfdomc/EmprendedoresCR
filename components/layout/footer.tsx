@@ -22,13 +22,13 @@ function FooterComponent() {
             <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Legal</h4>
             <div className="space-y-3">
               <Link 
-                href="/terms" 
+                href="/terminos-y-condiciones" 
                 className="block text-sm text-gray-600 hover:text-orange-500 transition-colors"
               >
                 Términos y Condiciones
               </Link>
               <Link 
-                href="/privacy" 
+                href="/politica-de-privacidad" 
                 className="block text-sm text-gray-600 hover:text-orange-500 transition-colors"
               >
                 Política de Privacidad
