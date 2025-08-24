@@ -83,8 +83,8 @@ function PageNavigationComponent({
             </div>
           )}
           
-          {/* Select para cambiar entre páginas - Solo móvil */}
-          <div className="lg:hidden">
+          {/* Select para cambiar entre páginas - Oculto en móviles */}
+          <div className="hidden">
             <Select value={currentPage} onValueChange={handlePageChange}>
               <SelectTrigger className="w-48 h-9 text-sm font-medium border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-150 bg-white shadow-sm">
                 <SelectValue />

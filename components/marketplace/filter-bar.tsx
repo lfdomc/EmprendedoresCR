@@ -80,6 +80,7 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
       ...filters,
       category_id: categoryId === 'all' ? undefined : categoryId
     });
+    setShowMobileMenu(false);
   }, [filters, onFiltersChange]);
 
   const handleProvinciaChange = useCallback((provincia: string) => {
@@ -88,6 +89,7 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
       provincia: provincia === 'all' ? undefined : provincia,
       canton: undefined // Reset canton when provincia changes
     });
+    setShowMobileMenu(false);
   }, [filters, onFiltersChange]);
 
   const handleCantonChange = useCallback((canton: string) => {
@@ -95,6 +97,7 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
       ...filters,
       canton: canton === 'all' ? undefined : canton
     });
+    setShowMobileMenu(false);
   }, [filters, onFiltersChange]);
 
   const handlePriceRangeChange = (rangeValue: string) => {
@@ -106,6 +109,7 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
       });
       setCustomMinPrice('');
       setCustomMaxPrice('');
+      setShowMobileMenu(false);
     } else if (rangeValue === 'custom') {
       // Keep current custom values
       return;
@@ -119,6 +123,7 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
         });
         setCustomMinPrice(range.min.toString());
         setCustomMaxPrice(range.max?.toString() || '');
+        setShowMobileMenu(false);
       }
     }
   };
@@ -132,6 +137,7 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
       min_price: minPrice,
       max_price: maxPrice
     });
+    setShowMobileMenu(false);
   };
 
   const handleSortChange = (value: string) => {
@@ -139,6 +145,7 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
       ...filters,
       sort_by: value === 'all' ? undefined : value as 'random' | 'popularity' | 'newest'
     });
+    setShowMobileMenu(false);
   };
 
 
@@ -291,17 +298,19 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
         <div className="md:hidden">
           <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 xs:gap-0">
             <div className="flex flex-wrap items-center gap-2 w-full xs:w-auto">
-              {/* Selector de página móvil */}
+              {/* Selector de página móvil - Oculto */}
               {onPageChange && currentPage && (
-                <Select value={currentPage} onValueChange={onPageChange}>
-                  <SelectTrigger className="w-32 h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="border-gray-200">
-                    <SelectItem value="marketplace" className="text-xs">Marketplace</SelectItem>
-                    <SelectItem value="businesses" className="text-xs">Emprendimientos</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="hidden">
+                  <Select value={currentPage} onValueChange={onPageChange}>
+                    <SelectTrigger className="w-32 h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-gray-200">
+                      <SelectItem value="marketplace" className="text-xs">Marketplace</SelectItem>
+                      <SelectItem value="businesses" className="text-xs">Emprendimientos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
               
               {/* Selector de tipo de contenido móvil */}
