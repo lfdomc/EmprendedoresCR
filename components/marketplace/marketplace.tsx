@@ -219,16 +219,16 @@ function MarketplaceComponent() {
 
 
           {loading ? (
-            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+            <ResponsiveGrid variant="mixed" gap="md">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-xl p-4 shadow-sm animate-pulse">
-                  <div className="bg-gray-200 h-40 sm:h-48 rounded-lg mb-4"></div>
-                  <div className="bg-gray-200 h-4 rounded mb-2"></div>
-                  <div className="bg-gray-200 h-4 rounded w-2/3 mb-2"></div>
-                  <div className="bg-gray-200 h-6 rounded w-1/3"></div>
+                <div key={i} className="bg-white rounded-xl p-3 sm:p-4 shadow-sm animate-pulse h-full flex flex-col">
+                  <div className="bg-gray-200 aspect-square rounded-lg mb-3 sm:mb-4"></div>
+                  <div className="bg-gray-200 h-3 sm:h-4 rounded mb-2"></div>
+                  <div className="bg-gray-200 h-3 sm:h-4 rounded w-2/3 mb-2"></div>
+                  <div className="bg-gray-200 h-5 sm:h-6 rounded w-1/3 mt-auto"></div>
                 </div>
               ))}
-            </div>
+            </ResponsiveGrid>
           ) : totalItems === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-sm">
               <div className="text-gray-500 mb-6">

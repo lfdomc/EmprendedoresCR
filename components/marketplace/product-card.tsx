@@ -224,7 +224,7 @@ const ProductCardComponent = ({ product, viewMode, priority = false }: ProductCa
          </SafeLink>
       </div>
 
-      <CardContent className="p-2 sm:p-3">
+      <CardContent className="p-1.5 sm:p-3">
         {product.category && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
             <span className="text-xs">{product.category.icon}</span>
@@ -236,7 +236,7 @@ const ProductCardComponent = ({ product, viewMode, priority = false }: ProductCa
           href={`/products/${productSlug}`}
           className="focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded"
         >
-          <h3 id={`product-title-${product.id}`} className="font-medium text-sm hover:text-primary transition-colors line-clamp-2 mb-1 leading-tight h-10 flex items-start">
+          <h3 id={`product-title-${product.id}`} className="font-medium text-xs sm:text-sm hover:text-primary transition-colors line-clamp-2 mb-1 leading-tight h-8 sm:h-10 flex items-start">
             <span className="line-clamp-2">{product.name}</span>
           </h3>
         </SafeLink>
@@ -260,23 +260,23 @@ const ProductCardComponent = ({ product, viewMode, priority = false }: ProductCa
         </div>
       </CardContent>
 
-      <CardFooter className="p-2 sm:p-3 pt-0 flex gap-1">
-        <Button variant="outline" size="sm" className="flex-1 text-xs px-1 sm:px-3" asChild>
+      <CardFooter className="p-1.5 sm:p-3 pt-0 flex gap-1">
+        <Button variant="outline" size="sm" className="flex-1 text-xs px-1 sm:px-3 py-1 sm:py-2" asChild>
           <SafeLink 
             href={`/products/${productSlug}`}
             aria-label={`Ver detalles de ${product.name}`}
           >
-            <Eye className="h-5 w-5 mr-0 sm:mr-1" />
+            <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-0 sm:mr-1" />
             <span className="hidden sm:inline">Ver</span>
           </SafeLink>
         </Button>
         <Button 
           size="sm" 
-          className="flex-1 bg-green-600 hover:bg-green-700 text-xs p-1"
+          className="flex-1 bg-green-600 hover:bg-green-700 text-xs p-1 sm:p-2"
           onClick={handleWhatsAppContact}
           aria-label={`Contactar por WhatsApp sobre ${product.name}`}
         >
-          <FaWhatsapp className="h-5 w-5" />
+          <FaWhatsapp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </Button>
       </CardFooter>
     </Card>

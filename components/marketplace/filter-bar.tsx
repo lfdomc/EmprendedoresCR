@@ -289,8 +289,8 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
 
         {/* Mobile Layout */}
         <div className="md:hidden">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 xs:gap-0">
+            <div className="flex flex-wrap items-center gap-2 w-full xs:w-auto">
               {/* Selector de página móvil */}
               {onPageChange && currentPage && (
                 <Select value={currentPage} onValueChange={onPageChange}>

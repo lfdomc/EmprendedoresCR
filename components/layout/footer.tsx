@@ -5,12 +5,12 @@ import { memo } from 'react'
 function FooterComponent() {
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Company Info */}
-          <div className="md:col-span-2 space-y-4">
+          <div className="sm:col-span-2 md:col-span-2 space-y-3 sm:space-y-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-gray-900">Costa Rica Emprende</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Costa Rica Emprende</h3>
             </div>
             <p className="text-sm text-gray-600 max-w-md">
               Conectando emprendedores costarricenses con oportunidades de crecimiento y desarrollo empresarial.
@@ -42,11 +42,11 @@ function FooterComponent() {
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Mail className="h-4 w-4 text-gray-400" />
-                <span>info@costaricaemprende.com</span>
+                <span className="text-xs sm:text-sm">info@crtemsa.com.com</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <MessageCircle className="h-4 w-4 text-gray-400" />
-                <span>+506 8888-8888</span>
+                <span> Whatsapp: +506 7012-0250</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <MapPin className="h-4 w-4 text-gray-400" />

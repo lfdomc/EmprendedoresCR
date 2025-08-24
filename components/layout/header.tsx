@@ -93,7 +93,7 @@ function HeaderComponent() {
                 priority
                 className="h-10 w-10 object-contain"
               />
-            <div className="text-lg font-semibold text-gray-900">
+            <div className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">
               <span>Costa Rica </span>
               <span className="text-orange-500">Emprende</span>
             </div>

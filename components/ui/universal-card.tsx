@@ -345,13 +345,13 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
             
             {/* Botones de acción */}
             {(cardData.type === 'product' || cardData.type === 'service') && (
-              <div className="flex flex-col gap-1 sm:gap-2 justify-center ml-2 sm:ml-3 md:ml-4">
-                <Button variant="outline" size="sm" className="h-8 w-8 sm:h-10 sm:w-10 p-0 border-2 hover:border-primary/50 hover:bg-primary/10 hover:shadow-soft transition-modern rounded-lg sm:rounded-xl hover-lift" asChild>
+              <div className="flex flex-col gap-1 sm:gap-2 justify-center ml-1.5 sm:ml-3 md:ml-4">
+                <Button variant="outline" size="sm" className="h-7 w-7 sm:h-10 sm:w-10 p-0 border-2 hover:border-primary/50 hover:bg-primary/10 hover:shadow-soft transition-modern rounded-lg sm:rounded-xl hover-lift" asChild>
                   <SafeLink 
                     href={detailUrl}
                     aria-label={`Ver detalles de ${cardData.data.name}`}
                   >
-                    <Eye className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                    <Eye className="h-3.5 w-3.5 sm:h-5 sm:w-5" aria-hidden="true" />
                   </SafeLink>
                 </Button>
                 
@@ -359,11 +359,11 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="h-8 w-8 sm:h-10 sm:w-10 p-0 border-2 text-green-600 hover:text-green-700 hover:bg-green-50 hover:border-green-300 hover:shadow-soft transition-modern rounded-lg sm:rounded-xl hover-lift"
+                    className="h-7 w-7 sm:h-10 sm:w-10 p-0 border-2 text-green-600 hover:text-green-700 hover:bg-green-50 hover:border-green-300 hover:shadow-soft transition-modern rounded-lg sm:rounded-xl hover-lift"
                     onClick={handleWhatsAppContact}
                     aria-label={`Contactar por WhatsApp sobre ${cardData.data.name}`}
                   >
-                    <FaWhatsapp className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                    <FaWhatsapp className="h-3.5 w-3.5 sm:h-5 sm:w-5" aria-hidden="true" />
                   </Button>
                 )}
                 
@@ -373,7 +373,7 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
                     serviceName={cardData.data.name}
                     price={cardData.data.price}
                     currency={cardData.data.currency}
-                    className="h-8 w-8 sm:h-10 sm:w-10 p-0 border-2 text-xs hover:border-green-300 hover:shadow-soft transition-modern rounded-lg sm:rounded-xl hover-lift"
+                    className="h-7 w-7 sm:h-10 sm:w-10 p-0 border-2 text-xs hover:border-green-300 hover:shadow-soft transition-modern rounded-lg sm:rounded-xl hover-lift"
                     showShortText={false}
                     businessId={cardData.data.business?.id || ''}
                     serviceId={cardData.data.id}
@@ -451,7 +451,7 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
           </div>
         </SafeLink>
 
-        <CardContent className="p-3 sm:p-4 lg:p-5 flex-1 flex flex-col">
+        <CardContent className="p-1.5 sm:p-3 lg:p-4 flex-1 flex flex-col">
           <SafeLink 
             href={detailUrl}
             className={`block focus:outline-none focus:ring-2 ${typeConfig.ringColor.split(' ')[0]} focus:ring-offset-2 rounded-lg cursor-pointer`}
@@ -464,14 +464,14 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
               </div>
             )}
             
-            <h3 id={`${cardData.type}-title-grid-${cardData.data.id}`} className="font-bold text-sm sm:text-base lg:text-lg hover:text-primary transition-colors line-clamp-2 mb-1.5 sm:mb-2 leading-tight text-gray-900 tracking-tight">
+            <h3 id={`${cardData.type}-title-grid-${cardData.data.id}`} className="font-bold text-xs sm:text-sm lg:text-base hover:text-primary transition-colors line-clamp-2 mb-1 sm:mb-1.5 leading-tight text-gray-900 tracking-tight">
               <span className="line-clamp-2">{cardData.data.name}</span>
             </h3>
 
             {/* Información específica por tipo */}
             
             {cardData.type === 'business' && cardData.data.description && (
-              <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2 leading-relaxed font-medium">
+              <p className="text-xs text-gray-600 mb-1.5 sm:mb-2 line-clamp-2 leading-relaxed font-medium">
                 {cardData.data.description}
               </p>
             )}
