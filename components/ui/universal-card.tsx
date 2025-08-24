@@ -493,7 +493,7 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
           {/* Precio */}
           {formattedPrice && (
             <div className="mt-auto">
-              <span className="text-sm sm:text-base font-bold text-primary bg-primary/5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border-modern transition-modern hover:shadow-glow-primary tracking-tight">
+              <span className="text-xs sm:text-sm font-bold text-gray-700 bg-gray-100 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border-modern transition-modern hover:shadow-md tracking-tight">
                 {formattedPrice}
               </span>
             </div>

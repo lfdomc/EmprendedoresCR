@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 
+import dynamic from 'next/dynamic';
 import { 
   Store, 
   Package, 
@@ -21,6 +22,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
+
 // Lazy loading del componente de configuración de negocio
 const BusinessSetup = dynamic(() => import('@/components/dashboard/business-setup').then(mod => ({ default: mod.BusinessSetup })), {
   loading: () => (
@@ -30,7 +32,6 @@ const BusinessSetup = dynamic(() => import('@/components/dashboard/business-setu
   ),
   ssr: false,
 });
-import dynamic from 'next/dynamic';
 
 // Lazy loading de componentes pesados del dashboard
 const ProductsManager = dynamic(() => import('./products-manager').then(mod => ({ default: mod.ProductsManager })), {
@@ -174,27 +175,27 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Business Header */}
-        <div className="mb-8">
-          <div className="flex items-start gap-4 mb-6">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm mx-auto sm:mx-0">
               {business.logo_url ? (
                 <Image 
                   src={business.logo_url} 
                   alt={`Logo de ${business.name}`}
                   width={160}
                   height={160}
-                  className="w-full h-full object-contain p-4 rounded-xl hover:scale-105 transition-transform duration-300 drop-shadow-sm"
+                  className="w-full h-full object-contain p-3 sm:p-4 rounded-xl hover:scale-105 transition-transform duration-300 drop-shadow-sm"
                   priority
                 />
               ) : (
-                <Store className="h-16 w-16 sm:h-20 sm:w-20 text-primary/70" />
+                <Store className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 text-primary/70" />
               )}
             </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 truncate">{business.name}</h1>
-              <p className="text-base sm:text-lg text-muted-foreground mb-3 line-clamp-2">{business.description}</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge variant={business.is_active ? 'default' : 'secondary'} className="text-sm px-3 py-1">
+            <div className="flex-1 min-w-0 text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 break-words">{business.name}</h1>
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-3 line-clamp-2">{business.description}</p>
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
+                <Badge variant={business.is_active ? 'default' : 'secondary'} className="text-xs sm:text-sm px-2 sm:px-3 py-1">
                   {business.is_active ? 'Activo' : 'Inactivo'}
                 </Badge>
               </div>
@@ -209,39 +210,40 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
           {/* Productos Module */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5 flex-shrink-0" />
-                    <span className="truncate">Gestión de Productos</span>
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground mt-2">Administra tu catálogo de productos</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <Button 
-                    onClick={() => {
-                      setIsProductsExpanded(true);
-                      setIsProductDialogOpen(true);
-                    }}
-                    className="flex-1 sm:flex-none"
-                    size="sm"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">Agregar Producto</span>
-                    <span className="sm:hidden">Agregar</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsProductsExpanded(!isProductsExpanded)}
-                    className="bg-gray-600 hover:bg-gray-700 text-white flex-shrink-0"
-                  >
-                    {isProductsExpanded ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </Button>
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 xs:gap-3">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base lg:text-lg">
+                      <Package className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                      <span className="break-words text-xs sm:text-sm lg:text-base">Gestión de Productos</span>
+                    </CardTitle>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">Administra tu catálogo de productos</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 self-end xs:self-auto">
+                    <Button 
+                      onClick={() => {
+                        setIsProductsExpanded(true);
+                        setIsProductDialogOpen(true);
+                      }}
+                      className="flex-1 xs:flex-none h-8 sm:h-9 px-2 sm:px-3"
+                      size="sm"
+                    >
+                      <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      <span className="text-xs sm:text-sm">Agregar</span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsProductsExpanded(!isProductsExpanded)}
+                      className="bg-gray-600 hover:bg-gray-700 text-white flex-shrink-0 h-8 sm:h-9 px-2 sm:px-3"
+                    >
+                      {isProductsExpanded ? (
+                        <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                      ) : (
+                        <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardHeader>
@@ -260,41 +262,42 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
           {/* Servicios Module */}
           <Card>
             <CardHeader>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <CardTitle className="flex items-center gap-2">
-                    <Wrench className="h-5 w-5 flex-shrink-0" />
-                    <span className="truncate">Gestión de Servicios</span>
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground mt-2">Administra tu catálogo de servicios</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <Button 
-                    onClick={() => {
-                      setIsServicesExpanded(true);
-                      setIsServiceDialogOpen(true);
-                    }}
-                    className="flex-1 sm:flex-none"
-                    size="sm"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">Agregar Servicio</span>
-                    <span className="sm:hidden">Agregar</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsServicesExpanded(!isServicesExpanded)}
-                    className="bg-gray-600 hover:bg-gray-700 text-white flex-shrink-0"
-                  >
-                    {isServicesExpanded ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 xs:gap-3">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base lg:text-lg">
+                      <Wrench className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                      <span className="break-words text-xs sm:text-sm lg:text-base">Gestión de Servicios</span>
+                    </CardTitle>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">Administra tu catálogo de servicios</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 self-end xs:self-auto">
+                    <Button 
+                      onClick={() => {
+                        setIsServicesExpanded(true);
+                        setIsServiceDialogOpen(true);
+                      }}
+                      className="flex-1 xs:flex-none h-8 sm:h-9 px-2 sm:px-3"
+                      size="sm"
+                    >
+                      <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      <span className="text-xs sm:text-sm">Agregar</span>
+                    </Button>
+                    <Button
+                       variant="ghost"
+                       size="sm"
+                       onClick={() => setIsServicesExpanded(!isServicesExpanded)}
+                       className="bg-gray-600 hover:bg-gray-700 text-white flex-shrink-0 h-8 sm:h-9 px-2 sm:px-3"
+                     >
+                       {isServicesExpanded ? (
+                         <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                       ) : (
+                         <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                       )}
+                     </Button>
+                   </div>
+                 </div>
+               </div>
             </CardHeader>
             {isServicesExpanded && (
               <CardContent>
@@ -311,19 +314,19 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
           {/* Configuración Module */}
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    Configuración del Emprendimiento
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                <div className="flex-1">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                    <span className="break-words">Configuración del Emprendimiento</span>
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground">Actualiza la información de tu emprendimiento</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">Actualiza la información de tu emprendimiento</p>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsConfigExpanded(!isConfigExpanded)}
-                  className="bg-gray-600 hover:bg-gray-700 text-white"
+                  className="bg-gray-600 hover:bg-gray-700 text-white self-end sm:self-auto flex-shrink-0 h-8 px-3"
                 >
                   {isConfigExpanded ? (
                     <ChevronDown className="h-4 w-4" />
