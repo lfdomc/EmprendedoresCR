@@ -27,6 +27,24 @@ export function SignUpForm({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Función para traducir mensajes de error de Supabase al español
+  const translateError = (errorMessage: string): string => {
+    const translations: { [key: string]: string } = {
+      'User already registered': 'El usuario ya está registrado',
+      'Email already registered': 'El email ya está registrado',
+      'Signup is disabled': 'El registro está deshabilitado',
+      'Email rate limit exceeded': 'Límite de emails excedido',
+      'Too many requests': 'Demasiadas solicitudes',
+      'Invalid email format': 'Formato de email inválido',
+      'Weak password': 'Contraseña débil',
+      'Password is too weak': 'La contraseña es muy débil',
+      'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres',
+      'Passwords do not match': 'Las contraseñas no coinciden'
+    };
+    
+    return translations[errorMessage] || errorMessage;
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
@@ -34,7 +52,7 @@ export function SignUpForm({
     setError(null);
 
     if (password !== repeatPassword) {
-      setError("Passwords do not match");
+      setError(translateError("Passwords do not match"));
       setIsLoading(false);
       return;
     }
@@ -50,7 +68,8 @@ export function SignUpForm({
       if (error) throw error;
       router.push("/auth/sign-up-success");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Ocurrió un error");
+      const errorMessage = error instanceof Error ? error.message : "Ocurrió un error";
+      setError(translateError(errorMessage));
     } finally {
       setIsLoading(false);
     }

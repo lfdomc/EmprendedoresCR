@@ -24,6 +24,21 @@ export function ForgotPasswordForm({
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Función para traducir mensajes de error de Supabase al español
+  const translateError = (errorMessage: string): string => {
+    const translations: { [key: string]: string } = {
+      'Invalid email': 'Email inválido',
+      'Email not found': 'Email no encontrado',
+      'User not found': 'Usuario no encontrado',
+      'Email rate limit exceeded': 'Límite de emails excedido',
+      'Too many requests': 'Demasiadas solicitudes',
+      'Invalid email format': 'Formato de email inválido',
+      'Email address not found': 'Dirección de email no encontrada'
+    };
+    
+    return translations[errorMessage] || errorMessage;
+  };
+
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
@@ -38,7 +53,8 @@ export function ForgotPasswordForm({
       if (error) throw error;
       setSuccess(true);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Ocurrió un error");
+      const errorMessage = error instanceof Error ? error.message : "Ocurrió un error";
+      setError(translateError(errorMessage));
     } finally {
       setIsLoading(false);
     }

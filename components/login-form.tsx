@@ -27,6 +27,21 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Función para traducir mensajes de error de Supabase al español
+  const translateError = (errorMessage: string): string => {
+    const translations: { [key: string]: string } = {
+      'Invalid login credentials': 'Credenciales de acceso inválidas',
+      'Invalid email or password': 'Email o contraseña inválidos',
+      'Email not confirmed': 'Email no confirmado',
+      'User not found': 'Usuario no encontrado',
+      'An error occurred': 'Ocurrió un error',
+      'Too many requests': 'Demasiadas solicitudes',
+      'Invalid email format': 'Formato de email inválido'
+    };
+    
+    return translations[errorMessage] || errorMessage;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
@@ -43,7 +58,8 @@ export function LoginForm({
       // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/dashboard");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      const errorMessage = error instanceof Error ? error.message : "An error occurred";
+      setError(translateError(errorMessage));
     } finally {
       setIsLoading(false);
     }

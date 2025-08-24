@@ -30,6 +30,27 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
   const router = useRouter();
   const supabase = createClient();
 
+  // Función para traducir mensajes de error de Supabase al español
+  const translateError = (errorMessage: string): string => {
+    const translations: { [key: string]: string } = {
+      'Invalid login credentials': 'Credenciales de acceso inválidas',
+      'Invalid email or password': 'Email o contraseña inválidos',
+      'Email not confirmed': 'Email no confirmado',
+      'User not found': 'Usuario no encontrado',
+      'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres',
+      'User already registered': 'El usuario ya está registrado',
+      'Email already registered': 'El email ya está registrado',
+      'Signup is disabled': 'El registro está deshabilitado',
+      'Email rate limit exceeded': 'Límite de emails excedido',
+      'Too many requests': 'Demasiadas solicitudes',
+      'Invalid email format': 'Formato de email inválido',
+      'Weak password': 'Contraseña débil',
+      'Password is too weak': 'La contraseña es muy débil'
+    };
+    
+    return translations[errorMessage] || errorMessage;
+  };
+
   // Hook para validación de email en tiempo real
   const { validationState, validateEmail, handleBlur, handleFocus } = useEmailValidation(800);
   
@@ -88,7 +109,7 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
       });
 
       if (error) {
-        setError(error.message);
+        setError(translateError(error.message));
       } else {
         toast.success('¡Bienvenido de vuelta!');
         // Solo limpiar el formulario cuando el login sea exitoso
@@ -205,7 +226,7 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                    errorMessage.includes('too many')) {
           setError('Demasiados intentos. Por favor espera unos minutos antes de intentar de nuevo.');
         } else {
-          setError(`Error: ${error.message}`);
+          setError(translateError(error.message));
         }
       } else {
         // Verificar si realmente se creó una nueva cuenta
@@ -286,6 +307,14 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                       disabled={isLoading}
                       value={loginForm.email}
                       onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
+                      onInvalid={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('Por favor completar este campo');
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('');
+                      }}
                     />
                   </div>
                 </div>
@@ -311,6 +340,14 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                       disabled={isLoading}
                       value={loginForm.password}
                       onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
+                      onInvalid={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('Por favor completar este campo');
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('');
+                      }}
                     />
                     <button
                       type="button"
@@ -345,6 +382,14 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                       disabled={isLoading}
                       value={signupForm.fullName}
                       onChange={(e) => setSignupForm(prev => ({ ...prev, fullName: e.target.value }))}
+                      onInvalid={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('Por favor completar este campo');
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('');
+                      }}
                     />
                   </div>
                 </div>
@@ -371,6 +416,14 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                       }}
                       onBlur={handleBlur}
                       onFocus={handleFocus}
+                      onInvalid={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('Por favor completar este campo');
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('');
+                      }}
                     />
                     {/* Indicador de estado */}
                     <div className="absolute right-3 top-3 h-4 w-4">
@@ -420,6 +473,14 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                       }}
                       onBlur={handlePasswordBlur}
                       onFocus={handlePasswordFocus}
+                      onInvalid={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('Por favor completar este campo');
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('');
+                      }}
                     />
                     {/* Botón de mostrar/ocultar contraseña */}
                     <button
@@ -537,6 +598,14 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                           ...prev,
                           showError: prev.hasBlurred && !prev.isValid && signupForm.confirmPassword.length > 0
                         }));
+                      }}
+                      onInvalid={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('Por favor completar este campo');
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        target.setCustomValidity('');
                       }}
                     />
                     {/* Botón de mostrar/ocultar contraseña */}

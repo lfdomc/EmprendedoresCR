@@ -25,6 +25,21 @@ export function UpdatePasswordForm({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Función para traducir mensajes de error de Supabase al español
+  const translateError = (errorMessage: string): string => {
+    const translations: { [key: string]: string } = {
+      'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres',
+      'Weak password': 'Contraseña débil',
+      'Password is too weak': 'La contraseña es muy débil',
+      'Invalid password': 'Contraseña inválida',
+      'Password update failed': 'Error al actualizar la contraseña',
+      'Session not found': 'Sesión no encontrada',
+      'User not authenticated': 'Usuario no autenticado'
+    };
+    
+    return translations[errorMessage] || errorMessage;
+  };
+
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
@@ -51,7 +66,8 @@ export function UpdatePasswordForm({
       // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push("/dashboard");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Ocurrió un error");
+      const errorMessage = error instanceof Error ? error.message : "Ocurrió un error";
+      setError(translateError(errorMessage));
     } finally {
       setIsLoading(false);
     }
