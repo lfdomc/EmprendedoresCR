@@ -1225,21 +1225,44 @@ export async function checkEmailExists(email: string): Promise<{ exists: boolean
       return { exists: false, error: 'Formato de email inválido' };
     }
 
-    // Consultar la tabla businesses para verificar si el email existe
-    // Esto funciona porque cada usuario registrado debe tener al menos un emprendimiento
-    const { data, error } = await supabase
-      .from('businesses')
-      .select('email')
-      .eq('email', email.toLowerCase())
-      .limit(1);
+    // Verificar si el email existe en la tabla auth.users usando la función RPC
+    const { data, error } = await supabase.rpc('check_email_exists', {
+      email_to_check: email.toLowerCase()
+    });
 
     if (error) {
-      console.error('Error checking email in businesses table:', error);
+      console.error('Error checking email existence:', error);
+      // Si la función RPC no existe, intentar método alternativo
+      if (error.message?.includes('function') || error.code === '42883') {
+        // Método alternativo: intentar hacer signUp con un password temporal
+        // y verificar el tipo de error
+        const tempPassword = 'temp_password_123';
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: email.toLowerCase(),
+          password: tempPassword,
+          options: {
+            data: { temp_check: true }
+          }
+        });
+        
+        if (signUpError) {
+          const errorMessage = signUpError.message.toLowerCase();
+          if (errorMessage.includes('user already registered') || 
+              errorMessage.includes('already been registered') ||
+              errorMessage.includes('email address is already registered') ||
+              errorMessage.includes('already registered') ||
+              errorMessage.includes('duplicate') ||
+              errorMessage.includes('already exists') ||
+              signUpError.status === 422) {
+            return { exists: true };
+          }
+        }
+        return { exists: false };
+      }
       return { exists: false, error: 'Error al verificar email' };
     }
 
-    // Si encontramos el email en la tabla businesses, significa que ya existe
-    return { exists: data && data.length > 0 };
+    return { exists: data === true };
     
   } catch (error) {
     console.error('Error in checkEmailExists:', error);

@@ -125,6 +125,20 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
       return;
     }
 
+    // Verificar si el email ya existe usando el estado de validación
+    if (validationState.exists) {
+      setError('Este email ya está registrado. Por favor inicia sesión o usa otro email.');
+      setIsLoading(false);
+      return;
+    }
+
+    // Verificar que la validación de email sea válida
+    if (!validationState.isValid) {
+      setError('Por favor verifica que el email sea válido y esté disponible.');
+      setIsLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       setIsLoading(false);
