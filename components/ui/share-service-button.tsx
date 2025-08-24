@@ -15,10 +15,11 @@ export function ShareServiceButton({
   className = "" 
 }: ShareServiceButtonProps) {
   const handleShare = async () => {
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://costaricaemprende.com';
     const shareData = {
       title: `${serviceName} - Servicio en Costa Rica`,
       text: `🌟 ¡Descubre ${serviceName}! ${serviceDescription ? serviceDescription.substring(0, 100) + '...' : 'Un increíble servicio costarricense.'} 🇨🇷`,
-      url: window.location.href
+      url: currentUrl
     };
 
     try {
@@ -28,20 +29,26 @@ export function ShareServiceButton({
         toast.success('¡Compartido exitosamente!');
       } else {
         // Fallback: copiar al portapapeles si está disponible
-        const shareText = `🌟 ¡Descubre ${serviceName}! 🌟\n\n${serviceDescription || 'Un increíble servicio costarricense.'} 🇨🇷\n\n🔗 Ver más: ${window.location.href}\n\n#CostaRicaEmprende #CostaRica`;
+        const shareText = `🌟 ¡Descubre ${serviceName}! 🌟
+
+${serviceDescription || 'Un increíble servicio costarricense.'} 🇨🇷
+
+🔗 Ver más: ${currentUrl}
+
+#CostaRicaEmprende #CostaRica`;
         
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(shareText);
           toast.success('¡Enlace copiado al portapapeles! 📋');
         } else {
           // Fallback final: mostrar el texto para copiar manualmente
-          toast.info('Copia este enlace: ' + window.location.href);
+          toast.info('Copia este enlace: ' + currentUrl);
         }
       }
     } catch (error) {
       console.error('Error sharing:', error);
       // Fallback de emergencia
-      toast.info('Copia este enlace: ' + window.location.href);
+      toast.info('Copia este enlace: ' + currentUrl);
     }
   };
 

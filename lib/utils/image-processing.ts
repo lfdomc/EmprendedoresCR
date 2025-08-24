@@ -39,6 +39,12 @@ export async function convertToWebP(
       // Calcular nuevas dimensiones manteniendo la proporción
       let { width, height } = img;
       
+      // Validar que las dimensiones sean válidas para evitar división por cero
+      if (width <= 0 || height <= 0) {
+        reject(new Error('Dimensiones de imagen inválidas'));
+        return;
+      }
+      
       if (width > maxWidth || height > maxHeight) {
         const ratio = Math.min(maxWidth / width, maxHeight / height);
         width = Math.floor(width * ratio);

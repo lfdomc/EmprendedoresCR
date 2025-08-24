@@ -39,8 +39,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Business, Product, Service } from '@/lib/types/database';
-import { ProductCard } from '@/components/marketplace/product-card';
-import { ServiceCard } from '@/components/marketplace/service-card';
+import { UniversalCard } from '@/components/ui/universal-card';
+import { ResponsiveGrid } from '@/components/ui/responsive-grid';
 import { deleteBusiness, isBusinessOwner } from '@/lib/supabase/database';
 import { WhatsAppBusinessButton } from '@/components/ui/whatsapp-business-button';
 
@@ -100,10 +100,11 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
 
   // Función para manejar el compartir
   const handleShare = async () => {
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://costaricaemprende.com';
     const shareData = {
       title: `${business.name} - Emprendimiento en Costa Rica`,
       text: `🌟 ¡Descubre ${business.name}! ${business.description ? business.description.substring(0, 100) + '...' : 'Un increíble emprendimiento costarricense.'} 🇨🇷`,
-      url: window.location.href
+      url: currentUrl
     };
 
     try {
@@ -113,20 +114,20 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
         toast.success('¡Compartido exitosamente!');
       } else {
         // Fallback: copiar al portapapeles si está disponible
-        const shareText = `🌟 ¡Descubre ${business.name}! 🌟\n\n${business.description || 'Un increíble emprendimiento costarricense.'} 🇨🇷\n\n🔗 Ver más: ${window.location.href}\n\n#CostaRicaEmprende #CostaRica`;
+        const shareText = `🌟 ¡Descubre ${business.name}! 🌟\n\n${business.description || 'Un increíble emprendimiento costarricense.'} 🇨🇷\n\n🔗 Ver más: ${currentUrl}\n\n#CostaRicaEmprende #CostaRica`;
         
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(shareText);
           toast.success('¡Enlace copiado al portapapeles! 📋');
         } else {
           // Fallback final: mostrar el texto para copiar manualmente
-          toast.info('Copia este enlace: ' + window.location.href);
+          toast.info('Copia este enlace: ' + currentUrl);
         }
       }
     } catch (error) {
       console.error('Error sharing:', error);
       // Fallback de emergencia
-      toast.info('Copia este enlace: ' + window.location.href);
+      toast.info('Copia este enlace: ' + currentUrl);
      }
    };
 
@@ -378,11 +379,18 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              <ResponsiveGrid variant="products">
                 {activeProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} viewMode="grid" />
+                  <UniversalCard 
+                     key={product.id} 
+                     data={{
+                       type: 'product',
+                       data: product
+                     }} 
+                     viewMode="grid" 
+                   />
                 ))}
-              </div>
+              </ResponsiveGrid>
             )}
           </div>
 
@@ -402,11 +410,18 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              <ResponsiveGrid variant="services">
                 {activeServices.map((service) => (
-                  <ServiceCard key={service.id} service={service} viewMode="grid" />
+                  <UniversalCard 
+                     key={service.id} 
+                     data={{
+                       type: 'service',
+                       data: service
+                     }} 
+                     viewMode="grid" 
+                   />
                 ))}
-              </div>
+              </ResponsiveGrid>
             )}
           </div>
         </div>

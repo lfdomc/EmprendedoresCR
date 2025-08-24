@@ -54,16 +54,30 @@ export function WhatsAppButton({
         hour12: true
       });
       
-      const productUrl = productSlug ? `${window.location.origin}/products/${productSlug}` : 'https://costaricaemprende.com';
-      const message = ` *¡Hola! Estoy interesado/a en este producto* \n\n` +
-        `📦 *Producto:* ${productName}\n` +
-        `💰 *Precio:* ${formatPrice(price)}\n\n` +
-        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `🔗 *Ver detalles completos:*\n${productUrl}\n\n` +
-        `📅 *Fecha de consulta:* ${dateTime}\n\n` +
+      const productUrl = productSlug ? `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/products/${productSlug}` : 'https://costaricaemprende.com';
+      const message = ` *¡Hola! Estoy interesado/a en este producto* 
+
+` +
+        `📦 *Producto:* ${productName}
+` +
+        `💰 *Precio:* ${formatPrice(price)}
+
+` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+` +
+        `🔗 *Ver detalles completos:*
+${productUrl}
+
+` +
+        `📅 *Fecha de consulta:* ${dateTime}
+
+` +
         `¡Espero tu respuesta! 😊`;
       const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      if (typeof window !== 'undefined') {
+        window.open(whatsappUrl, '_blank');
+      }
     }
   };
 

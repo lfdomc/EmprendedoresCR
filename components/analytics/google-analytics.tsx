@@ -141,7 +141,7 @@ export function GoogleAnalytics() {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}', {
-              page_path: window.location.pathname,
+              page_path: typeof window !== 'undefined' ? window.location.pathname : '/',
               send_page_view: false
             });
           `,

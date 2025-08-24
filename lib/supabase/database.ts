@@ -17,26 +17,42 @@ import {
   ApiResponse
 } from '@/lib/types/database';
 
-// Tipos para elementos con estadísticas de WhatsApp
-type ItemWithWhatsAppStats = {
-  whatsapp_stats?: Array<{ contact_count: number }>;
-};
+// Types for WhatsApp stats - currently unused but kept for future features
+// type ItemWithWhatsAppStats = {
+//   whatsapp_stats?: Array<{ contact_count: number }>;
+// };
 
-type ProductWithWhatsAppStats = Product & ItemWithWhatsAppStats;
-type ServiceWithWhatsAppStats = Service & ItemWithWhatsAppStats;
+// type ProductWithWhatsAppStats = Product & ItemWithWhatsAppStats;
+// type ServiceWithWhatsAppStats = Service & ItemWithWhatsAppStats;
 import { generateBusinessSlug, generateProductSlug, generateServiceSlug } from '@/lib/utils/slug';
 
 // Cliente para operaciones del lado del cliente
 const supabase = createClient();
 
 // Funciones para Categorías
+// Cache para categorías (se actualizan poco)
+let categoriesCache: { data: Category[]; timestamp: number } | null = null;
+const CATEGORIES_CACHE_TTL = 5 * 60 * 1000; // 5 minutos
+
 export async function getCategories(): Promise<Category[]> {
+  // Verificar cache
+  if (categoriesCache && Date.now() - categoriesCache.timestamp < CATEGORIES_CACHE_TTL) {
+    return categoriesCache.data;
+  }
+
   const { data, error } = await supabase
     .from('categories')
-    .select('*')
+    .select('id, name, description, created_at, updated_at')
     .order('name');
 
   if (error) throw error;
+  
+  // Actualizar cache
+  categoriesCache = {
+    data: data || [],
+    timestamp: Date.now()
+  };
+  
   return data || [];
 }
 
@@ -63,12 +79,28 @@ export async function getBusinesses(filters?: BusinessFilters): Promise<Business
     query = query.eq('country', filters.country);
   }
 
+  if (filters?.category_id) {
+    if (Array.isArray(filters.category_id)) {
+      query = query.in('category_id', filters.category_id);
+    } else {
+      query = query.eq('category_id', filters.category_id);
+    }
+  }
+
   if (filters?.provincia) {
-    query = query.eq('provincia', filters.provincia);
+    if (Array.isArray(filters.provincia)) {
+      query = query.in('provincia', filters.provincia);
+    } else {
+      query = query.eq('provincia', filters.provincia);
+    }
   }
 
   if (filters?.canton) {
-    query = query.eq('canton', filters.canton);
+    if (Array.isArray(filters.canton)) {
+      query = query.in('canton', filters.canton);
+    } else {
+      query = query.eq('canton', filters.canton);
+    }
   }
 
   // Paginación
@@ -80,52 +112,25 @@ export async function getBusinesses(filters?: BusinessFilters): Promise<Business
   query = query.range(from, to);
 
   // Determinar el tipo de ordenamiento
-  const sortBy = filters?.sort_by || 'random';
+  const sortBy = filters?.sort_by || 'newest';
   
-  if (sortBy === 'popularity') {
-    // Obtener datos con estadísticas de WhatsApp y ordenar en el cliente
-    const { data, error } = await query
-      .select(`
-        *,
-        business:businesses(*),
-        category:categories(*),
-        whatsapp_stats!left(
-          contact_count
-        )
-      `);
-    
-    if (error) throw error;
-    
-    // Ordenar por popularidad en el cliente (JavaScript)
-    const sortedData = (data || []).sort((a: ProductWithWhatsAppStats, b: ProductWithWhatsAppStats) => {
-      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
-      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
-      return bCount - aCount; // Descendente (más popular primero)
-    });
-    
-    return sortedData;
-  } else if (sortBy === 'newest') {
-    // Ordenar por fecha de creación (más recientes primero)
-    const { data, error } = await query.order('created_at', { ascending: false });
-    if (error) throw error;
-    return data || [];
+  if (sortBy === 'newest') {
+    query = query.order('created_at', { ascending: false });
+  } else if (sortBy === 'random') {
+    // Para random, usar una función de base de datos más eficiente
+    query = query.order('created_at', { ascending: false });
+  } else if (sortBy === 'popularity') {
+    // Ordenar por popularidad (por ahora usar fecha como fallback)
+    query = query.order('created_at', { ascending: false });
   } else {
-    // Ordenamiento aleatorio por defecto (solo cuando no hay búsqueda específica)
-    if (!filters?.search) {
-      // Obtener datos sin ordenar y mezclar en el cliente
-      const { data, error } = await query.order('created_at', { ascending: false });
-      if (error) throw error;
-      
-      // Mezclar aleatoriamente los resultados en el cliente
-      const shuffledData = (data || []).sort(() => Math.random() - 0.5);
-      return shuffledData;
-    } else {
-      // Mantener ordenamiento por relevancia cuando hay búsqueda
-      const { data, error } = await query.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    }
+    // Fallback a ordenamiento por fecha
+    query = query.order('created_at', { ascending: false });
   }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+  return data || [];
 }
 
 export async function getBusinessById(id: string, includeInactive: boolean = false): Promise<Business | null> {
@@ -343,7 +348,11 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
     .eq('business.is_active', true);
 
   if (filters?.category_id) {
-    query = query.eq('category_id', filters.category_id);
+    if (Array.isArray(filters.category_id)) {
+      query = query.in('category_id', filters.category_id);
+    } else {
+      query = query.eq('category_id', filters.category_id);
+    }
   }
 
   if (filters?.business_id) {
@@ -366,11 +375,19 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
 
   // Location filters
   if (filters?.provincia) {
-    query = query.eq('provincia', filters.provincia);
+    if (Array.isArray(filters.provincia)) {
+      query = query.in('provincia', filters.provincia);
+    } else {
+      query = query.eq('provincia', filters.provincia);
+    }
   }
 
   if (filters?.canton) {
-    query = query.eq('canton', filters.canton);
+    if (Array.isArray(filters.canton)) {
+      query = query.in('canton', filters.canton);
+    } else {
+      query = query.eq('canton', filters.canton);
+    }
   }
 
   // Pagination
@@ -385,48 +402,94 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
   const sortBy = filters?.sort_by || 'random';
   
   if (sortBy === 'popularity') {
-    // Obtener datos con estadísticas de WhatsApp y ordenar en el cliente
-    const { data, error } = await query
+    // Optimización: Obtener IDs ordenados por popularidad primero
+    const { data: statsData, error: statsError } = await supabase
+      .from('whatsapp_stats')
+      .select('product_id, contact_count')
+      .not('product_id', 'is', null)
+      .order('contact_count', { ascending: false })
+      .range(from, to);
+
+    if (statsError || !statsData?.length) {
+      // Fallback a ordenamiento por fecha si no hay estadísticas
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    }
+
+    // Aplicar filtros adicionales a los productos populares
+    const productIds = statsData.map(stat => stat.product_id);
+    let popularQuery = supabase
+      .from('products')
       .select(`
         *,
         business:businesses(*),
-        category:categories(*),
-        whatsapp_stats!left(
-          contact_count
-        )
-      `);
-    
+        category:categories(*)
+      `)
+      .in('id', productIds)
+      .eq('is_active', true)
+      .eq('business.is_active', true);
+
+    // Aplicar los mismos filtros que la consulta original
+    if (filters?.category_id) {
+      if (Array.isArray(filters.category_id)) {
+        popularQuery = popularQuery.in('category_id', filters.category_id);
+      } else {
+        popularQuery = popularQuery.eq('category_id', filters.category_id);
+      }
+    }
+
+    if (filters?.business_id) {
+      popularQuery = popularQuery.eq('business_id', filters.business_id);
+    }
+
+    if (filters?.search) {
+      popularQuery = popularQuery.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+    }
+
+    if (filters?.min_price !== undefined) {
+      popularQuery = popularQuery.gte('price', filters.min_price);
+    }
+
+    if (filters?.max_price !== undefined) {
+      popularQuery = popularQuery.lte('price', filters.max_price);
+    }
+
+    if (filters?.provincia) {
+      if (Array.isArray(filters.provincia)) {
+        popularQuery = popularQuery.in('provincia', filters.provincia);
+      } else {
+        popularQuery = popularQuery.eq('provincia', filters.provincia);
+      }
+    }
+
+    if (filters?.canton) {
+      if (Array.isArray(filters.canton)) {
+        popularQuery = popularQuery.in('canton', filters.canton);
+      } else {
+        popularQuery = popularQuery.eq('canton', filters.canton);
+      }
+    }
+
+    const { data, error } = await popularQuery;
     if (error) throw error;
-    
-    // Ordenar por popularidad en el cliente (JavaScript)
-    const sortedData = (data || []).sort((a: ServiceWithWhatsAppStats, b: ServiceWithWhatsAppStats) => {
-      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
-      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
-      return bCount - aCount; // Descendente (más popular primero)
-    });
-    
-    return sortedData;
+
+    // Mantener el orden de popularidad
+    const orderedProducts = productIds
+      .map(id => data?.find(product => product.id === id))
+      .filter(Boolean) as Product[];
+
+    return orderedProducts;
   } else if (sortBy === 'newest') {
     // Ordenar por fecha de creación (más recientes primero)
     const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   } else {
-    // Ordenamiento aleatorio por defecto (solo cuando no hay búsqueda específica)
-    if (!filters?.search) {
-      // Obtener datos sin ordenar y mezclar en el cliente
-      const { data, error } = await query.order('created_at', { ascending: false });
-      if (error) throw error;
-      
-      // Mezclar aleatoriamente los resultados en el cliente
-      const shuffledData = (data || []).sort(() => Math.random() - 0.5);
-      return shuffledData;
-    } else {
-      // Mantener ordenamiento por relevancia cuando hay búsqueda
-      const { data, error } = await query.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    }
+    // Ordenamiento por fecha de creación (más recientes primero)
+    const { data, error } = await query.order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   }
 }
 
@@ -525,7 +588,11 @@ export async function getServices(filters?: ServiceFilters): Promise<Service[]> 
     .eq('business.is_active', true);
 
   if (filters?.category_id) {
-    query = query.eq('category_id', filters.category_id);
+    if (Array.isArray(filters.category_id)) {
+      query = query.in('category_id', filters.category_id);
+    } else {
+      query = query.eq('category_id', filters.category_id);
+    }
   }
 
   if (filters?.business_id) {
@@ -556,11 +623,19 @@ export async function getServices(filters?: ServiceFilters): Promise<Service[]> 
 
   // Location filters
   if (filters?.provincia) {
-    query = query.eq('provincia', filters.provincia);
+    if (Array.isArray(filters.provincia)) {
+      query = query.in('provincia', filters.provincia);
+    } else {
+      query = query.eq('provincia', filters.provincia);
+    }
   }
 
   if (filters?.canton) {
-    query = query.eq('canton', filters.canton);
+    if (Array.isArray(filters.canton)) {
+      query = query.in('canton', filters.canton);
+    } else {
+      query = query.eq('canton', filters.canton);
+    }
   }
 
   // Pagination
@@ -575,48 +650,102 @@ export async function getServices(filters?: ServiceFilters): Promise<Service[]> 
   const sortBy = filters?.sort_by || 'random';
   
   if (sortBy === 'popularity') {
-    // Obtener datos con estadísticas de WhatsApp y ordenar en el cliente
-    const { data, error } = await query
+    // Optimización: Obtener IDs ordenados por popularidad primero
+    const { data: statsData, error: statsError } = await supabase
+      .from('whatsapp_stats')
+      .select('service_id, contact_count')
+      .not('service_id', 'is', null)
+      .order('contact_count', { ascending: false })
+      .range(from, to);
+
+    if (statsError || !statsData?.length) {
+      // Fallback a ordenamiento por fecha si no hay estadísticas
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    }
+
+    // Aplicar filtros adicionales a los servicios populares
+    const serviceIds = statsData.map(stat => stat.service_id);
+    let popularQuery = supabase
+      .from('services')
       .select(`
         *,
         business:businesses(*),
-        category:categories(*),
-        whatsapp_stats!left(
-          contact_count
-        )
-      `);
-    
+        category:categories(*)
+      `)
+      .in('id', serviceIds)
+      .eq('is_active', true)
+      .eq('business.is_active', true);
+
+    // Aplicar los mismos filtros que la consulta original
+    if (filters?.category_id) {
+      if (Array.isArray(filters.category_id)) {
+        popularQuery = popularQuery.in('category_id', filters.category_id);
+      } else {
+        popularQuery = popularQuery.eq('category_id', filters.category_id);
+      }
+    }
+
+    if (filters?.business_id) {
+      popularQuery = popularQuery.eq('business_id', filters.business_id);
+    }
+
+    if (filters?.search) {
+      popularQuery = popularQuery.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+    }
+
+    if (filters?.min_price !== undefined) {
+      popularQuery = popularQuery.gte('price', filters.min_price);
+    }
+
+    if (filters?.max_price !== undefined) {
+      popularQuery = popularQuery.lte('price', filters.max_price);
+    }
+
+    if (filters?.min_duration !== undefined) {
+      popularQuery = popularQuery.gte('duration_minutes', filters.min_duration);
+    }
+
+    if (filters?.max_duration !== undefined) {
+      popularQuery = popularQuery.lte('duration_minutes', filters.max_duration);
+    }
+
+    if (filters?.provincia) {
+      if (Array.isArray(filters.provincia)) {
+        popularQuery = popularQuery.in('provincia', filters.provincia);
+      } else {
+        popularQuery = popularQuery.eq('provincia', filters.provincia);
+      }
+    }
+
+    if (filters?.canton) {
+      if (Array.isArray(filters.canton)) {
+        popularQuery = popularQuery.in('canton', filters.canton);
+      } else {
+        popularQuery = popularQuery.eq('canton', filters.canton);
+      }
+    }
+
+    const { data, error } = await popularQuery;
     if (error) throw error;
-    
-    // Ordenar por popularidad en el cliente (JavaScript)
-    const sortedData = (data || []).sort((a: ServiceWithWhatsAppStats, b: ServiceWithWhatsAppStats) => {
-      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
-      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
-      return bCount - aCount; // Descendente (más popular primero)
-    });
-    
-    return sortedData;
+
+    // Mantener el orden de popularidad
+    const orderedServices = serviceIds
+      .map(id => data?.find(service => service.id === id))
+      .filter(Boolean) as Service[];
+
+    return orderedServices;
   } else if (sortBy === 'newest') {
     // Ordenar por fecha de creación (más recientes primero)
     const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   } else {
-    // Ordenamiento aleatorio por defecto (solo cuando no hay búsqueda específica)
-    if (!filters?.search) {
-      // Obtener datos sin ordenar y mezclar en el cliente
-      const { data, error } = await query.order('created_at', { ascending: false });
-      if (error) throw error;
-      
-      // Mezclar aleatoriamente los resultados en el cliente
-      const shuffledData = (data || []).sort(() => Math.random() - 0.5);
-      return shuffledData;
-    } else {
-      // Mantener ordenamiento por relevancia cuando hay búsqueda
-      const { data, error } = await query.order('created_at', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    }
+    // Ordenamiento por fecha de creación (más recientes primero)
+    const { data, error } = await query.order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   }
 }
 
@@ -868,16 +997,42 @@ export async function getPublicServicesByBusinessId(businessId: string): Promise
 // Funciones para obtener productos y servicios más populares por WhatsApp
 export async function getPopularProducts(limit: number = 50): Promise<Product[]> {
   try {
+    // Optimización: Usar una vista materializada o consulta optimizada
+    // Primero obtenemos solo los IDs ordenados por popularidad
+    const { data: statsData, error: statsError } = await supabase
+      .from('whatsapp_stats')
+      .select('product_id, contact_count')
+      .not('product_id', 'is', null)
+      .order('contact_count', { ascending: false })
+      .limit(limit);
+
+    if (statsError || !statsData?.length) {
+      // Fallback: productos recientes si no hay estadísticas
+      const { data } = await supabase
+        .from('products')
+        .select(`
+          *,
+          business:businesses!inner(*),
+          category:categories(*)
+        `)
+        .eq('is_active', true)
+        .eq('business.is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      
+      return data || [];
+    }
+
+    // Obtener los productos completos usando los IDs ordenados
+    const productIds = statsData.map(stat => stat.product_id);
     const { data, error } = await supabase
       .from('products')
       .select(`
         *,
-        business:businesses(*),
-        category:categories(*),
-        whatsapp_stats!inner(
-          contact_count
-        )
+        business:businesses!inner(*),
+        category:categories(*)
       `)
+      .in('id', productIds)
       .eq('is_active', true)
       .eq('business.is_active', true);
 
@@ -886,14 +1041,12 @@ export async function getPopularProducts(limit: number = 50): Promise<Product[]>
       return [];
     }
 
-    // Ordenar por popularidad en el cliente y limitar
-    const sortedData = (data || []).sort((a: ProductWithWhatsAppStats, b: ProductWithWhatsAppStats) => {
-      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
-      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
-      return bCount - aCount; // Descendente (más popular primero)
-    }).slice(0, limit);
+    // Mantener el orden de popularidad
+    const orderedProducts = productIds
+      .map(id => data?.find(product => product.id === id))
+      .filter(Boolean) as Product[];
 
-    return sortedData;
+    return orderedProducts;
   } catch (error) {
     console.error('Error fetching popular products:', error);
     return [];
@@ -902,16 +1055,42 @@ export async function getPopularProducts(limit: number = 50): Promise<Product[]>
 
 export async function getPopularServices(limit: number = 50): Promise<Service[]> {
   try {
+    // Optimización: Usar una vista materializada o consulta optimizada
+    // Primero obtenemos solo los IDs ordenados por popularidad
+    const { data: statsData, error: statsError } = await supabase
+      .from('whatsapp_stats')
+      .select('service_id, contact_count')
+      .not('service_id', 'is', null)
+      .order('contact_count', { ascending: false })
+      .limit(limit);
+
+    if (statsError || !statsData?.length) {
+      // Fallback: servicios recientes si no hay estadísticas
+      const { data } = await supabase
+        .from('services')
+        .select(`
+          *,
+          business:businesses!inner(*),
+          category:categories(*)
+        `)
+        .eq('is_active', true)
+        .eq('business.is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      
+      return data || [];
+    }
+
+    // Obtener los servicios completos usando los IDs ordenados
+    const serviceIds = statsData.map(stat => stat.service_id);
     const { data, error } = await supabase
       .from('services')
       .select(`
         *,
-        business:businesses(*),
-        category:categories(*),
-        whatsapp_stats!inner(
-          contact_count
-        )
+        business:businesses!inner(*),
+        category:categories(*)
       `)
+      .in('id', serviceIds)
       .eq('is_active', true)
       .eq('business.is_active', true);
 
@@ -920,14 +1099,12 @@ export async function getPopularServices(limit: number = 50): Promise<Service[]>
       return [];
     }
 
-    // Ordenar por popularidad en el cliente y limitar
-    const sortedData = (data || []).sort((a: ServiceWithWhatsAppStats, b: ServiceWithWhatsAppStats) => {
-      const aCount = a.whatsapp_stats?.[0]?.contact_count || 0;
-      const bCount = b.whatsapp_stats?.[0]?.contact_count || 0;
-      return bCount - aCount; // Descendente (más popular primero)
-    }).slice(0, limit);
+    // Mantener el orden de popularidad
+    const orderedServices = serviceIds
+      .map(id => data?.find(service => service.id === id))
+      .filter(Boolean) as Service[];
 
-    return sortedData;
+    return orderedServices;
   } catch (error) {
     console.error('Error fetching popular services:', error);
     return [];

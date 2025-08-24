@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { Category } from '@/lib/types/database';
 
 interface FilterSidebarProps {
@@ -32,7 +31,7 @@ interface FilterSidebarProps {
   onClose?: () => void;
 }
 
-export function FilterSidebar({
+function FilterSidebarComponent({
   categories,
   filters,
   onFilterChange,
@@ -54,74 +53,76 @@ export function FilterSidebar({
     }));
   }, []);
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
+  const toggleSection = useCallback((section: keyof typeof expandedSections) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }));
-  };
+  }, []);
 
-  const handleCategoryChange = (categoryId: string) => {
+  const handleCategoryChange = useCallback((categoryId: string) => {
     onFilterChange({
       ...filters,
       category_id: filters.category_id === categoryId ? undefined : categoryId
     });
-  };
+  }, [filters, onFilterChange]);
 
-  const handlePriceChange = (type: 'min' | 'max', value: string) => {
+  const handlePriceChange = useCallback((type: 'min' | 'max', value: string) => {
     const numValue = value === '' ? undefined : parseFloat(value);
     onFilterChange({
       ...filters,
       [type === 'min' ? 'min_price' : 'max_price']: numValue
     });
-  };
+  }, [filters, onFilterChange]);
 
 
 
-  const handleProvinciaChange = (provincia: string) => {
+  const handleProvinciaChange = useCallback((provincia: string) => {
     onFilterChange({
       ...filters,
       provincia: filters.provincia === provincia ? undefined : provincia,
       canton: undefined // Reset canton when provincia changes
     });
-  };
+  }, [filters, onFilterChange]);
 
-  const handleCantonChange = (canton: string) => {
+  const handleCantonChange = useCallback((canton: string) => {
     onFilterChange({
       ...filters,
       canton: filters.canton === canton ? undefined : canton
     });
-  };
+  }, [filters, onFilterChange]);
 
-  const handleSortChange = (sortBy: 'random' | 'popularity' | 'newest') => {
+  const handleSortChange = useCallback((sortBy: 'random' | 'popularity' | 'newest') => {
     onFilterChange({
       ...filters,
       sort_by: sortBy
     });
-  };
+  }, [filters, onFilterChange]);
 
   const activeFiltersCount = Object.values(filters).filter(Boolean).length;
 
   return (
-    <div className="w-[70%] sm:w-80 h-screen overflow-y-auto bg-background shadow-lg lg:shadow-none lg:bg-card lg:rounded-lg lg:border p-3 sm:p-4 lg:h-fit lg:sticky lg:top-24 lg:overflow-visible">
+    <div className="w-[70%] sm:w-80 h-screen overflow-y-auto bg-white shadow-lg lg:shadow-none lg:bg-white lg:rounded-lg lg:border lg:border-gray-100 p-4 sm:p-6 lg:h-fit lg:sticky lg:top-24 lg:overflow-visible">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
-        <h3 className="font-semibold text-base sm:text-lg">Filtros</h3>
-        <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <h2 className="text-lg sm:text-xl font-medium text-gray-900">
+          Filtros
           {activeFiltersCount > 0 && (
-            <>
-              <Badge variant="secondary" className="text-xs">
-                {activeFiltersCount}
-              </Badge>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClearFilters}
-                className="h-5 w-5 sm:h-6 sm:w-6 p-0"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </>
+            <span className="ml-2 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-900 text-white">
+              {activeFiltersCount}
+            </span>
+          )}
+        </h2>
+        <div className="flex items-center gap-2 sm:gap-3">
+          {activeFiltersCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClearFilters}
+              className="text-sm text-gray-500 hover:text-gray-900 font-medium"
+            >
+              Limpiar
+            </Button>
           )}
           {/* Close button for mobile */}
           {onClose && (
@@ -137,36 +138,36 @@ export function FilterSidebar({
         </div>
       </div>
 
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-6 sm:space-y-8">
         {/* Categories */}
         <div>
           <button
             onClick={() => toggleSection('categories')}
-            className="flex items-center justify-between w-full text-left font-medium mb-2 sm:mb-3 hover:text-primary transition-colors"
+            className="flex items-center justify-between w-full text-left font-medium mb-3 sm:mb-4 hover:text-gray-900 transition-colors py-2"
           >
-            <span className="text-sm sm:text-base">Categorías</span>
+            <span className="text-base sm:text-lg text-gray-700">Categorías</span>
             {expandedSections.categories ? (
-              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             ) : (
-              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             )}
           </button>
           
           {expandedSections.categories && (
-            <div className="space-y-1 sm:space-y-2 max-h-48 sm:max-h-64 overflow-y-auto">
+            <div className="space-y-2 sm:space-y-3 max-h-48 sm:max-h-64 overflow-y-auto">
               {categories.map((category) => (
-                <div key={category.id} className="flex items-center space-x-2">
+                <div key={category.id} className="flex items-center space-x-3 py-1">
                   <Checkbox
                     id={`category-${category.id}`}
                     checked={filters.category_id === category.id}
                     onCheckedChange={() => handleCategoryChange(category.id)}
-                    className="h-3 w-3 sm:h-4 sm:w-4"
+                    className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900"
                   />
                   <Label
                     htmlFor={`category-${category.id}`}
-                    className="text-xs sm:text-sm font-normal cursor-pointer flex items-center gap-1 sm:gap-2 flex-1"
+                    className="text-sm sm:text-base font-normal cursor-pointer flex items-center gap-2 sm:gap-3 flex-1 text-gray-700 hover:text-gray-900"
                   >
-                    <span className="text-xs sm:text-sm">{category.icon}</span>
+                    <span className="text-sm sm:text-base">{category.icon}</span>
                     <span>{category.name}</span>
                   </Label>
                 </div>
@@ -175,39 +176,39 @@ export function FilterSidebar({
           )}
         </div>
 
-        <Separator />
+        <div className="border-t border-gray-100 my-6"></div>
 
         {/* Location */}
         <div>
           <button
             onClick={() => toggleSection('location')}
-            className="flex items-center justify-between w-full text-left font-medium mb-2 sm:mb-3 hover:text-primary transition-colors"
+            className="flex items-center justify-between w-full text-left font-medium mb-3 sm:mb-4 hover:text-gray-900 transition-colors py-2"
           >
-            <span className="text-sm sm:text-base">Ubicación</span>
+            <span className="text-base sm:text-lg text-gray-700">Ubicación</span>
             {expandedSections.location ? (
-              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             ) : (
-              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             )}
           </button>
           
           {expandedSections.location && (
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-4 sm:space-y-5">
               {/* Provincia */}
               <div>
-                <Label className="text-xs sm:text-sm font-medium mb-1 sm:mb-2 block">Provincia</Label>
-                <div className="space-y-1 sm:space-y-2 max-h-32 sm:max-h-48 overflow-y-auto">
+                <Label className="text-sm sm:text-base text-gray-600 mb-2 sm:mb-3 block font-medium">Provincia</Label>
+                <div className="space-y-2 sm:space-y-3 max-h-32 sm:max-h-48 overflow-y-auto">
                   {['San José', 'Alajuela', 'Cartago', 'Heredia', 'Guanacaste', 'Puntarenas', 'Limón'].map((provincia) => (
-                    <div key={provincia} className="flex items-center space-x-1 sm:space-x-2">
+                    <div key={provincia} className="flex items-center space-x-3 py-1">
                       <Checkbox
                         id={`provincia-${provincia}`}
                         checked={filters.provincia === provincia}
                         onCheckedChange={() => handleProvinciaChange(provincia)}
-                        className="h-3 w-3 sm:h-4 sm:w-4"
+                        className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900"
                       />
                       <Label
                         htmlFor={`provincia-${provincia}`}
-                        className="text-xs sm:text-sm font-normal cursor-pointer flex-1"
+                        className="text-sm sm:text-base font-normal cursor-pointer flex-1 text-gray-700 hover:text-gray-900"
                       >
                         {provincia}
                       </Label>
@@ -219,8 +220,8 @@ export function FilterSidebar({
               {/* Canton */}
               {filters.provincia && (
                 <div>
-                  <Label className="text-xs sm:text-sm font-medium mb-1 sm:mb-2 block">Cantón</Label>
-                  <div className="space-y-1 sm:space-y-2 max-h-32 sm:max-h-48 overflow-y-auto">
+                  <Label className="text-sm sm:text-base text-gray-600 mb-2 sm:mb-3 block font-medium">Cantón</Label>
+                  <div className="space-y-2 sm:space-y-3 max-h-32 sm:max-h-48 overflow-y-auto">
                     {(() => {
                       const cantonesPorProvincia: Record<string, string[]> = {
                         'San José': ['San José', 'Escazú', 'Desamparados', 'Puriscal', 'Tarrazú', 'Aserrí', 'Mora', 'Goicoechea', 'Santa Ana', 'Alajuelita', 'Vásquez de Coronado', 'Acosta', 'Tibás', 'Moravia', 'Montes de Oca', 'Turrubares', 'Dota', 'Curridabat', 'Pérez Zeledón'],
@@ -235,16 +236,16 @@ export function FilterSidebar({
                       const cantonesDisponibles = cantonesPorProvincia[filters.provincia] || [];
                       
                       return cantonesDisponibles.map((canton) => (
-                        <div key={canton} className="flex items-center space-x-1 sm:space-x-2">
+                        <div key={canton} className="flex items-center space-x-3 py-1">
                           <Checkbox
                             id={`canton-${canton}`}
                             checked={filters.canton === canton}
                             onCheckedChange={() => handleCantonChange(canton)}
-                            className="h-3 w-3 sm:h-4 sm:w-4"
+                            className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900"
                           />
                           <Label
                             htmlFor={`canton-${canton}`}
-                            className="text-xs sm:text-sm font-normal cursor-pointer flex-1"
+                            className="text-sm sm:text-base font-normal cursor-pointer flex-1 text-gray-700 hover:text-gray-900"
                           >
                             {canton}
                           </Label>
@@ -259,27 +260,27 @@ export function FilterSidebar({
           )}
         </div>
 
-        <Separator />
+        <div className="border-t border-gray-100 my-6"></div>
 
         {/* Price Range */}
         <div>
           <button
             onClick={() => toggleSection('price')}
-            className="flex items-center justify-between w-full text-left font-medium mb-2 sm:mb-3 hover:text-primary transition-colors"
+            className="flex items-center justify-between w-full text-left font-medium mb-3 sm:mb-4 hover:text-gray-900 transition-colors py-2"
           >
-            <span className="text-sm sm:text-base">Rango de Precio</span>
+            <span className="text-base sm:text-lg text-gray-700">Rango de Precio</span>
             {expandedSections.price ? (
-              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             ) : (
-              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             )}
           </button>
           
           {expandedSections.price && (
-            <div className="space-y-2 sm:space-y-3">
-              <div className="space-y-2">
+            <div className="space-y-4 sm:space-y-5">
+              <div className="space-y-3">
                 <div>
-                  <Label htmlFor="min-price" className="text-xs sm:text-sm text-muted-foreground">
+                  <Label htmlFor="min-price" className="text-sm sm:text-base text-gray-600 font-medium">
                     Mínimo (₡)
                   </Label>
                   <Input
@@ -288,11 +289,11 @@ export function FilterSidebar({
                     placeholder="0"
                     value={filters.min_price || ''}
                     onChange={(e) => handlePriceChange('min', e.target.value)}
-                    className="mt-1 h-8 sm:h-10 text-xs sm:text-sm"
+                    className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-gray-300 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="max-price" className="text-xs sm:text-sm text-muted-foreground">
+                  <Label htmlFor="max-price" className="text-sm sm:text-base text-gray-600 font-medium">
                     Máximo (₡)
                   </Label>
                   <Input
@@ -301,18 +302,18 @@ export function FilterSidebar({
                     placeholder="Sin límite"
                     value={filters.max_price || ''}
                     onChange={(e) => handlePriceChange('max', e.target.value)}
-                    className="mt-1 h-8 sm:h-10 text-xs sm:text-sm"
+                    className="mt-2 h-10 sm:h-12 text-sm sm:text-base border-gray-300 focus:border-gray-900 focus:ring-gray-900"
                   />
                 </div>
               </div>
               
               {/* Quick Price Filters */}
-              <div className="space-y-1 sm:space-y-2 mt-2 sm:mt-3">
+              <div className="space-y-2 sm:space-y-3 mt-4 sm:mt-5">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onFilterChange({ ...filters, min_price: undefined, max_price: 10000 })}
-                  className="w-full text-xs h-7 sm:h-8"
+                  className="w-full text-sm h-10 sm:h-11 border-gray-300 hover:border-gray-900 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
                 >
                   Hasta ₡10K
                 </Button>
@@ -320,7 +321,7 @@ export function FilterSidebar({
                   variant="outline"
                   size="sm"
                   onClick={() => onFilterChange({ ...filters, min_price: 10000, max_price: 50000 })}
-                  className="w-full text-xs h-7 sm:h-8"
+                  className="w-full text-sm h-10 sm:h-11 border-gray-300 hover:border-gray-900 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
                 >
                   ₡10K - ₡50K
                 </Button>
@@ -328,7 +329,7 @@ export function FilterSidebar({
                   variant="outline"
                   size="sm"
                   onClick={() => onFilterChange({ ...filters, min_price: 50000, max_price: 100000 })}
-                  className="w-full text-xs h-7 sm:h-8"
+                  className="w-full text-sm h-10 sm:h-11 border-gray-300 hover:border-gray-900 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
                 >
                   ₡50K - ₡100K
                 </Button>
@@ -336,7 +337,7 @@ export function FilterSidebar({
                   variant="outline"
                   size="sm"
                   onClick={() => onFilterChange({ ...filters, min_price: 100000, max_price: undefined })}
-                  className="w-full text-xs h-7 sm:h-8"
+                  className="w-full text-sm h-10 sm:h-11 border-gray-300 hover:border-gray-900 hover:bg-gray-50 text-gray-700 hover:text-gray-900"
                 >
                   Más de ₡100K
                 </Button>
@@ -351,58 +352,58 @@ export function FilterSidebar({
         <div>
           <button
             onClick={() => toggleSection('sorting')}
-            className="flex items-center justify-between w-full text-left font-medium mb-2 sm:mb-3 hover:text-primary transition-colors"
+            className="flex items-center justify-between w-full text-left font-medium mb-3 sm:mb-4 hover:text-gray-900 transition-colors py-2"
           >
-            <span className="text-sm sm:text-base">Ordenar por</span>
+            <span className="text-base sm:text-lg text-gray-700">Ordenar por</span>
             {expandedSections.sorting ? (
-              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             ) : (
-              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
             )}
           </button>
           
           {expandedSections.sorting && (
-            <div className="space-y-1 sm:space-y-2">
-              <div className="flex items-center space-x-1 sm:space-x-2">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center space-x-3 py-1">
                 <Checkbox
                   id="sort-random"
                   checked={!filters.sort_by || filters.sort_by === 'random'}
                   onCheckedChange={() => handleSortChange('random')}
-                  className="h-3 w-3 sm:h-4 sm:w-4"
+                  className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900"
                 />
                 <Label
                   htmlFor="sort-random"
-                  className="text-xs sm:text-sm font-normal cursor-pointer flex items-center gap-1 sm:gap-2"
+                  className="text-sm sm:text-base font-normal cursor-pointer flex items-center gap-2 sm:gap-3 text-gray-700 hover:text-gray-900"
                 >
                   <span>🎲</span>
                   <span>Aleatorio</span>
                 </Label>
               </div>
-              <div className="flex items-center space-x-1 sm:space-x-2">
+              <div className="flex items-center space-x-3 py-1">
                 <Checkbox
                   id="sort-popularity"
                   checked={filters.sort_by === 'popularity'}
                   onCheckedChange={() => handleSortChange('popularity')}
-                  className="h-3 w-3 sm:h-4 sm:w-4"
+                  className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900"
                 />
                 <Label
                   htmlFor="sort-popularity"
-                  className="text-xs sm:text-sm font-normal cursor-pointer flex items-center gap-1 sm:gap-2"
+                  className="text-sm sm:text-base font-normal cursor-pointer flex items-center gap-2 sm:gap-3 text-gray-700 hover:text-gray-900"
                 >
                   <span>📱</span>
                   <span>Más populares</span>
                 </Label>
               </div>
-              <div className="flex items-center space-x-1 sm:space-x-2">
+              <div className="flex items-center space-x-3 py-1">
                 <Checkbox
                   id="sort-newest"
                   checked={filters.sort_by === 'newest'}
                   onCheckedChange={() => handleSortChange('newest')}
-                  className="h-3 w-3 sm:h-4 sm:w-4"
+                  className="h-4 w-4 sm:h-5 sm:w-5 border-gray-300 data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900"
                 />
                 <Label
                   htmlFor="sort-newest"
-                  className="text-xs sm:text-sm font-normal cursor-pointer flex items-center gap-1 sm:gap-2"
+                  className="text-sm sm:text-base font-normal cursor-pointer flex items-center gap-2 sm:gap-3 text-gray-700 hover:text-gray-900"
                 >
                   <span>🆕</span>
                   <span>Más recientes</span>
@@ -417,11 +418,11 @@ export function FilterSidebar({
         {/* Clear All Filters */}
         {activeFiltersCount > 0 && (
           <>
-            <Separator />
+            <div className="border-t border-gray-100 my-6"></div>
             <Button
               variant="outline"
               onClick={onClearFilters}
-              className="w-full"
+              className="w-full h-11 sm:h-12 text-sm sm:text-base border-gray-300 hover:border-gray-900 hover:bg-gray-50 text-gray-700 hover:text-gray-900 font-medium"
             >
               Limpiar todos los filtros
             </Button>
@@ -431,3 +432,5 @@ export function FilterSidebar({
     </div>
   );
 }
+
+export const FilterSidebar = memo(FilterSidebarComponent);

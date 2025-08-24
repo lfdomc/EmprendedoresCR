@@ -1,14 +1,30 @@
+// Polyfill para self en el servidor - debe ejecutarse primero
+if (typeof window === 'undefined' && typeof self === 'undefined') {
+  if (typeof global !== 'undefined') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (global as any).self = global;
+  } else if (typeof globalThis !== 'undefined') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).self = globalThis;
+  }
+}
+
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { Toaster } from "sonner";
-import { WebsiteStructuredData } from "@/components/seo/structured-data";
-import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { ClientProviders } from "@/components/providers/client-providers";
 import { siteConfig } from "@/lib/config";
-import { Analytics } from "@vercel/analytics/next"
+import dynamic from "next/dynamic";
 import "./globals.css";
+
+// Lazy loading de componentes no críticos
+const Footer = dynamic(() => import("@/components/layout/footer"), {
+  ssr: true,
+});
+const WebsiteStructuredData = dynamic(() => import("@/components/seo/structured-data").then(mod => ({ default: mod.WebsiteStructuredData })), {
+  ssr: true,
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -116,9 +132,20 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
         <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4334054982108939"
-          crossOrigin="anonymous"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Polyfill para self en el cliente
+              if (typeof self === 'undefined') {
+                if (typeof globalThis !== 'undefined') {
+                  globalThis.self = globalThis;
+                } else if (typeof window !== 'undefined') {
+                  window.self = window;
+                } else if (typeof global !== 'undefined') {
+                  global.self = global;
+                }
+              }
+            `,
+          }}
         />
       </head>
       <body className={`${geistSans.className} antialiased flex flex-col min-h-screen`}>
@@ -128,15 +155,13 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <GoogleAnalytics />
           <WebsiteStructuredData />
           <Header />
           <main className="flex-1">
             {children}
           </main>
           <Footer />
-          <Analytics />
-          <Toaster richColors position="top-right" />
+          <ClientProviders />
         </ThemeProvider>
       </body>
     </html>

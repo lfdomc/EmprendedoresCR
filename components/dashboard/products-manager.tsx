@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -26,6 +26,8 @@ import {
   Search,
   Filter
 } from 'lucide-react';
+import { ResponsiveGrid } from '@/components/ui/responsive-grid';
+// import { useVirtualizedGridSize } from '@/hooks/use-container-size';
 import { Product, Category, ProductFormData, Business } from '@/lib/types/database';
 import { 
   getProductsByBusinessId, 
@@ -58,7 +60,7 @@ interface ProductsManagerProps {
   setIsDialogOpen?: (open: boolean) => void;
 }
 
-export function ProductsManager({ 
+function ProductsManagerComponent({ 
   businessId, 
   hideAddButton = false, 
   isDialogOpen: externalIsDialogOpen, 
@@ -72,6 +74,15 @@ export function ProductsManager({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [internalIsDialogOpen, setInternalIsDialogOpen] = useState(false);
+  
+  // Hook para virtualización - temporalmente deshabilitado
+  // const { ref: gridRef, gridConfig } = useVirtualizedGridSize({
+  //   minItemWidth: 200,
+  //   maxItemWidth: 280,
+  //   itemHeight: 200,
+  //   gap: 16,
+  //   maxHeight: 600
+  // });
   
   // Use external state if provided, otherwise use internal state
   const isDialogOpen = externalIsDialogOpen !== undefined ? externalIsDialogOpen : internalIsDialogOpen;
@@ -177,7 +188,7 @@ export function ProductsManager({
     }
   };
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = useCallback((product: Product) => {
     setEditingProduct(product);
     form.reset({
       name: product.name,
@@ -192,9 +203,9 @@ export function ProductsManager({
       is_active: product.is_active,
     });
     setIsDialogOpen(true);
-  };
+  }, [form, business?.canton, business?.provincia, setIsDialogOpen]);
 
-  const handleDelete = async (productId: string) => {
+  const handleDelete = useCallback(async (productId: string) => {
     try {
       const response = await deleteProduct(productId);
       if (response.error) {
@@ -207,9 +218,9 @@ export function ProductsManager({
       console.error('Error deleting product:', error);
       toast.error('Error al eliminar el producto');
     }
-  };
+  }, [products]);
 
-  const handleNewProduct = () => {
+  const handleNewProduct = useCallback(() => {
     setEditingProduct(null);
     form.reset({
       name: '',
@@ -224,14 +235,16 @@ export function ProductsManager({
       is_active: true,
     });
     setIsDialogOpen(true);
-  };
+  }, [form, business?.canton, business?.provincia, setIsDialogOpen]);
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = (product.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-                         (product.description?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || product.category_id === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchesSearch = (product.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                           (product.description?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || product.category_id === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchTerm, selectedCategory]);
 
   if (loading) {
     return (
@@ -563,11 +576,12 @@ export function ProductsManager({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {filteredProducts.map((product) => {
-            const category = categories.find(c => c.id === product.category_id);
-            return (
-              <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow w-full">
+        <div className="w-full">
+          <ResponsiveGrid variant="products">
+            {filteredProducts.map((product) => {
+              const category = categories.find(c => c.id === product.category_id);
+              return (
+                <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow w-full">
                 <div className="aspect-[4/3] bg-muted relative h-24">
                   {product.image_url ? (
                     <Image 
@@ -661,11 +675,14 @@ export function ProductsManager({
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            );
-          })}
+                </Card>
+              );
+            })}
+          </ResponsiveGrid>
         </div>
       )}
     </div>
   );
 }
+
+export const ProductsManager = memo(ProductsManagerComponent);

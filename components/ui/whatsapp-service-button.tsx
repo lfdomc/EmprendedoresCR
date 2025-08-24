@@ -55,16 +55,30 @@ export function WhatsAppServiceButton({
         hour12: true
       });
       
-      const serviceUrl = serviceSlug ? `${window.location.origin}/services/${serviceSlug}` : 'https://costaricaemprende.com';
-      const message = ` *¡Hola! Me interesa este servicio* \n\n` +
-        `🛠️ *Servicio:* ${serviceName}\n` +
-        `💰 *Precio:* ${formatPrice(price)}\n\n` +
-        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `🔗 *Ver información completa:*\n${serviceUrl}\n\n` +
-        `📅 *Fecha de consulta:* ${dateTime}\n\n` +
+      const serviceUrl = serviceSlug ? `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/services/${serviceSlug}` : 'https://costaricaemprende.com';
+      const message = ` *¡Hola! Me interesa este servicio* 
+
+` +
+        `🛠️ *Servicio:* ${serviceName}
+` +
+        `💰 *Precio:* ${formatPrice(price)}
+
+` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+` +
+        `🔗 *Ver información completa:*
+${serviceUrl}
+
+` +
+        `📅 *Fecha de consulta:* ${dateTime}
+
+` +
         `¡Espero poder coordinar! 🤝`;
       const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      if (typeof window !== 'undefined') {
+        window.open(whatsappUrl, '_blank');
+      }
     }
   };
 

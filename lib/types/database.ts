@@ -176,13 +176,13 @@ export interface ServiceFormData {
 
 // Tipos para filtros
 export interface ProductFilters {
-  category_id?: string;
+  category_id?: string | string[];
   min_price?: number;
   max_price?: number;
   search?: string;
   business_id?: string;
-  provincia?: string;
-  canton?: string;
+  provincia?: string | string[];
+  canton?: string | string[];
   country?: string;
   page?: number;
   limit?: number;
@@ -190,13 +190,13 @@ export interface ProductFilters {
 }
 
 export interface ServiceFilters {
-  category_id?: string;
+  category_id?: string | string[];
   min_price?: number;
   max_price?: number;
   search?: string;
   business_id?: string;
-  provincia?: string;
-  canton?: string;
+  provincia?: string | string[];
+  canton?: string | string[];
   min_duration?: number;
   max_duration?: number;
   country?: string;
@@ -207,9 +207,9 @@ export interface ServiceFilters {
 
 export interface BusinessFilters {
   search?: string;
-  category_id?: string;
-  canton?: string;
-  provincia?: string;
+  category_id?: string | string[];
+  canton?: string | string[];
+  provincia?: string | string[];
   city?: string;
   state?: string;
   country?: string;

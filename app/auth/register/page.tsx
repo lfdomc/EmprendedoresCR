@@ -1,5 +1,17 @@
-import { AuthForm } from '@/components/auth/auth-form';
-import { Suspense } from 'react';
+'use client';
+
+import { Suspense, useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+// Lazy loading del formulario de autenticación
+const AuthForm = dynamic(() => import('@/components/auth/auth-form').then(mod => ({ default: mod.AuthForm })), {
+  loading: () => (
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+    </div>
+  ),
+  ssr: false,
+});
 
 interface RegisterPageProps {
   searchParams: Promise<{
@@ -8,8 +20,25 @@ interface RegisterPageProps {
   }>;
 }
 
-async function RegisterContent({ searchParams }: { searchParams: Promise<{ redirect_to?: string; tab?: string; }> }) {
-  const params = await searchParams;
+function RegisterContent({ searchParams }: { searchParams: Promise<{ redirect_to?: string; tab?: string; }> }) {
+  const [params, setParams] = useState<{ redirect_to?: string; tab?: string; }>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    searchParams.then((resolvedParams) => {
+      setParams(resolvedParams);
+      setLoading(false);
+    });
+  }, [searchParams]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   const redirectTo = params.redirect_to || '/dashboard';
   const initialTab = params.tab === 'login' ? 'login' : 'signup';
   
@@ -28,7 +57,4 @@ export default function RegisterPage({ searchParams }: RegisterPageProps) {
   );
 }
 
-export const metadata = {
-  title: 'Registrarse - Costa Rica Emprende',
-  description: 'Crea tu cuenta en Costa Rica Emprende',
-};
+// Metadata moved to layout.tsx since this is now a client component

@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { BusinessFilterSidebar } from './business-filter-sidebar';
-import { BusinessCard } from './business-card';
+import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import { FilterBar } from '@/components/marketplace/filter-bar';
+import { UniversalCard } from '@/components/ui/universal-card';
+import { ResponsiveGrid } from '@/components/ui/responsive-grid';
 import { Card, CardContent } from '@/components/ui/card';
-import { Store, Grid, List, Filter, X, Loader2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Store, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageNavigation } from '@/components/layout/page-navigation';
+
+
 import Link from 'next/link';
 import { Business, Category } from '@/lib/types/database';
 import { getBusinesses } from '@/lib/supabase/database';
@@ -24,7 +26,7 @@ interface BusinessesWithFiltersProps {
   };
 }
 
-export function BusinessesWithFilters({
+function BusinessesWithFiltersComponent({
   initialBusinesses,
   categories,
   initialFilters = {}
@@ -33,29 +35,45 @@ export function BusinessesWithFilters({
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMoreBusinesses, setHasMoreBusinesses] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showFilters, setShowFilters] = useState(false);
+  const [paginationPage, setPaginationPage] = useState(1);
+
+
   const observerRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState({
-    category_id: initialFilters.category,
+    category_id: initialFilters.category as string | string[] | undefined,
     search: initialFilters.search,
-    provincia: undefined as string | undefined,
-    canton: undefined as string | undefined
+    provincia: undefined as string | string[] | undefined,
+    canton: undefined as string | string[] | undefined
   });
 
+  // Estado para la página actual
+  const [activePage, setActivePage] = useState<'marketplace' | 'businesses'>('businesses');
+
+  // Función para manejar el cambio de página
+  const handlePageChange = (page: 'marketplace' | 'businesses') => {
+    setActivePage(page);
+    if (page === 'marketplace') {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+    }
+  };
+
   // Filter businesses based on current filters
-  const filteredBusinesses = businesses.filter(business => {
-    const matchesSearch = !filters.search || 
-      business.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-      (business.description && business.description.toLowerCase().includes(filters.search.toLowerCase()));
-    
-    const matchesCategory = !filters.category_id || business.category_id === filters.category_id;
-    const matchesProvincia = !filters.provincia || business.provincia === filters.provincia;
-    const matchesCanton = !filters.canton || business.canton === filters.canton;
-    
-    return matchesSearch && matchesCategory && matchesProvincia && matchesCanton;
-  });
+  const filteredBusinesses = useMemo(() => 
+    businesses.filter(business => {
+      const matchesSearch = !filters.search || 
+        business.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        (business.description && business.description.toLowerCase().includes(filters.search.toLowerCase()));
+      
+      const matchesCategory = !filters.category_id || business.category_id === filters.category_id;
+      const matchesProvincia = !filters.provincia || business.provincia === filters.provincia;
+      const matchesCanton = !filters.canton || business.canton === filters.canton;
+      
+      return matchesSearch && matchesCategory && matchesProvincia && matchesCanton;
+    }), 
+    [businesses, filters.search, filters.category_id, filters.provincia, filters.canton]
+  );
 
   const handleFilterChange = async (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -63,7 +81,7 @@ export function BusinessesWithFilters({
     // If search filter changed, fetch new data from server
     if (newFilters.search !== filters.search) {
       setLoading(true);
-      setCurrentPage(1);
+      setPaginationPage(1);
       setHasMoreBusinesses(true);
       try {
         const fetchedBusinesses = await getBusinesses({
@@ -96,7 +114,7 @@ export function BusinessesWithFilters({
     
     // Reload all businesses when filters are cleared
     setLoading(true);
-    setCurrentPage(1);
+    setPaginationPage(1);
     setHasMoreBusinesses(true);
     try {
       const fetchedBusinesses = await getBusinesses({
@@ -118,7 +136,7 @@ export function BusinessesWithFilters({
 
     setLoadingMore(true);
     try {
-      const nextPage = currentPage + 1;
+      const nextPage = paginationPage + 1;
       const moreBusinesses = await getBusinesses({
         search: filters.search,
         provincia: filters.provincia,
@@ -130,7 +148,7 @@ export function BusinessesWithFilters({
 
       if (moreBusinesses.length > 0) {
         setBusinesses(prev => [...prev, ...moreBusinesses]);
-        setCurrentPage(nextPage);
+        setPaginationPage(nextPage);
         setHasMoreBusinesses(moreBusinesses.length === 50);
       } else {
         setHasMoreBusinesses(false);
@@ -140,11 +158,11 @@ export function BusinessesWithFilters({
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMoreBusinesses, currentPage, filters]);
+  }, [loadingMore, hasMoreBusinesses, paginationPage, filters]);
 
   // Resetear paginación cuando cambien los filtros
   useEffect(() => {
-    setCurrentPage(1);
+    setPaginationPage(1);
     setHasMoreBusinesses(true);
   }, [filters.category_id, filters.provincia, filters.canton]);
 
@@ -169,9 +187,12 @@ export function BusinessesWithFilters({
         observer.unobserve(currentObserverRef);
       }
     };
-  }, [hasMoreBusinesses, loading, loadingMore, filters, currentPage, loadMoreBusinesses]);
+  }, [hasMoreBusinesses, loading, loadingMore, filters, paginationPage, loadMoreBusinesses]);
 
-  const activeFiltersCount = Object.values(filters).filter(Boolean).length;
+  const activeFiltersCount = useMemo(() => 
+    Object.values(filters).filter(Boolean).length, 
+    [filters]
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -181,49 +202,33 @@ export function BusinessesWithFilters({
         onSearchChange={(query) => handleFilterChange({ ...filters, search: query })}
       />
       
-      <div className="flex min-h-screen bg-background relative">
-      {/* Mobile Filter Overlay */}
-      {showFilters && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
-          onClick={() => setShowFilters(false)}
-        />
-      )}
-
-      {/* Filter Sidebar */}
-      <div className={`
-        fixed lg:static inset-y-0 left-0 z-50 lg:z-auto
-        transform transition-transform duration-300 ease-in-out lg:transform-none
-        ${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        <BusinessFilterSidebar
-          categories={categories}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onClearFilters={handleClearFilters}
-          onClose={() => setShowFilters(false)}
-        />
+      {/* Filter Bar */}
+      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 py-0">
+          <FilterBar
+             categories={categories}
+             filters={{
+               category_id: filters.category_id,
+               provincia: filters.provincia,
+               canton: filters.canton,
+               search: filters.search
+             }}
+             onFiltersChange={(newFilters) => handleFilterChange({
+               ...filters,
+               ...newFilters
+             })}
+             onClearFilters={handleClearFilters}
+             currentPage={activePage}
+             onPageChange={handlePageChange}
+           />
+        </div>
       </div>
-
+      
+      <div className="bg-background">
       {/* Main Content */}
-      <div className="flex-1 p-3 sm:p-6 lg:ml-0">
+      <div className="container mx-auto p-3 sm:p-6">
         <div className="space-y-4 sm:space-y-6">
-          {/* Mobile Filter Button */}
-          <div className="lg:hidden">
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(true)}
-              className="w-full justify-center gap-3 h-12 sm:h-14 text-lg sm:text-xl font-bold border-2 shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              <Filter className="h-5 w-5 sm:h-6 sm:w-6" />
-              Filtros
-              {Object.values(filters).filter(Boolean).length > 0 && (
-                <Badge variant="secondary" className="ml-2 text-sm sm:text-base px-2 py-1">
-                  {Object.values(filters).filter(Boolean).length}
-                </Badge>
-              )}
-            </Button>
-          </div>
+
 
           {/* Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -235,27 +240,7 @@ export function BusinessesWithFilters({
               )}
             </div>
             
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="px-2 sm:px-3"
-              >
-                <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline ml-1">Grid</span>
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="px-2 sm:px-3"
-              >
-                <List className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline ml-1">Lista</span>
-              </Button>
-            </div>
+
           </div>
 
           {/* Results Grid */}
@@ -307,25 +292,25 @@ export function BusinessesWithFilters({
             </Card>
           ) : (
             <>
-              <div className={viewMode === 'grid' 
-                ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 lg:gap-4" 
-                : "space-y-3 sm:space-y-4"
-              }>
+              <ResponsiveGrid variant="businesses">
                 {filteredBusinesses.map((business) => {
                   const category = categories.find(c => c.id === business.category_id);
                   
                   return (
-                    <BusinessCard
-                      key={business.id}
-                      business={{
-                        ...business,
-                        category
-                      }}
-                      viewMode={viewMode}
-                    />
+                    <UniversalCard
+                       key={business.id}
+                       data={{
+                         type: 'business',
+                         data: {
+                           ...business,
+                           category
+                         }
+                       }}
+                       viewMode="grid"
+                     />
                   );
                 })}
-              </div>
+              </ResponsiveGrid>
               
               {/* Elemento observador para scroll infinito */}
               {hasMoreBusinesses && (
@@ -338,6 +323,8 @@ export function BusinessesWithFilters({
                   )}
                 </div>
               )}
+
+
             </>
           )}
         </div>
@@ -346,3 +333,5 @@ export function BusinessesWithFilters({
     </div>
   );
 }
+
+export const BusinessesWithFilters = memo(BusinessesWithFiltersComponent);

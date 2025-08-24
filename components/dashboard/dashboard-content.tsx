@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { User } from '@supabase/supabase-js';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,9 +21,35 @@ import {
   MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
-import { BusinessSetup } from '@/components/dashboard/business-setup';
-import { ProductsManager } from './products-manager';
-import { ServicesManager } from '@/components/dashboard/services-manager';
+// Lazy loading del componente de configuración de negocio
+const BusinessSetup = dynamic(() => import('@/components/dashboard/business-setup').then(mod => ({ default: mod.BusinessSetup })), {
+  loading: () => (
+    <div className="flex items-center justify-center p-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  ),
+  ssr: false,
+});
+import dynamic from 'next/dynamic';
+
+// Lazy loading de componentes pesados del dashboard
+const ProductsManager = dynamic(() => import('./products-manager').then(mod => ({ default: mod.ProductsManager })), {
+  loading: () => (
+    <div className="flex items-center justify-center p-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  ),
+  ssr: false,
+});
+
+const ServicesManager = dynamic(() => import('@/components/dashboard/services-manager').then(mod => ({ default: mod.ServicesManager })), {
+  loading: () => (
+    <div className="flex items-center justify-center p-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  ),
+  ssr: false,
+});
 // DashboardStats component removed
 import { getBusinessByUserId, getDashboardStats } from '@/lib/supabase/database';
 import { Business } from '@/lib/types/database';
@@ -32,7 +58,7 @@ interface DashboardContentProps {
   user: User;
 }
 
-export function DashboardContent({ user }: DashboardContentProps) {
+function DashboardContentComponent({ user }: DashboardContentProps) {
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ 
@@ -382,3 +408,5 @@ export function DashboardContent({ user }: DashboardContentProps) {
     </div>
   );
 }
+
+export const DashboardContent = memo(DashboardContentComponent);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -38,6 +38,8 @@ import {
 } from '@/lib/supabase/database';
 import { createClient } from '@/lib/supabase/client';
 import { convertToWebP, isValidImageFile, getCompressionInfo, formatFileSize } from '@/lib/utils/image-processing';
+import { ResponsiveGrid } from '@/components/ui/responsive-grid';
+// import { useVirtualizedGridSize } from '@/hooks/use-container-size';
 
 const supabase = createClient();
 
@@ -61,7 +63,7 @@ interface ServicesManagerProps {
   setIsDialogOpen?: (open: boolean) => void;
 }
 
-export function ServicesManager({ 
+function ServicesManagerComponent({ 
   businessId, 
   hideAddButton = false, 
   isDialogOpen: externalIsDialogOpen, 
@@ -75,6 +77,15 @@ export function ServicesManager({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [internalIsDialogOpen, setInternalIsDialogOpen] = useState(false);
+  
+  // Hook para virtualización - temporalmente deshabilitado
+  // const { ref: gridRef, gridConfig } = useVirtualizedGridSize({
+  //   minItemWidth: 200,
+  //   maxItemWidth: 280,
+  //   itemHeight: 200,
+  //   gap: 16,
+  //   maxHeight: 600
+  // });
   
   // Use external state if provided, otherwise use internal state
   const isDialogOpen = externalIsDialogOpen !== undefined ? externalIsDialogOpen : internalIsDialogOpen;
@@ -290,12 +301,14 @@ export function ServicesManager({
 
 
 
-  const filteredServices = services.filter(service => {
-    const matchesSearch = (service.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-                         (service.description?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || service.category_id === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredServices = useMemo(() => {
+    return services.filter(service => {
+      const matchesSearch = (service.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                           (service.description?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || service.category_id === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [services, searchTerm, selectedCategory]);
 
   if (loading) {
     return (
@@ -602,11 +615,12 @@ export function ServicesManager({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {filteredServices.map((service) => {
-            const category = categories.find(c => c.id === service.category_id);
-            return (
-              <Card key={service.id} className="overflow-hidden hover:shadow-md transition-shadow w-full">
+        <div className="w-full">
+          <ResponsiveGrid variant="services">
+            {filteredServices.map((service) => {
+              const category = categories.find(c => c.id === service.category_id);
+              return (
+                <Card key={service.id} className="overflow-hidden hover:shadow-md transition-shadow w-full">
                 <div className="aspect-[4/3] bg-muted relative h-24">
                   {service.image_url ? (
                     <Image 
@@ -688,11 +702,14 @@ export function ServicesManager({
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            );
-          })}
+                </Card>
+              );
+            })}
+          </ResponsiveGrid>
         </div>
       )}
     </div>
   );
 }
+
+export const ServicesManager = memo(ServicesManagerComponent);

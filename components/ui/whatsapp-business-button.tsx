@@ -42,17 +42,31 @@ export function WhatsAppBusinessButton({
         hour12: true
       });
       
-      const businessUrl = window.location.href;
-      const message = `🌟 *¡Hola! Me interesa conocer más sobre su emprendimiento* 🌟\n\n` +
-        `🏢 *Emprendimiento:* ${businessName}\n` +
-        `${businessDescription ? `📝 *Descripción:* ${businessDescription.substring(0, 100)}${businessDescription.length > 100 ? '...' : ''}\n` : ''}\n` +
-        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `🔗 *Ver perfil completo:*\n${businessUrl}\n\n` +
-        `📅 *Fecha de consulta:* ${dateTime}\n\n` +
+      const businessUrl = typeof window !== 'undefined' ? window.location.href : 'https://costaricaemprende.com';
+      const message = `🌟 *¡Hola! Me interesa conocer más sobre su emprendimiento* 🌟
+
+` +
+        `🏢 *Emprendimiento:* ${businessName}
+` +
+        `${businessDescription ? `📝 *Descripción:* ${businessDescription.substring(0, 100)}${businessDescription.length > 100 ? '...' : ''}
+` : ''}
+` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+` +
+        `🔗 *Ver perfil completo:*
+${businessUrl}
+
+` +
+        `📅 *Fecha de consulta:* ${dateTime}
+
+` +
         `¡Me gustaría conocer más sobre sus productos y servicios! 😊`;
       
       const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      if (typeof window !== 'undefined') {
+        window.open(whatsappUrl, '_blank');
+      }
     }
   };
 
