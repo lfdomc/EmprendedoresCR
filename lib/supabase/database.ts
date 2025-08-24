@@ -1210,3 +1210,39 @@ export async function getWhatsAppStats(businessId: string): Promise<{
     };
   }
 }
+
+// Función para verificar si un email ya existe en la base de datos
+// Usa la tabla businesses para verificar emails de usuarios registrados
+export async function checkEmailExists(email: string): Promise<{ exists: boolean; error?: string }> {
+  try {
+    if (!email || !email.trim()) {
+      return { exists: false, error: 'Email no válido' };
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { exists: false, error: 'Formato de email inválido' };
+    }
+
+    // Consultar la tabla businesses para verificar si el email existe
+    // Esto funciona porque cada usuario registrado debe tener al menos un emprendimiento
+    const { data, error } = await supabase
+      .from('businesses')
+      .select('email')
+      .eq('email', email.toLowerCase())
+      .limit(1);
+
+    if (error) {
+      console.error('Error checking email in businesses table:', error);
+      return { exists: false, error: 'Error al verificar email' };
+    }
+
+    // Si encontramos el email en la tabla businesses, significa que ya existe
+    return { exists: data && data.length > 0 };
+    
+  } catch (error) {
+    console.error('Error in checkEmailExists:', error);
+    return { exists: false, error: 'Error al verificar email' };
+  }
+}
