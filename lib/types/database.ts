@@ -75,6 +75,9 @@ export interface Product {
   currency: string;
   sku?: string;
   image_url?: string;
+  additional_photo_1?: string;
+  additional_photo_2?: string;
+  additional_photo_3?: string;
   canton?: string;
   provincia?: string;
   is_active: boolean;
@@ -91,6 +94,9 @@ export interface Service {
   price?: number;
   currency: string;
   image_url?: string;
+  additional_photo_1?: string;
+  additional_photo_2?: string;
+  additional_photo_3?: string;
   canton?: string;
   provincia?: string;
   is_active: boolean;
@@ -157,6 +163,9 @@ export interface ProductFormData {
   currency?: string;
   sku?: string;
   image_url?: string;
+  additional_photo_1?: string;
+  additional_photo_2?: string;
+  additional_photo_3?: string;
   canton?: string;
   provincia?: string;
   is_active?: boolean;
@@ -170,6 +179,9 @@ export interface ServiceFormData {
   price?: number;
   currency?: string;
   image_url?: string;
+  additional_photo_1?: string;
+  additional_photo_2?: string;
+  additional_photo_3?: string;
   is_active?: boolean;
   business_id: string;
 }

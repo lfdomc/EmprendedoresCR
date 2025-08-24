@@ -131,7 +131,7 @@ export function ImageUpload({
             type="button"
             variant="destructive"
             size="sm"
-            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+            className="absolute -top-2 -left-2 h-6 w-6 rounded-full p-0"
             onClick={handleRemove}
             disabled={disabled || uploading}
           >

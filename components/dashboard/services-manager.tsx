@@ -39,6 +39,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { convertToWebP, isValidImageFile, getCompressionInfo, formatFileSize } from '@/lib/utils/image-processing';
 import { ResponsiveGrid } from '@/components/ui/responsive-grid';
+import { ImageUpload } from '@/components/ui/image-upload';
 // import { useVirtualizedGridSize } from '@/hooks/use-container-size';
 
 const supabase = createClient();
@@ -51,6 +52,9 @@ const serviceSchema = z.object({
   currency: z.enum(['CRC', 'USD']),
   image_file: z.instanceof(File).optional(),
   image_url: z.string().optional(),
+  additional_photo_1: z.string().optional().or(z.literal('')),
+  additional_photo_2: z.string().optional().or(z.literal('')),
+  additional_photo_3: z.string().optional().or(z.literal('')),
   is_active: z.boolean().default(true),
 });
 
@@ -213,6 +217,9 @@ function ServicesManagerComponent({
         price: values.price,
         currency: values.currency,
         image_url: imageUrl,
+        additional_photo_1: values.additional_photo_1 || '',
+        additional_photo_2: values.additional_photo_2 || '',
+        additional_photo_3: values.additional_photo_3 || '',
         is_active: values.is_active,
         business_id: businessId,
       };
@@ -276,6 +283,9 @@ function ServicesManagerComponent({
       currency: service.currency as 'CRC' | 'USD',
       image_file: undefined,
       image_url: service.image_url || '',
+      additional_photo_1: service.additional_photo_1 || '',
+      additional_photo_2: service.additional_photo_2 || '',
+      additional_photo_3: service.additional_photo_3 || '',
       is_active: service.is_active,
     });
     setIsDialogOpen(true);
@@ -285,6 +295,7 @@ function ServicesManagerComponent({
     try {
       await deleteService(serviceId);
       setServices(services.filter(s => s.id !== serviceId));
+      setIsDialogOpen(false);
       toast.success('Servicio eliminado exitosamente');
     } catch (error) {
       console.error('Error deleting service:', error);
@@ -295,7 +306,19 @@ function ServicesManagerComponent({
   const handleNewService = () => {
     setEditingService(null);
     setImageError(null); // Limpiar errores de imagen
-    form.reset();
+    form.reset({
+      name: '',
+      description: '',
+      category_id: '',
+      price: 0,
+      currency: 'CRC',
+      image_file: undefined,
+      image_url: '',
+      additional_photo_1: '',
+      additional_photo_2: '',
+      additional_photo_3: '',
+      is_active: true,
+    });
     setIsDialogOpen(true);
   };
 
@@ -551,8 +574,72 @@ function ServicesManagerComponent({
                   />
                 </div>
                 
+                {/* Fotos Adicionales */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Fotos Adicionales (Opcional)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="additional_photo_1"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Foto Adicional 1</FormLabel>
+                          <FormControl>
+                            <ImageUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              onRemove={() => field.onChange('')}
+                              label="Foto 1"
+                              description="Primera foto adicional"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="additional_photo_2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Foto Adicional 2</FormLabel>
+                          <FormControl>
+                            <ImageUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              onRemove={() => field.onChange('')}
+                              label="Foto 2"
+                              description="Segunda foto adicional"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="additional_photo_3"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Foto Adicional 3</FormLabel>
+                          <FormControl>
+                            <ImageUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              onRemove={() => field.onChange('')}
+                              label="Foto 3"
+                              description="Tercera foto adicional"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
-                
                 <FormField
                   control={form.control}
                   name="is_active"
@@ -579,11 +666,39 @@ function ServicesManagerComponent({
                     type="button" 
                     variant="outline" 
                     onClick={() => setIsDialogOpen(false)}
-                    className="w-full sm:w-auto order-2 sm:order-1 h-12 bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
+                    className="w-full sm:w-auto order-3 sm:order-1 h-12 px-6 font-medium bg-gray-600 hover:bg-gray-700 text-white border-2 border-gray-600 hover:border-gray-700 transition-colors"
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" disabled={submitting} className="w-full sm:w-auto order-1 sm:order-2">
+                  {editingService && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          className="w-full sm:w-auto order-2 sm:order-2 h-12 px-6 font-medium bg-red-600 hover:bg-red-700 text-white border-2 border-red-600 hover:border-red-700 transition-colors"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Eliminar Servicio
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>¿Eliminar servicio?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Esta acción no se puede deshacer. El servicio será eliminado permanentemente.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(editingService.id)}>
+                            Eliminar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                  <Button type="submit" disabled={submitting} className="w-full sm:w-auto order-1 sm:order-3 h-12 px-6 font-medium bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600 hover:border-blue-700 transition-colors">
                     {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {editingService ? 'Actualizar' : 'Crear'} Servicio
                   </Button>
@@ -620,88 +735,113 @@ function ServicesManagerComponent({
             {filteredServices.map((service) => {
               const category = categories.find(c => c.id === service.category_id);
               return (
-                <Card key={service.id} className="overflow-hidden hover:shadow-md transition-shadow w-full">
-                <div className="aspect-[4/3] bg-muted relative h-24">
-                  {service.image_url ? (
-                    <Image 
-                      src={service.image_url} 
-                      alt={service.name}
-                      fill
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Wrench className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  )}
-                  
-                  <div className="absolute top-0.5 left-0.5 flex gap-0.5">
-                    {!service.is_active && (
-                      <Badge key={`${service.id}-inactive`} variant="secondary" className="text-xs px-1 py-0">Inactivo</Badge>
-                    )}
-                  </div>
-                  
-                  <div className="absolute top-0.5 left-0.5 flex gap-0.5">
-                    <Button
-                       variant="ghost"
-                       size="sm"
-                       className="h-7 w-7 p-0 bg-white/80 hover:bg-white text-black"
-                       onClick={() => handleEdit(service)}
-                     >
-                       <Edit className="h-4 w-4" />
-                     </Button>
-                  </div>
-                  
-                  <div className="absolute bottom-0.5 left-0.5 flex gap-0.5">
-                     <AlertDialog>
-                       <AlertDialogTrigger asChild>
-                         <Button variant="ghost" size="sm" className="h-6 w-6 sm:h-7 sm:w-7 p-0 bg-white/80 hover:bg-white text-black">
-                           <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>¿Eliminar servicio?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Esta acción no se puede deshacer. El servicio será eliminado permanentemente.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(service.id)}>
-                            Eliminar
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </div>
-                
-                <CardContent className="p-3">
-                  <div className="space-y-2">
-                    <div className="space-y-1">
-                      <h3 className="font-semibold text-sm line-clamp-2 leading-tight">{service.name}</h3>
-                      {category && (
-                        <Badge variant="secondary" className="text-xs px-2 py-0.5 w-fit">
-                          {category.name.length > 10 ? category.name.substring(0, 10) + '...' : category.name}
-                        </Badge>
+                <Card key={service.id} className="group relative overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-white/50 backdrop-blur-sm hover:bg-white/80">
+                  {/* Clickable area for editing */}
+                  <div 
+                    className="cursor-pointer" 
+                    onClick={() => handleEdit(service)}
+                  >
+                    {/* Image Container */}
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg">
+                      {service.image_url ? (
+                        <Image 
+                          src={service.image_url} 
+                          alt={service.name}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+                          <Wrench className="h-8 w-8 text-blue-400" />
+                        </div>
+                      )}
+                      
+                      {/* Status Badge */}
+                      {!service.is_active && (
+                        <div className="absolute top-2 left-2">
+                          <Badge variant="secondary" className="text-xs px-2 py-1 bg-gray-800/80 text-white border-0">
+                            Inactivo
+                          </Badge>
+                        </div>
                       )}
                     </div>
                     
-                    <div className="space-y-1 text-xs text-muted-foreground">
-                      <p className="line-clamp-2">
-                        {service.description}
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold text-sm">
-                        {service.currency === 'USD' ? '$' : '₡'}
-                        {(service.price || 0).toLocaleString()}
-                      </p>
-                    </div>
+                    {/* Content */}
+                    <CardContent className="p-4 space-y-3">
+                      {/* Header */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-gray-900">
+                          {service.name}
+                        </h3>
+                        
+                        {category && (
+                          <Badge variant="outline" className="text-xs px-2 py-1 border-gray-200 text-gray-600">
+                            {category.name.length > 12 ? category.name.substring(0, 12) + '...' : category.name}
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {/* Description */}
+                      <div className="text-xs text-gray-500">
+                        <p className="line-clamp-2 leading-relaxed">
+                          {service.description || 'Sin descripción disponible'}
+                        </p>
+                      </div>
+                      
+                      {/* Price */}
+                      <div className="pt-2 border-t border-gray-100">
+                        <p className="font-bold text-lg text-primary">
+                          {service.currency === 'USD' ? '$' : '₡'}
+                          {(service.price || 0).toLocaleString()}
+                        </p>
+                      </div>
+                    </CardContent>
                   </div>
-                </CardContent>
+                    
+                  {/* Action Buttons - Always visible at bottom */}
+                  <CardContent className="p-4 pt-0">
+                    <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-gray-100">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 h-8 text-xs bg-white hover:bg-gray-50 text-gray-700 border-gray-200"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(service);
+                        }}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex-1 h-8 text-xs bg-white hover:bg-red-50 text-red-600 border-red-200 hover:border-red-300"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Trash2 className="h-3 w-3 mr-1" />
+                            Eliminar
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>¿Eliminar servicio?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta acción no se puede deshacer. El servicio será eliminado permanentemente.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(service.id)}>
+                              Eliminar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </CardContent>
                 </Card>
               );
             })}

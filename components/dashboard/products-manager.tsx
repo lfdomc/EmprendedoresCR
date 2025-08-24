@@ -46,6 +46,9 @@ const productSchema = z.object({
   currency: z.enum(['CRC', 'USD']),
   sku: z.string().optional().or(z.literal('')),
   image_url: z.string().optional().or(z.literal('')),
+  additional_photo_1: z.string().optional().or(z.literal('')),
+  additional_photo_2: z.string().optional().or(z.literal('')),
+  additional_photo_3: z.string().optional().or(z.literal('')),
   canton: z.string().optional().or(z.literal('')),
   provincia: z.string().optional().or(z.literal('')),
   is_active: z.boolean().default(true),
@@ -149,6 +152,9 @@ function ProductsManagerComponent({
         currency: values.currency,
         sku: values.sku || undefined,
         image_url: values.image_url || undefined,
+        additional_photo_1: values.additional_photo_1 || undefined,
+        additional_photo_2: values.additional_photo_2 || undefined,
+        additional_photo_3: values.additional_photo_3 || undefined,
         canton: values.canton || undefined,
         provincia: values.provincia || undefined,
         is_active: values.is_active,
@@ -198,6 +204,9 @@ function ProductsManagerComponent({
       currency: product.currency as 'CRC' | 'USD',
       sku: product.sku || '',
       image_url: product.image_url || '',
+      additional_photo_1: product.additional_photo_1 || '',
+      additional_photo_2: product.additional_photo_2 || '',
+      additional_photo_3: product.additional_photo_3 || '',
       canton: business?.canton || '',
       provincia: business?.provincia || '',
       is_active: product.is_active,
@@ -213,12 +222,13 @@ function ProductsManagerComponent({
         return;
       }
       setProducts(products.filter(p => p.id !== productId));
+      setIsDialogOpen(false);
       toast.success('Producto eliminado exitosamente');
     } catch (error) {
       console.error('Error deleting product:', error);
       toast.error('Error al eliminar el producto');
     }
-  }, [products]);
+  }, [products, setIsDialogOpen]);
 
   const handleNewProduct = useCallback(() => {
     setEditingProduct(null);
@@ -230,6 +240,9 @@ function ProductsManagerComponent({
       currency: 'CRC',
       sku: '',
       image_url: '',
+      additional_photo_1: '',
+      additional_photo_2: '',
+      additional_photo_3: '',
       canton: business?.canton || '',
       provincia: business?.provincia || '',
       is_active: true,
@@ -512,6 +525,72 @@ function ProductsManagerComponent({
                   )}
                 />
                 
+                {/* Fotos Adicionales */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Fotos Adicionales (Opcional)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="additional_photo_1"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Foto Adicional 1</FormLabel>
+                          <FormControl>
+                            <ImageUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              onRemove={() => field.onChange('')}
+                              label="Foto 1"
+                              description="Primera foto adicional"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="additional_photo_2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Foto Adicional 2</FormLabel>
+                          <FormControl>
+                            <ImageUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              onRemove={() => field.onChange('')}
+                              label="Foto 2"
+                              description="Segunda foto adicional"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="additional_photo_3"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Foto Adicional 3</FormLabel>
+                          <FormControl>
+                            <ImageUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              onRemove={() => field.onChange('')}
+                              label="Foto 3"
+                              description="Tercera foto adicional"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                
 
                 
                 <FormField
@@ -540,11 +619,39 @@ function ProductsManagerComponent({
                     type="button" 
                     variant="outline" 
                     onClick={() => setIsDialogOpen(false)}
-                    className="w-full sm:w-auto order-2 sm:order-1 h-12 bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
+                    className="w-full sm:w-auto order-3 sm:order-1 h-12 px-6 font-medium bg-gray-600 hover:bg-gray-700 text-white border-2 border-gray-600 hover:border-gray-700 transition-colors"
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" disabled={submitting} className="w-full sm:w-auto order-1 sm:order-2">
+                  {editingProduct && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          className="w-full sm:w-auto order-2 sm:order-2 h-12 px-6 font-medium bg-red-600 hover:bg-red-700 text-white border-2 border-red-600 hover:border-red-700 transition-colors"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Eliminar Producto
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>¿Eliminar producto?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Esta acción no se puede deshacer. El producto será eliminado permanentemente.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(editingProduct.id)}>
+                            Eliminar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                  <Button type="submit" disabled={submitting} className="w-full sm:w-auto order-1 sm:order-3 h-12 px-6 font-medium bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600 hover:border-blue-700 transition-colors">
                     {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {editingProduct ? 'Actualizar' : 'Crear'} Producto
                   </Button>
@@ -581,100 +688,125 @@ function ProductsManagerComponent({
             {filteredProducts.map((product) => {
               const category = categories.find(c => c.id === product.category_id);
               return (
-                <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow w-full">
-                <div className="aspect-[4/3] bg-muted relative h-24">
-                  {product.image_url ? (
-                    <Image 
-                      src={product.image_url} 
-                      alt={product.name}
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  )}
-                  
-                  <div className="absolute top-0.5 left-0.5 flex gap-0.5">
-                    {!product.is_active && (
-                      <Badge key={`${product.id}-inactive`} variant="secondary" className="text-xs px-1 py-0">Inactivo</Badge>
-                    )}
-
-                  </div>
-                  
-                  <div className="absolute top-0.5 left-0.5 flex gap-0.5">
-                    <Button
-                       variant="ghost"
-                       size="sm"
-                       className="h-7 w-7 p-0 bg-white/80 hover:bg-white text-black"
-                       onClick={() => handleEdit(product)}
-                     >
-                       <Edit className="h-4 w-4" />
-                     </Button>
-                  </div>
-                  
-                  <div className="absolute bottom-0.5 left-0.5 flex gap-0.5">
-                     <AlertDialog>
-                       <AlertDialogTrigger asChild>
-                         <Button variant="ghost" size="sm" className="h-6 w-6 sm:h-7 sm:w-7 p-0 bg-white/80 hover:bg-white text-black">
-                           <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>¿Eliminar producto?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Esta acción no se puede deshacer. El producto será eliminado permanentemente.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(product.id)}>
-                            Eliminar
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </div>
-                
-                <CardContent className="p-3">
-                  <div className="space-y-2">
-                    <div className="space-y-1">
-                      <h3 className="font-semibold text-sm line-clamp-2 leading-tight">{product.name}</h3>
-                      {category && (
-                        <Badge variant="secondary" className="text-xs px-2 py-0.5 w-fit">
-                          {category.name.length > 10 ? category.name.substring(0, 10) + '...' : category.name}
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-1 text-xs text-muted-foreground">
-                      {product.sku && (
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium">SKU:</span>
-                          <span>{product.sku}</span>
+                <Card key={product.id} className="group relative overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-white/50 backdrop-blur-sm hover:bg-white/80">
+                  {/* Clickable area for editing */}
+                  <div 
+                    className="cursor-pointer" 
+                    onClick={() => handleEdit(product)}
+                  >
+                    {/* Image Container */}
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg">
+                      {product.image_url ? (
+                        <Image 
+                          src={product.image_url} 
+                          alt={product.name}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+                          <Package className="h-8 w-8 text-gray-400" />
                         </div>
                       )}
                       
-                      {(product.canton || product.provincia) && (
-                        <div className="flex items-center gap-1">
-                          <span>📍</span>
-                          <span>{product.canton}{product.canton && product.provincia ? ', ' : ''}{product.provincia}</span>
+                      {/* Status Badge */}
+                      {!product.is_active && (
+                        <div className="absolute top-2 left-2">
+                          <Badge variant="secondary" className="text-xs px-2 py-1 bg-gray-800/80 text-white border-0">
+                            Inactivo
+                          </Badge>
                         </div>
                       )}
                     </div>
                     
-                    <div className="pt-1 border-t">
-                      <p className="font-bold text-base text-primary">
-                        {product.currency === 'USD' ? '$' : '₡'}
-                        {(product.price || 0).toLocaleString()}
-                      </p>
-                    </div>
+                    {/* Content */}
+                    <CardContent className="p-4 space-y-3">
+                      {/* Header */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-gray-900">
+                          {product.name}
+                        </h3>
+                        
+                        {category && (
+                          <Badge variant="outline" className="text-xs px-2 py-1 border-gray-200 text-gray-600">
+                            {category.name.length > 12 ? category.name.substring(0, 12) + '...' : category.name}
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {/* Metadata */}
+                      <div className="space-y-1.5 text-xs text-gray-500">
+                        {product.sku && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-medium text-gray-600">SKU:</span>
+                            <span className="font-mono">{product.sku}</span>
+                          </div>
+                        )}
+                        
+                        {(product.canton || product.provincia) && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-400">📍</span>
+                            <span className="truncate">
+                              {product.canton}{product.canton && product.provincia ? ', ' : ''}{product.provincia}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Price */}
+                      <div className="pt-2 border-t border-gray-100">
+                        <p className="font-bold text-lg text-primary">
+                          {product.currency === 'USD' ? '$' : '₡'}
+                          {(product.price || 0).toLocaleString()}
+                        </p>
+                      </div>
+                    </CardContent>
                   </div>
-                </CardContent>
+                    
+                  {/* Action Buttons - Always visible at bottom */}
+                  <CardContent className="p-4 pt-0">
+                    <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-gray-100">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 h-8 text-xs bg-white hover:bg-gray-50 text-gray-700 border-gray-200"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(product);
+                        }}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="flex-1 h-8 text-xs bg-white hover:bg-red-50 text-red-600 border-red-200 hover:border-red-300"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Trash2 className="h-3 w-3 mr-1" />
+                            Eliminar
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>¿Eliminar producto?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta acción no se puede deshacer. El producto será eliminado permanentemente.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(product.id)}>
+                              Eliminar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </CardContent>
                 </Card>
               );
             })}

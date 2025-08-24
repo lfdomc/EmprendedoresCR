@@ -67,8 +67,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Service Image */}
+            {/* Service Images Gallery */}
             <div className="space-y-4">
+              {/* Main Image */}
               <div className="relative aspect-video overflow-hidden rounded-lg bg-white">
                 {service.image_url ? (
                   <Image
@@ -83,6 +84,42 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   </div>
                 )}
               </div>
+              
+              {/* Additional Photos */}
+              {(service.additional_photo_1 || service.additional_photo_2 || service.additional_photo_3) && (
+                <div className="grid grid-cols-3 gap-2">
+                  {service.additional_photo_1 && (
+                    <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
+                      <Image
+                        src={service.additional_photo_1}
+                        alt={`${service.name} - Foto adicional 1`}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform cursor-pointer"
+                      />
+                    </div>
+                  )}
+                  {service.additional_photo_2 && (
+                    <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
+                      <Image
+                        src={service.additional_photo_2}
+                        alt={`${service.name} - Foto adicional 2`}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform cursor-pointer"
+                      />
+                    </div>
+                  )}
+                  {service.additional_photo_3 && (
+                    <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
+                      <Image
+                        src={service.additional_photo_3}
+                        alt={`${service.name} - Foto adicional 3`}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform cursor-pointer"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Service Details */}
@@ -112,27 +149,98 @@ export default async function ServicePage({ params }: ServicePageProps) {
               {service.business && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Ofrecido por</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-4">
+                    <CardTitle className="text-lg flex items-center gap-3">
                       {service.business.logo_url && (
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white border border-gray-200 shadow-sm">
+                        <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
                           <Image
                             src={service.business.logo_url}
-                            alt={service.business.name}
-                            fill
-                            className="object-contain p-2 hover:scale-105 transition-transform duration-300"
+                            alt={`Logo de ${service.business.name}`}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       )}
-                      <div className="flex-1">
-                        <Link href={`/businesses/${businessSlug}`}>
-                          <h4 className="font-semibold hover:text-primary transition-colors">
-                            {service.business.name}
-                          </h4>
-                        </Link>
+                      <div>
+                        <span>Ofrecido por</span>
+                        <p className="text-base font-semibold text-gray-900 mt-1">{service.business.name}</p>
                       </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {service.business.description && (
+                        <p className="text-gray-600 text-sm leading-relaxed">{service.business.description}</p>
+                      )}
+                      
+                      {/* Información de contacto */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        {service.business.email && (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-500">Email:</span>
+                            <a href={`mailto:${service.business.email}`} className="text-blue-600 hover:text-blue-800 transition-colors">
+                              {service.business.email}
+                            </a>
+                          </div>
+                        )}
+                        {service.business.phone && (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-500">Teléfono:</span>
+                            <a href={`tel:${service.business.phone}`} className="text-blue-600 hover:text-blue-800 transition-colors">
+                              {service.business.phone}
+                            </a>
+                          </div>
+                        )}
+                        {service.business.website && (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-500">Sitio web:</span>
+                            <a href={service.business.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors">
+                              Visitar sitio
+                            </a>
+                          </div>
+                        )}
+                        {(service.business.provincia || service.business.canton) && (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-500">Ubicación:</span>
+                            <span className="text-gray-700">
+                              {[service.business.canton, service.business.provincia].filter(Boolean).join(', ')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Redes sociales */}
+                      {(service.business.facebook || service.business.instagram) && (
+                        <div className="space-y-2">
+                          <span className="font-medium text-gray-500 text-sm">Redes sociales:</span>
+                          <div className="flex gap-3">
+                            {service.business.facebook && (
+                              <a 
+                                href={service.business.facebook} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 transition-colors text-sm"
+                              >
+                                Facebook
+                              </a>
+                            )}
+                            {service.business.instagram && (
+                              <a 
+                                href={service.business.instagram} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-pink-600 hover:text-pink-800 transition-colors text-sm"
+                              >
+                                Instagram
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <Link href={`/businesses/${businessSlug}`} className="inline-block text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
+                        Ver más servicios de este emprendimiento →
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>

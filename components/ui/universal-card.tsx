@@ -235,23 +235,23 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
   if (viewMode === 'list') {
     return (
       <Card 
-        className={`group transition-modern hover-lift h-24 sm:h-28 md:h-32 lg:h-36 border-modern hover:border-modern-hover bg-white/95 backdrop-blur-sm cursor-pointer animate-fade-in ${
+        className={`group relative overflow-hidden transition-all duration-300 ease-out h-20 sm:h-24 border-0 bg-white/80 backdrop-blur-md cursor-pointer ${
           isSelected 
-            ? 'shadow-glow-primary ring-2 ring-primary/20' 
-            : 'hover:shadow-soft-md shadow-soft'
-        } ${typeConfig.ringColor}`} 
+            ? 'shadow-lg shadow-blue-500/20 ring-1 ring-blue-500/30 scale-[1.02]' 
+            : 'hover:shadow-xl hover:shadow-gray-900/10 hover:scale-[1.01] shadow-sm'
+        }`} 
         role="article" 
         aria-labelledby={`${cardData.type}-title-${cardData.data.id}`}
         onClick={handleCardClick}
       >
-        <div className="flex h-full">
+        <div className="flex h-full relative">
           {/* Imagen */}
           <SafeLink 
             href={detailUrl}
-            className={`focus:outline-none focus:ring-2 ${typeConfig.ringColor.split(' ')[0]} focus:ring-offset-2 rounded-l-xl`}
+            className="focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 rounded-l-lg"
             aria-label={`Ver detalles de ${cardData.data.name}`}
           >
-            <div className="relative w-16 sm:w-20 md:w-24 lg:w-28 h-full flex-shrink-0 cursor-pointer bg-gradient-to-br from-gray-50 to-gray-100 backdrop-blur-sm border-r border-gray-200/80 rounded-l-xl overflow-hidden">
+            <div className="relative w-16 sm:w-20 h-full flex-shrink-0 bg-gradient-to-br from-gray-50/50 to-gray-100/50 rounded-l-lg overflow-hidden">
               {cardData.type === 'business' ? (
                 <div className="relative w-full h-full bg-gradient-to-br from-white/95 to-gray-50/95 flex items-center justify-center overflow-hidden">
                   {cardData.data.logo_url && !imageError ? (
