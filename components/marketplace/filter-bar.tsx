@@ -196,8 +196,8 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full">
               <div className="flex flex-wrap items-center gap-3 w-full">
-                {/* Selector de tipo de contenido */}
-                {onContentTypeChange && contentType && (
+                {/* Selector de tipo de contenido - Ocultar en página de emprendimientos */}
+                {onContentTypeChange && contentType && currentPage !== 'businesses' && (
                   <div className="w-auto flex-shrink-0">
                     <Select value={contentType} onValueChange={onContentTypeChange}>
                       <SelectTrigger className="w-40 h-8 text-xs">
@@ -263,20 +263,23 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
             </div>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                className={`text-xs h-8 w-40 border-gray-300 text-gray-700 hover:bg-gray-50 ${
-                  showAdvanced ? 'bg-gray-100' : ''
-                }`}
-              >
-                <Filter className="h-4 w-4 mr-1" />
-                Más filtros
-                <ChevronDown className={`ml-1 h-3 w-3 transition-transform ${
-                  showAdvanced ? 'rotate-180' : ''
-                }`} />
-              </Button>
+              {/* Ocultar botón "Más filtros" en página de emprendimientos */}
+              {currentPage !== 'businesses' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  className={`text-xs h-8 w-40 border-gray-300 text-gray-700 hover:bg-gray-50 ${
+                    showAdvanced ? 'bg-gray-100' : ''
+                  }`}
+                >
+                  <Filter className="h-4 w-4 mr-1" />
+                  Más filtros
+                  <ChevronDown className={`ml-1 h-3 w-3 transition-transform ${
+                    showAdvanced ? 'rotate-180' : ''
+                  }`} />
+                </Button>
+              )}
 
 
 
@@ -313,8 +316,8 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
                 </div>
               )}
               
-              {/* Selector de tipo de contenido móvil */}
-              {onContentTypeChange && contentType && (
+              {/* Selector de tipo de contenido móvil - Ocultar en página de emprendimientos */}
+              {onContentTypeChange && contentType && currentPage !== 'businesses' && (
                 <Select value={contentType} onValueChange={onContentTypeChange}>
                   <SelectTrigger className="w-20 h-8 text-xs">
                     <SelectValue />
@@ -348,9 +351,10 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
                 variant="ghost"
                 size="sm"
                 onClick={onClearFilters}
-                className="text-xs h-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-xs h-7 text-red-600 hover:text-red-700 hover:bg-red-50 flex items-center gap-1"
               >
                 <X className="h-4 w-4" />
+                <span className="inline">Limpiar filtros</span>
               </Button>
             )}
           </div>
@@ -415,67 +419,71 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
                 </div>
               )}
 
-              {/* Precio Dropdown */}
-              <div>
-                <Label className="text-xs font-medium text-gray-700 mb-2 block">Precio</Label>
-                <Select value={getCurrentPriceRangeValue()} onValueChange={handlePriceRangeChange}>
-                  <SelectTrigger className="w-full h-8 text-xs">
-                    <SelectValue placeholder="Rango de Precios" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos los precios</SelectItem>
-                    {QUICK_PRICE_RANGES.map((range) => (
-                      <SelectItem key={range.label} value={range.label}>
-                        {range.label}
-                      </SelectItem>
-                    ))}
-                    <SelectItem value="custom">Personalizado</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Precio Dropdown - Ocultar en página de emprendimientos */}
+              {currentPage !== 'businesses' && (
+                <div>
+                  <Label className="text-xs font-medium text-gray-700 mb-2 block">Precio</Label>
+                  <Select value={getCurrentPriceRangeValue()} onValueChange={handlePriceRangeChange}>
+                    <SelectTrigger className="w-full h-8 text-xs">
+                      <SelectValue placeholder="Rango de Precios" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos los precios</SelectItem>
+                      {QUICK_PRICE_RANGES.map((range) => (
+                        <SelectItem key={range.label} value={range.label}>
+                          {range.label}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="custom">Personalizado</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                {getCurrentPriceRangeValue() === 'custom' && (
-                  <div className="flex items-center gap-2 mt-2">
-                    <Input
-                      type="number"
-                      placeholder="Mín"
-                      value={customMinPrice}
-                      onChange={(e) => setCustomMinPrice(e.target.value)}
-                      className="flex-1 h-7 text-xs"
-                    />
-                    <span className="text-xs text-gray-500">-</span>
-                    <Input
-                      type="number"
-                      placeholder="Máx"
-                      value={customMaxPrice}
-                      onChange={(e) => setCustomMaxPrice(e.target.value)}
-                      className="flex-1 h-7 text-xs"
-                    />
-                    <Button
-                      size="sm"
-                      onClick={handleCustomPriceApply}
-                      className="h-7 text-xs px-2"
-                    >
-                      OK
-                    </Button>
-                  </div>
-                )}
-              </div>
+                  {getCurrentPriceRangeValue() === 'custom' && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <Input
+                        type="number"
+                        placeholder="Mín"
+                        value={customMinPrice}
+                        onChange={(e) => setCustomMinPrice(e.target.value)}
+                        className="flex-1 h-7 text-xs"
+                      />
+                      <span className="text-xs text-gray-500">-</span>
+                      <Input
+                        type="number"
+                        placeholder="Máx"
+                        value={customMaxPrice}
+                        onChange={(e) => setCustomMaxPrice(e.target.value)}
+                        className="flex-1 h-7 text-xs"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={handleCustomPriceApply}
+                        className="h-7 text-xs px-2"
+                      >
+                        OK
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
 
-              {/* Ordenar Dropdown */}
-              <div>
-                <Label className="text-xs font-medium text-gray-700 mb-2 block">Ordenar por</Label>
-                <Select value={getCurrentSortValue()} onValueChange={handleSortChange}>
-                  <SelectTrigger className="w-full h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Por defecto</SelectItem>
-                    <SelectItem value="random">Aleatorio</SelectItem>
-                    <SelectItem value="popularity">Popularidad</SelectItem>
-                    <SelectItem value="newest">Más recientes</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Ordenar Dropdown - Ocultar en página de emprendimientos */}
+              {currentPage !== 'businesses' && (
+                <div>
+                  <Label className="text-xs font-medium text-gray-700 mb-2 block">Ordenar por</Label>
+                  <Select value={getCurrentSortValue()} onValueChange={handleSortChange}>
+                    <SelectTrigger className="w-full h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Por defecto</SelectItem>
+                      <SelectItem value="random">Aleatorio</SelectItem>
+                      <SelectItem value="popularity">Popularidad</SelectItem>
+                      <SelectItem value="newest">Más recientes</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div className="flex gap-2 pt-2">
                 <Button
@@ -504,8 +512,8 @@ function FilterBarComponent({ categories, filters, onFiltersChange, onClearFilte
           )}
         </div>
 
-        {/* Filtros Avanzados - Solo Desktop */}
-        {showAdvanced && (
+        {/* Filtros Avanzados - Solo Desktop - Ocultar en página de emprendimientos */}
+        {showAdvanced && currentPage !== 'businesses' && (
           <div className="hidden md:block mt-4 pt-4 border-t border-gray-100">
             <div className="flex flex-wrap items-center gap-3">
               {/* Precio Dropdown */}
