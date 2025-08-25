@@ -115,21 +115,31 @@ const BusinessCardComponent = ({ business, viewMode }: BusinessCardProps) => {
     >
       <Card className="group hover:shadow-xl hover:shadow-black/10 shadow-md transition-all duration-500 hover:-translate-y-2 cursor-pointer h-full w-full flex flex-col border-0 bg-white/90 backdrop-blur-sm overflow-hidden" role="article" aria-labelledby={`business-title-grid-${business.id}`}>
         <div className="relative">
-          <div className="relative aspect-square sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[4/3] overflow-hidden rounded-t-xl bg-gradient-to-br from-white/80 to-gray-50/80 flex items-center justify-center cursor-pointer border border-gray-200">
+          <div className="relative aspect-square sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[4/3] overflow-hidden rounded-t-xl bg-gradient-to-br from-white via-gray-50/30 to-gray-100/50 flex items-center justify-center cursor-pointer border border-gray-200/60 shadow-inner">
+            {/* Decorative background pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.03),transparent_70%)]" />
+            
             {business.logo_url && !imageError ? (
-              <Image
-                 src={imageUrl}
-                 alt={`Logo del emprendimiento ${business.name}`}
-                 fill
-                 className="object-contain group-hover:scale-110 transition-transform duration-500 p-3 sm:p-4 md:p-5 lg:p-6 drop-shadow-lg"
-                 onError={() => setImageError(true)}
-                 loading="lazy"
-                 placeholder="blur"
-                 blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-               />
+              <div className="relative w-full h-full flex items-center justify-center">
+                <Image
+                   src={imageUrl}
+                   alt={`Logo del emprendimiento ${business.name}`}
+                   fill
+                   className="object-contain group-hover:scale-110 transition-all duration-700 ease-out p-4 sm:p-5 md:p-6 lg:p-7 drop-shadow-xl filter group-hover:brightness-110 group-hover:contrast-110"
+                   onError={() => setImageError(true)}
+                   loading="lazy"
+                   placeholder="blur"
+                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                 />
+                 {/* Subtle glow effect on hover */}
+                 <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-t-xl" />
+              </div>
             ) : (
-              <Store className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 lg:h-18 lg:w-18 text-primary/50" aria-hidden="true" />
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 rounded-full blur-xl" />
+                <Store className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 lg:h-18 lg:w-18 text-primary/60 relative z-10 drop-shadow-sm" aria-hidden="true" />
+              </div>
             )}
           </div>
         </div>

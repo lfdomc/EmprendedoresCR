@@ -168,14 +168,18 @@ export default function ProductClient({ product }: ProductClientProps) {
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-3">
                     {product.business.logo_url && (
-                      <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                      <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-white via-gray-50/40 to-gray-100/60 border border-gray-200/70 shadow-lg hover:shadow-xl transition-all duration-300 relative group">
+                        {/* Decorative background pattern */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(59,130,246,0.04),transparent_65%)] rounded-full" />
                         <Image
                           src={product.business.logo_url}
                           alt={`Logo de ${product.business.name}`}
-                          width={48}
-                          height={48}
-                          className="w-full h-full object-cover"
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-contain p-1 rounded-full hover:scale-110 transition-all duration-500 ease-out drop-shadow-lg filter hover:brightness-110 hover:contrast-105"
                         />
+                        {/* Subtle overlay on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-full" />
                       </div>
                     )}
                     <div>

@@ -169,18 +169,28 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
           <div className="flex flex-col lg:flex-row lg:items-start gap-4 sm:gap-6">
             {/* Logo and Info Section */}
             <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 flex-1">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center overflow-hidden mx-auto sm:mx-0 border border-gray-200 shadow-sm">
+              <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-white via-gray-50/40 to-gray-100/60 rounded-xl flex items-center justify-center overflow-hidden mx-auto sm:mx-0 border border-gray-200/70 shadow-lg hover:shadow-xl transition-all duration-300 relative group">
+                {/* Decorative background pattern */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(59,130,246,0.04),transparent_65%)] rounded-xl" />
+                
                 {business.logo_url ? (
-                  <Image
-                    src={business.logo_url}
-                    alt={`Logo de ${business.name}`}
-                    width={160}
-                    height={160}
-                    className="w-full h-full object-contain p-4 rounded-xl hover:scale-105 transition-transform duration-300 drop-shadow-sm"
-                    priority
-                  />
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <Image
+                      src={business.logo_url}
+                      alt={`Logo de ${business.name}`}
+                      width={160}
+                      height={160}
+                      className="w-full h-full object-contain p-4 sm:p-5 rounded-xl hover:scale-110 transition-all duration-500 ease-out drop-shadow-lg filter hover:brightness-110 hover:contrast-105"
+                      priority
+                    />
+                    {/* Subtle overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-xl" />
+                  </div>
                 ) : (
-                  <Store className="h-16 w-16 sm:h-20 sm:w-20 text-primary/70" />
+                  <div className="relative flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/8 to-primary/12 rounded-full blur-lg" />
+                    <Store className="h-16 w-16 sm:h-20 sm:w-20 text-primary/70 relative z-10 drop-shadow-md" />
+                  </div>
                 )}
               </div>
               <div className="flex-1 text-center sm:text-left">

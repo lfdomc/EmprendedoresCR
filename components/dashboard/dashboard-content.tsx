@@ -177,18 +177,28 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
         {/* Business Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200 shadow-sm mx-auto sm:mx-0">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-gradient-to-br from-white via-gray-50/40 to-gray-100/60 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200/70 shadow-lg hover:shadow-xl transition-all duration-300 mx-auto sm:mx-0 relative group">
+              {/* Decorative background pattern */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(59,130,246,0.04),transparent_60%)] rounded-xl" />
+              
               {business.logo_url ? (
-                <Image 
-                  src={business.logo_url} 
-                  alt={`Logo de ${business.name}`}
-                  width={160}
-                  height={160}
-                  className="w-full h-full object-contain p-3 sm:p-4 rounded-xl hover:scale-105 transition-transform duration-300 drop-shadow-sm"
-                  priority
-                />
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <Image 
+                    src={business.logo_url} 
+                    alt={`Logo de ${business.name}`}
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-contain p-3 sm:p-4 md:p-5 rounded-xl hover:scale-110 transition-all duration-500 ease-out drop-shadow-lg filter hover:brightness-110 hover:contrast-105"
+                    priority
+                  />
+                  {/* Subtle overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-xl" />
+                </div>
               ) : (
-                <Store className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 text-primary/70" />
+                <div className="relative flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/8 to-primary/12 rounded-full blur-lg" />
+                  <Store className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 text-primary/70 relative z-10 drop-shadow-md" />
+                </div>
               )}
             </div>
             <div className="flex-1 min-w-0 text-center sm:text-left">
