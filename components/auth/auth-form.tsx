@@ -195,6 +195,7 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
           data: {
             full_name: fullName.trim(),
           },
+          emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/auth/callback?redirect_to=${encodeURIComponent(redirectTo)}`,
         },
       });
 

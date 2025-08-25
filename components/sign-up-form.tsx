@@ -62,7 +62,7 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/login`,
+          emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/auth/callback?redirect_to=${encodeURIComponent('/dashboard')}`,
         },
       });
       if (error) throw error;
