@@ -199,6 +199,14 @@ export default async function ServicePage({ params }: ServicePageProps) {
                             </a>
                           </div>
                         )}
+                        {service.business.whatsapp && (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-500">WhatsApp:</span>
+                            <a href={`https://wa.me/${service.business.whatsapp.replace(/[^\d]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors">
+                              {service.business.whatsapp}
+                            </a>
+                          </div>
+                        )}
                         {(service.business.provincia || service.business.canton) && (
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-gray-500">Ubicación:</span>

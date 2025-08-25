@@ -216,6 +216,14 @@ export default function ProductClient({ product }: ProductClientProps) {
                           </a>
                         </div>
                       )}
+                      {product.business.whatsapp && (
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-500">WhatsApp:</span>
+                          <a href={`https://wa.me/${product.business.whatsapp.replace(/[^\d]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors">
+                            {product.business.whatsapp}
+                          </a>
+                        </div>
+                      )}
                       {(product.business.provincia || product.business.canton) && (
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-500">Ubicación:</span>
@@ -284,31 +292,7 @@ export default function ProductClient({ product }: ProductClientProps) {
               />
             </div>
 
-            {/* Información adicional */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium text-gray-500">Categoría:</span>
-                    <p>{product.category?.name || 'Sin categoría'}</p>
-                  </div>
-                  {location && (
-                    <div>
-                      <span className="font-medium text-gray-500">Ubicación:</span>
-                      <p>{location}</p>
-                    </div>
-                  )}
-                  <div>
-                    <span className="font-medium text-gray-500">Moneda:</span>
-                    <p>{product.currency || 'CRC'}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-500">Contacto:</span>
-                    <p>WhatsApp</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+
           </div>
         </div>
       </div>
