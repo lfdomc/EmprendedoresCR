@@ -25,6 +25,7 @@ import {
 // type ProductWithWhatsAppStats = Product & ItemWithWhatsAppStats;
 // type ServiceWithWhatsAppStats = Service & ItemWithWhatsAppStats;
 import { generateBusinessSlug, generateProductSlug, generateServiceSlug } from '@/lib/utils/slug';
+import { sendBusinessReminderEmail } from '@/lib/utils/notifications';
 
 // Cliente para operaciones del lado del cliente
 const supabase = createClient();
@@ -199,6 +200,17 @@ export async function createBusiness(businessData: BusinessFormData): Promise<Ap
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Enviar recordatorio por email después de crear el emprendimiento
+  if (data) {
+    try {
+      // Como es un nuevo emprendimiento, no tiene productos ni servicios
+      await sendBusinessReminderEmail(data, false, false);
+    } catch (emailError) {
+      // No fallar la creación del emprendimiento si el email falla
+      console.error('Error sending reminder email:', emailError);
+    }
   }
 
   return { data, message: 'Emprendimiento creado exitosamente' };
@@ -1267,5 +1279,46 @@ export async function checkEmailExists(email: string): Promise<{ exists: boolean
   } catch (error) {
     console.error('Error in checkEmailExists:', error);
     return { exists: false, error: 'Error al verificar email' };
+  }
+}
+
+/**
+ * Verifica si un emprendimiento tiene productos y servicios
+ */
+export async function checkBusinessCompleteness(businessId: string): Promise<{
+  hasProducts: boolean;
+  hasServices: boolean;
+  productCount: number;
+  serviceCount: number;
+}> {
+  try {
+    // Contar productos activos
+    const { count: productCount } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('business_id', businessId)
+      .eq('is_active', true);
+
+    // Contar servicios activos
+    const { count: serviceCount } = await supabase
+      .from('services')
+      .select('*', { count: 'exact', head: true })
+      .eq('business_id', businessId)
+      .eq('is_active', true);
+
+    return {
+      hasProducts: (productCount || 0) > 0,
+      hasServices: (serviceCount || 0) > 0,
+      productCount: productCount || 0,
+      serviceCount: serviceCount || 0
+    };
+  } catch (error) {
+    console.error('Error checking business completeness:', error);
+    return {
+      hasProducts: false,
+      hasServices: false,
+      productCount: 0,
+      serviceCount: 0
+    };
   }
 }

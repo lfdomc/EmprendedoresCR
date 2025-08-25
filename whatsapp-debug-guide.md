@@ -3,7 +3,7 @@
 ## Estado Actual de la Configuración ✅
 
 ### Metadatos Verificados
-- ✅ `og:image`: `https://emprendedores-cr.vercel.app/logosmall.jpg`
+- ✅ `og:image`: `https://www.costaricaemprende.com/logosmall.jpg`
 - ✅ `og:image:type`: `image/jpeg` (corregido)
 - ✅ `og:image:width`: `1200`
 - ✅ `og:image:height`: `630`
@@ -17,21 +17,21 @@
 #### Método A: Modificar URL temporalmente
 ```
 # En lugar de compartir:
-https://emprendedores-cr.vercel.app
+https://www.costaricaemprende.com
 
 # Comparte temporalmente:
-https://Emprendedores-cr.vercel.app
-# (nota la 'E' mayúscula)
+https://Www.costaricaemprende.com
+# (nota la 'W' mayúscula)
 ```
 
 #### Método B: Agregar parámetro temporal
 ```
-https://emprendedores-cr.vercel.app?test=123
+https://www.costaricaemprende.com?test=123
 ```
 
 #### Método C: Usar Facebook Sharing Debugger
 1. Ir a: https://developers.facebook.com/tools/debug/
-2. Ingresar: `https://emprendedores-cr.vercel.app`
+2. Ingresar: `https://www.costaricaemprende.com`
 3. Hacer clic en "Debug" o "Scrape Again"
 4. Verificar si muestra la imagen correctamente
 
@@ -97,13 +97,13 @@ https://emprendedores-cr.vercel.app?test=123
 
 ```powershell
 # Verificar metadatos actuales
-Invoke-WebRequest -Uri "https://emprendedores-cr.vercel.app" | Select-Object -ExpandProperty Content | Select-String -Pattern 'og:image'
+Invoke-WebRequest -Uri "https://www.costaricaemprende.com" | Select-Object -ExpandProperty Content | Select-String -Pattern 'og:image'
 
 # Verificar accesibilidad de imagen
-Invoke-WebRequest -Uri "https://emprendedores-cr.vercel.app/logosmall.jpg" -Method HEAD
+Invoke-WebRequest -Uri "https://www.costaricaemprende.com/logosmall.jpg" -Method HEAD
 
 # Verificar headers de imagen
-$response = Invoke-WebRequest -Uri "https://emprendedores-cr.vercel.app/logosmall.jpg" -Method HEAD
+$response = Invoke-WebRequest -Uri "https://www.costaricaemprende.com/logosmall.jpg" -Method HEAD
 $response.Headers['Content-Type']
 $response.Headers['Content-Length']
 ```

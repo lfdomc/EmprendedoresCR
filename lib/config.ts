@@ -7,8 +7,8 @@ export const getBaseUrl = () => {
   
   // En el servidor
   if (process.env.NODE_ENV === 'production') {
-    // Usar siempre la URL de Vercel para producción
-    return 'https://emprendedores-cr.vercel.app'
+    // Usar siempre la URL de producción
+    return 'https://www.costaricaemprende.com'
   }
   
   // En desarrollo

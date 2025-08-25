@@ -52,8 +52,9 @@ const ServicesManager = dynamic(() => import('@/components/dashboard/services-ma
   ssr: false,
 });
 // DashboardStats component removed
-import { getBusinessByUserId, getDashboardStats } from '@/lib/supabase/database';
+import { getBusinessByUserId, getDashboardStats, checkBusinessCompleteness } from '@/lib/supabase/database';
 import { Business } from '@/lib/types/database';
+import { BusinessReminderBanner } from './business-reminder-banner';
 
 interface DashboardContentProps {
   user: User;
@@ -70,6 +71,12 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
       productContacts: 0,
       serviceContacts: 0
     }
+  });
+  const [businessCompleteness, setBusinessCompleteness] = useState({
+    hasProducts: false,
+    hasServices: false,
+    productCount: 0,
+    serviceCount: 0
   });
   const [isConfigExpanded, setIsConfigExpanded] = useState(false);
   const [isProductsExpanded, setIsProductsExpanded] = useState(false);
@@ -92,12 +99,16 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
   const loadStats = useCallback(async () => {
     if (!business) return;
     try {
-      const statsData = await getDashboardStats(business.id);
-        setStats({
-          totalProducts: statsData.totalProducts,
-          totalServices: statsData.totalServices,
-          whatsappStats: statsData.whatsappStats
-        });
+      const [statsData, completenessData] = await Promise.all([
+        getDashboardStats(business.id),
+        checkBusinessCompleteness(business.id)
+      ]);
+      setStats({
+        totalProducts: statsData.totalProducts,
+        totalServices: statsData.totalServices,
+        whatsappStats: statsData.whatsappStats
+      });
+      setBusinessCompleteness(completenessData);
     } catch (error) {
       console.error('Error loading stats:', error);
     }
@@ -214,6 +225,15 @@ function DashboardContentComponent({ user }: DashboardContentProps) {
         </div>
 
 
+
+        {/* Business Reminder Banner */}
+        {business && (
+          <BusinessReminderBanner
+            business={business}
+            hasProducts={businessCompleteness.hasProducts}
+            hasServices={businessCompleteness.hasServices}
+          />
+        )}
 
         {/* Main Content - Modules */}
         <div className="space-y-8">
