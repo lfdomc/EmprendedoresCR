@@ -7,6 +7,7 @@ Allow: /whatsapp-logo
 Allow: /logosmall.png
 Allow: /logo.png
 Allow: /cremprende-logo.png
-Allow: /logo.webp
+Allow: /logonew.webp
+Allow: /logonew.jpeg
 
 Sitemap: https://emprendimientoscr.com/sitemap.xml

@@ -53,7 +53,7 @@ export function WebsiteStructuredData() {
       name: 'Costa Rica Emprende',
       logo: {
         '@type': 'ImageObject',
-        url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'}/logo.png`
+        url: `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'}/logonew.jpeg`
       }
     },
     sameAs: [

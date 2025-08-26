@@ -3,7 +3,7 @@
 ## Estado Actual de la Configuración ✅
 
 ### Metadatos Verificados
-- ✅ `og:image`: `https://www.costaricaemprende.com/logosmall.jpg`
+- ✅ `og:image`: `https://www.costaricaemprende.com/logonew.jpeg`
 - ✅ `og:image:type`: `image/jpeg` (corregido)
 - ✅ `og:image:width`: `1200`
 - ✅ `og:image:height`: `630`
@@ -100,10 +100,10 @@ https://www.costaricaemprende.com?test=123
 Invoke-WebRequest -Uri "https://www.costaricaemprende.com" | Select-Object -ExpandProperty Content | Select-String -Pattern 'og:image'
 
 # Verificar accesibilidad de imagen
-Invoke-WebRequest -Uri "https://www.costaricaemprende.com/logosmall.jpg" -Method HEAD
+Invoke-WebRequest -Uri "https://www.costaricaemprende.com/logonew.jpeg" -Method HEAD
 
 # Verificar headers de imagen
-$response = Invoke-WebRequest -Uri "https://www.costaricaemprende.com/logosmall.jpg" -Method HEAD
+$response = Invoke-WebRequest -Uri "https://www.costaricaemprende.com/logonew.jpeg" -Method HEAD
 $response.Headers['Content-Type']
 $response.Headers['Content-Length']
 ```

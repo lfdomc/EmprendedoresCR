@@ -86,7 +86,7 @@ function HeaderComponent() {
             aria-label="Costa Rica Emprende - Ir al inicio"
           >
               <Image
-                src="/logosmall.webp"
+                src="/logonew.webp"
                 alt="Costa Rica Emprende Logo"
                 width={40}
                 height={40}
