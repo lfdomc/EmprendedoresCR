@@ -82,8 +82,18 @@ export function ProductStructuredData({ product, business }: { product: Product 
       priceCurrency: product.currency || 'CRC',
       availability: 'https://schema.org/InStock',
       seller: {
-        '@type': 'Organization',
-        name: business?.name || 'Emprendimiento'
+        '@type': 'LocalBusiness',
+        name: business?.name || 'Emprendimiento',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: product.canton || business?.canton,
+          addressRegion: product.provincia || business?.provincia,
+          addressCountry: 'CR'
+        }
+      },
+      availableAtOrFrom: {
+        '@type': 'Place',
+        name: `${product.canton || business?.canton}, ${product.provincia || business?.provincia}, Costa Rica`
       }
     },
     aggregateRating: {

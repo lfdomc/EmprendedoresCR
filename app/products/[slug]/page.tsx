@@ -37,6 +37,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 }
 
+// Función auxiliar para validar si una imagen es válida para productos
+function isValidProductImage(imageUrl: string | null | undefined): boolean {
+  if (!imageUrl) return false;
+  
+  // Verificar si la URL contiene 'business-logos' (indica que es logo de negocio, no imagen de producto)
+  if (imageUrl.includes('business-logos')) return false;
+  
+  // Verificar si es una URL válida
+  try {
+    new URL(imageUrl);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   
@@ -78,6 +94,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000";
 
+    // Usar imagen válida del producto o fallback
+    const validProductImage = isValidProductImage(product.image_url) ? product.image_url : null;
+    const fallbackImage = '/cremprende-logo.png';
+    const imageUrl = validProductImage || fallbackImage;
+
     return {
       title,
       description,
@@ -104,19 +125,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         description,
         type: 'website',
         url: `${defaultUrl}/products/${slug}`,
-        images: product.image_url ? [
+        images: [
           {
-            url: product.image_url,
-            width: 800,
-            height: 600,
-            alt: product.name,
-          }
-        ] : [
-          {
-            url: '/cremprende-logo.png',
-            width: 1200,
-            height: 630,
-            alt: 'Costa Rica Emprende - Marketplace de Emprendimientos',
+            url: imageUrl,
+            width: validProductImage ? 800 : 1200,
+            height: validProductImage ? 600 : 630,
+            alt: validProductImage ? product.name : 'Costa Rica Emprende - Marketplace de Emprendimientos',
           }
         ],
         siteName: 'Costa Rica Emprende',
@@ -126,7 +140,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         card: 'summary_large_image',
         title,
         description,
-        images: product.image_url ? [product.image_url] : ['/cremprende-logo.png'],
+        images: [imageUrl],
       },
       alternates: {
         canonical: `${defaultUrl}/products/${slug}`,
@@ -148,6 +162,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         'product:availability': 'in stock',
         'product:condition': 'new',
         'product:retailer_item_id': product.id,
+        'product:location:locality': product.canton || '',
+        'product:location:region': product.provincia || '',
+        'product:location:country': 'Costa Rica',
+        'business:contact_data:locality': product.canton || '',
+        'business:contact_data:region': product.provincia || '',
+        'business:contact_data:country_name': 'Costa Rica',
       },
     };
   } catch {

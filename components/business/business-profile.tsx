@@ -228,6 +228,68 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
         {/* Main Content - All sections visible */}
         <div className="space-y-8">
 
+          {/* Products Section */}
+          <div id="products-section" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Productos ({activeProducts.length})</h2>
+            </div>
+            {activeProducts.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Package className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No hay productos disponibles</h3>
+                  <p className="text-muted-foreground text-center">
+                    Este emprendimiento aún no ha publicado productos.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <ResponsiveGrid variant="products">
+                {activeProducts.map((product) => (
+                  <UniversalCard 
+                     key={product.id} 
+                     data={{
+                       type: 'product',
+                       data: product
+                     }} 
+                     viewMode="grid" 
+                   />
+                ))}
+              </ResponsiveGrid>
+            )}
+          </div>
+
+          {/* Services Section */}
+          <div id="services-section" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Servicios ({activeServices.length})</h2>
+            </div>
+            {activeServices.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Wrench className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No hay servicios disponibles</h3>
+                  <p className="text-muted-foreground text-center">
+                    Este emprendimiento aún no ha publicado servicios.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <ResponsiveGrid variant="services">
+                {activeServices.map((service) => (
+                  <UniversalCard 
+                     key={service.id} 
+                     data={{
+                       type: 'service',
+                       data: service
+                     }} 
+                     viewMode="grid" 
+                   />
+                ))}
+              </ResponsiveGrid>
+            )}
+          </div>
+
           {/* Overview Section */}
           <div className="space-y-8">
             {/* Contact Information */}
@@ -371,68 +433,6 @@ export function BusinessProfile({ business, products, services }: BusinessProfil
             </Card>
 
 
-          </div>
-
-          {/* Products Section */}
-          <div id="products-section" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Productos ({activeProducts.length})</h2>
-            </div>
-            {activeProducts.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Package className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No hay productos disponibles</h3>
-                  <p className="text-muted-foreground text-center">
-                    Este emprendimiento aún no ha publicado productos.
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <ResponsiveGrid variant="products">
-                {activeProducts.map((product) => (
-                  <UniversalCard 
-                     key={product.id} 
-                     data={{
-                       type: 'product',
-                       data: product
-                     }} 
-                     viewMode="grid" 
-                   />
-                ))}
-              </ResponsiveGrid>
-            )}
-          </div>
-
-          {/* Services Section */}
-          <div id="services-section" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Servicios ({activeServices.length})</h2>
-            </div>
-            {activeServices.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Wrench className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No hay servicios disponibles</h3>
-                  <p className="text-muted-foreground text-center">
-                    Este emprendimiento aún no ha publicado servicios.
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <ResponsiveGrid variant="services">
-                {activeServices.map((service) => (
-                  <UniversalCard 
-                     key={service.id} 
-                     data={{
-                       type: 'service',
-                       data: service
-                     }} 
-                     viewMode="grid" 
-                   />
-                ))}
-              </ResponsiveGrid>
-            )}
           </div>
         </div>
 

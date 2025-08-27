@@ -921,7 +921,8 @@ export async function getProductsByBusinessId(businessId: string): Promise<Produ
     .from('products')
     .select(`
       *,
-      business:businesses(canton, provincia)
+      business:businesses(*),
+      category:categories(*)
     `)
     .eq('business_id', businessId)
     .order('created_at', { ascending: false });
@@ -934,7 +935,11 @@ export async function getProductsByBusinessId(businessId: string): Promise<Produ
 export async function getServicesByBusinessId(businessId: string): Promise<Service[]> {
   const { data, error } = await supabase
     .from('services')
-    .select('*')
+    .select(`
+      *,
+      business:businesses(*),
+      category:categories(*)
+    `)
     .eq('business_id', businessId)
     .order('created_at', { ascending: false });
   

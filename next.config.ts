@@ -31,6 +31,11 @@ const nextConfig: NextConfig = {
   },
   // Habilitar compresión
   compress: true,
+  // Configuración de Turbopack
+  turbopack: {
+    // Configuración básica para Turbopack
+    resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'],
+  },
   // Optimizaciones experimentales
   experimental: {
     // Deshabilitar el prefetching automático para evitar errores de Fetch failed loading
@@ -42,28 +47,6 @@ const nextConfig: NextConfig = {
     // Deshabilitar optimización de importaciones temporalmente
     // optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
    },
-   // Configuración de webpack simplificada
-    webpack: (config, { isServer }) => {
-    // Solo configuraciones esenciales para el servidor
-    if (isServer) {
-      // Definir self globalmente en el servidor
-       config.plugins = config.plugins || [];
-       config.plugins.push({
-         apply: (compiler: any) => {
-           compiler.hooks.compilation.tap('SelfPolyfill', () => {
-              if (typeof global !== 'undefined' && typeof (global as any).self === 'undefined') {
-                (global as any).self = global;
-              }
-              if (typeof globalThis !== 'undefined' && typeof (globalThis as any).self === 'undefined') {
-                (globalThis as any).self = globalThis;
-              }
-            });
-         }
-       });
-    }
-    
-    return config;
-  },
   // Configurar rewrites para manejar errores de red
   async rewrites() {
     return {

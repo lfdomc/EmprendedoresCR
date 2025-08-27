@@ -259,7 +259,7 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
                       src={imageUrl}
                       alt={`Logo del emprendimiento ${cardData.data.name}`}
                       fill
-                      className="object-contain p-3 sm:p-4 group-hover:scale-110 transition-transform duration-500 drop-shadow-md"
+                      className="object-contain p-1 sm:p-1.5 group-hover:scale-110 transition-transform duration-500 drop-shadow-md"
                       onError={() => setImageError(true)}
                       loading="lazy"
                       placeholder="blur"
@@ -414,7 +414,7 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
                   src={imageUrl}
                   alt={`Logo del emprendimiento ${cardData.data.name}`}
                   fill
-                  className="object-contain group-hover:scale-105 transition-transform duration-300 p-6"
+                  className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
                   onError={() => setImageError(true)}
                   loading="lazy"
                   placeholder="blur"

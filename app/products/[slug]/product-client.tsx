@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Package, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -104,6 +105,8 @@ function ProductImageGallery({ product }: { product: ProductWithDetails }) {
 }
 
 export default function ProductClient({ product }: ProductClientProps) {
+  const router = useRouter();
+  
   const formatPrice = (price?: number) => {
     if (!price) return 'Precio a consultar';
     return new Intl.NumberFormat('es-CR', {
@@ -164,7 +167,10 @@ export default function ProductClient({ product }: ProductClientProps) {
 
             {/* Información del emprendimiento */}
             {product.business && (
-              <Card>
+              <Card 
+                className="cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                onClick={() => router.push(`/businesses/${businessSlug}`)}
+              >
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-3">
                     {product.business.logo_url && (
@@ -196,83 +202,106 @@ export default function ProductClient({ product }: ProductClientProps) {
                     
                     {/* Información de contacto */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                      {product.business.email && (
+                      {product.business?.email && (
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-500">Email:</span>
-                          <a href={`mailto:${product.business.email}`} className="text-blue-600 hover:text-blue-800 transition-colors">
-                            {product.business.email}
-                          </a>
+                          <span 
+                            className="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = `mailto:${product.business?.email}`;
+                            }}
+                          >
+                            {product.business?.email}
+                          </span>
                         </div>
                       )}
-                      {product.business.phone && (
+                      {product.business?.phone && (
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-500">Teléfono:</span>
-                          <a href={`tel:${product.business.phone}`} className="text-blue-600 hover:text-blue-800 transition-colors">
-                            {product.business.phone}
-                          </a>
+                          <span 
+                            className="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.location.href = `tel:${product.business?.phone}`;
+                            }}
+                          >
+                            {product.business?.phone}
+                          </span>
                         </div>
                       )}
-                      {product.business.website && (
+                      {product.business?.website && (
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-500">Sitio web:</span>
-                          <a href={product.business.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors">
+                          <span 
+                            className="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(product.business?.website, '_blank', 'noopener,noreferrer');
+                            }}
+                          >
                             Visitar sitio
-                          </a>
+                          </span>
                         </div>
                       )}
-                      {product.business.whatsapp && (
+                      {product.business?.whatsapp && (
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-500">WhatsApp:</span>
-                          <a href={`https://wa.me/${product.business.whatsapp.replace(/[^\d]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition-colors">
-                            {product.business.whatsapp}
-                          </a>
+                          <span 
+                            className="text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(`https://wa.me/${product.business?.whatsapp?.replace(/[^\d]/g, '')}`, '_blank', 'noopener,noreferrer');
+                            }}
+                          >
+                            {product.business?.whatsapp}
+                          </span>
                         </div>
                       )}
-                      {(product.business.provincia || product.business.canton) && (
+                      {(product.business?.provincia || product.business?.canton) && (
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-500">Ubicación:</span>
                           <span className="text-gray-700">
-                            {[product.business.canton, product.business.provincia].filter(Boolean).join(', ')}
+                            {[product.business?.canton, product.business?.provincia].filter(Boolean).join(', ')}
                           </span>
                         </div>
                       )}
                     </div>
 
                     {/* Redes sociales */}
-                    {(product.business.facebook || product.business.instagram) && (
+                    {(product.business?.facebook || product.business?.instagram) && (
                       <div className="space-y-2">
                         <span className="font-medium text-gray-500 text-sm">Redes sociales:</span>
                         <div className="flex gap-3">
-                          {product.business.facebook && (
-                            <a 
-                              href={product.business.facebook} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 transition-colors text-sm"
+                          {product.business?.facebook && (
+                            <span 
+                              className="text-blue-600 hover:text-blue-800 transition-colors text-sm cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(product.business?.facebook, '_blank', 'noopener,noreferrer');
+                              }}
                             >
                               Facebook
-                            </a>
+                            </span>
                           )}
-                          {product.business.instagram && (
-                            <a 
-                              href={product.business.instagram} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-pink-600 hover:text-pink-800 transition-colors text-sm"
+                          {product.business?.instagram && (
+                            <span 
+                              className="text-pink-600 hover:text-pink-800 transition-colors text-sm cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(product.business?.instagram, '_blank', 'noopener,noreferrer');
+                              }}
                             >
                               Instagram
-                            </a>
+                            </span>
                           )}
                         </div>
                       </div>
                     )}
                     
-                    <Link 
-                      href={`/businesses/${businessSlug}`}
-                      className="inline-block text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
-                    >
+                    <span className="inline-block text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
                       Ver más productos de este emprendimiento →
-                    </Link>
+                    </span>
                   </div>
                 </CardContent>
               </Card>
