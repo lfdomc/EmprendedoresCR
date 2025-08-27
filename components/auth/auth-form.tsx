@@ -250,7 +250,21 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
             setError('Este email ya está registrado. Por favor inicia sesión o usa otro email.');
           } else {
             // Usuario creado exitosamente
-            toast.success('¡Cuenta creada exitosamente! Revisa tu email para confirmar tu cuenta.');
+            toast.success('🎉 ¡Cuenta creada exitosamente! 🎉', {
+              description: '🚨 📧 ¡REVISA TU EMAIL PARA CONFIRMAR TU CUENTA! 📧 🚨',
+              duration: 12000,
+              dismissible: true,
+              closeButton: true,
+              style: {
+                background: '#dc2626',
+                color: '#ffffff',
+                border: '3px solid #b91c1c',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                boxShadow: '0 0 20px rgba(220, 38, 38, 0.8)'
+              },
+              className: 'animate-pulse [&>*]:!text-white [&_*]:!text-white [&_.sonner-toast-description]:!text-white [&_.sonner-toast-description]:!font-bold [&_.sonner-toast-description]:!text-lg [&_button]:!text-black [&_[data-close-button]]:!text-black [&_[data-close-button]]:!bg-white [&_[data-close-button]]:!rounded-full [&_[data-close-button]]:!opacity-100'
+            });
             // Solo limpiar el formulario cuando el registro sea exitoso
             setSignupForm({ fullName: '', email: '', password: '', confirmPassword: '' });
             setActiveTab('login');
