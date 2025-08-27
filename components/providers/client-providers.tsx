@@ -18,7 +18,24 @@ const Analytics = dynamic(() => import("@vercel/analytics/next").then(mod => ({ 
 export function ClientProviders() {
   return (
     <>
-      <Toaster />
+      <Toaster 
+        position="top-center"
+        expand={true}
+        richColors={true}
+        closeButton={true}
+        toastOptions={{
+          style: {
+            fontSize: '16px',
+            fontWeight: 'bold',
+            padding: '16px',
+            borderRadius: '8px',
+            maxWidth: '90vw',
+            wordWrap: 'break-word'
+          },
+          className: 'mobile-toast'
+        }}
+        theme="light"
+      />
       <GoogleAnalytics />
       <Analytics />
     </>

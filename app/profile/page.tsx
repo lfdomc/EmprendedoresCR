@@ -168,8 +168,7 @@ export default async function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Debug: Metadatos del Usuario */}
-        <UserMetadataDebug />
+
       </div>
     </div>
   );

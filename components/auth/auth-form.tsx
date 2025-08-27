@@ -261,9 +261,12 @@ export function AuthForm({ redirectTo = '/dashboard', initialTab = 'login' }: Au
                 border: '3px solid #b91c1c',
                 fontSize: '16px',
                 fontWeight: 'bold',
-                boxShadow: '0 0 20px rgba(220, 38, 38, 0.8)'
+                boxShadow: '0 0 20px rgba(220, 38, 38, 0.8)',
+                maxWidth: '90vw',
+                padding: '16px',
+                borderRadius: '8px'
               },
-              className: 'animate-pulse [&>*]:!text-white [&_*]:!text-white [&_.sonner-toast-description]:!text-white [&_.sonner-toast-description]:!font-bold [&_.sonner-toast-description]:!text-lg [&_button]:!text-black [&_[data-close-button]]:!text-black [&_[data-close-button]]:!bg-white [&_[data-close-button]]:!rounded-full [&_[data-close-button]]:!opacity-100'
+              className: 'animate-pulse mobile-toast success-toast-mobile !bg-red-600 !text-white !border-red-700 [&>*]:!text-white [&_*]:!text-white [&_.sonner-toast-description]:!text-white [&_.sonner-toast-description]:!font-bold [&_.sonner-toast-description]:!text-lg [&_.sonner-toast-description]:!uppercase [&_button]:!text-black [&_[data-close-button]]:!text-black [&_[data-close-button]]:!bg-white [&_[data-close-button]]:!rounded-full [&_[data-close-button]]:!opacity-100'
             });
             // Solo limpiar el formulario cuando el registro sea exitoso
             setSignupForm({ fullName: '', email: '', password: '', confirmPassword: '' });
