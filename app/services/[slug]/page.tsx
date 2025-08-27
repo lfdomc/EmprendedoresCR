@@ -329,6 +329,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
     // Get the service image
     const serviceImage = service.image_url || null;
+    const imageUrl = serviceImage || '/cremprende-logo.png';
 
     return {
       title,
@@ -401,6 +402,14 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
         'service:availability': 'available',
         'service:area_served': `${service.canton}, ${service.provincia}, Costa Rica`,
         'service:provider': businessName,
+        // WhatsApp and Telegram specific metadata
+        'whatsapp:image': imageUrl,
+        'telegram:image': imageUrl,
+        'og:image:secure_url': imageUrl,
+        'og:image:width': serviceImage ? '800' : '1200',
+        'og:image:height': serviceImage ? '600' : '630',
+        'og:image:type': 'image/jpeg',
+        'og:image:alt': serviceImage ? service.name : 'Costa Rica Emprende - Marketplace de Emprendimientos',
       },
     };
   } catch {

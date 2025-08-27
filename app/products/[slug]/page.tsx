@@ -41,12 +41,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 function isValidProductImage(imageUrl: string | null | undefined): boolean {
   if (!imageUrl) return false;
   
-  // Verificar si la URL contiene 'business-logos' (indica que es logo de negocio, no imagen de producto)
-  if (imageUrl.includes('business-logos')) return false;
-  
   // Verificar si es una URL válida
   try {
     new URL(imageUrl);
+    // Permitir todas las imágenes válidas, incluso si están en carpetas de business-logos
+    // ya que algunos productos pueden usar imágenes del negocio
     return true;
   } catch {
     return false;
@@ -168,6 +167,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         'business:contact_data:locality': product.canton || '',
         'business:contact_data:region': product.provincia || '',
         'business:contact_data:country_name': 'Costa Rica',
+        // Metadatos específicos para WhatsApp
+        'og:image:secure_url': imageUrl,
+        'og:image:width': validProductImage ? '800' : '1200',
+        'og:image:height': validProductImage ? '600' : '630',
+        'og:image:type': 'image/jpeg',
+        'og:image:alt': validProductImage ? product.name : 'Costa Rica Emprende - Marketplace de Emprendimientos',
+        'whatsapp:image': imageUrl,
+        'telegram:image': imageUrl,
       },
     };
   } catch {

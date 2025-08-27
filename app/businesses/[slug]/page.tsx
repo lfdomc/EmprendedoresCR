@@ -150,6 +150,14 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
         'business:contact_data:country_name': 'Costa Rica',
         'business:contact_data:phone_number': business.whatsapp || business.phone || '',
         'business:contact_data:website': business.website || '',
+        // Metadatos específicos para WhatsApp
+        'og:image:secure_url': business.logo_url || '/cremprende-logo.png',
+        'og:image:width': business.logo_url ? '800' : '1200',
+        'og:image:height': business.logo_url ? '600' : '630',
+        'og:image:type': 'image/jpeg',
+        'og:image:alt': business.logo_url ? business.name : 'Costa Rica Emprende - Marketplace de Emprendimientos',
+        'whatsapp:image': business.logo_url || '/cremprende-logo.png',
+        'telegram:image': business.logo_url || '/cremprende-logo.png',
       },
     };
   } catch {
