@@ -147,6 +147,7 @@ const ServiceCardComponent = ({ service, viewMode }: ServiceCardProps) => {
                 businessId={service.business?.id || ''}
                 serviceId={service.id}
                 serviceSlug={serviceSlug}
+                serviceImageUrl={service.image_url}
                 aria-label={`Contactar por WhatsApp sobre ${service.name}`}
               />
             </div>
@@ -244,6 +245,7 @@ const ServiceCardComponent = ({ service, viewMode }: ServiceCardProps) => {
           businessId={service.business?.id || ''}
           serviceId={service.id}
           serviceSlug={serviceSlug}
+          serviceImageUrl={service.image_url}
           aria-label={`Contactar por WhatsApp sobre ${service.name}`}
         />
       </CardFooter>

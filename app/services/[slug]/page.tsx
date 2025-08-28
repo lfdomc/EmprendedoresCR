@@ -274,6 +274,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   businessId={service.business?.id || ''}
                   serviceId={service.id}
                   serviceSlug={slug}
+                  serviceImageUrl={service.image_url}
                 />
               </div>
             </div>

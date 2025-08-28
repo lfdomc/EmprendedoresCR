@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Package, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { generateBusinessSlug } from '@/lib/utils/slug';
+import { generateBusinessSlug, generateProductSlug } from '@/lib/utils/slug';
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 import { ShareProductButton } from '@/components/ui/share-product-button';
 import { ProductWithDetails } from '@/lib/types/database';
@@ -117,6 +117,7 @@ export default function ProductClient({ product }: ProductClientProps) {
   };
 
   const businessSlug = product.business ? generateBusinessSlug(product.business.name, product.business.id) : '';
+  const productSlug = generateProductSlug(product.business?.name, product.name, product.id);
   const location = [product.canton, product.provincia].filter(Boolean).join(', ');
 
   return (
@@ -316,6 +317,8 @@ export default function ProductClient({ product }: ProductClientProps) {
                 currency={product.currency}
                 businessId={product.business?.id || ''}
                 productId={product.id}
+                productSlug={productSlug}
+                productImageUrl={product.image_url}
                 className="w-full"
               />
               <ShareProductButton 

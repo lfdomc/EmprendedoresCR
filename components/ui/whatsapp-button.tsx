@@ -13,6 +13,7 @@ interface WhatsAppButtonProps {
   businessId: string;
   productId: string;
   productSlug?: string;
+  productImageUrl?: string;
 }
 
 export function WhatsAppButton({ 
@@ -23,7 +24,8 @@ export function WhatsAppButton({
   className,
   businessId,
   productId,
-  productSlug
+  productSlug,
+  productImageUrl
 }: WhatsAppButtonProps) {
   const formatPrice = (price?: number) => {
     if (!price) return 'Precio a consultar';
@@ -55,10 +57,21 @@ export function WhatsAppButton({
       });
       
       const productUrl = productSlug ? `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/products/${productSlug}` : 'https://costaricaemprende.com';
-      const message = ` *¡Hola! Estoy interesado/a en este producto* 
+      
+      // Construir el mensaje con imagen si está disponible
+      let message = ` *¡Hola! Estoy interesado/a en este producto* 
 
-` +
-        `📦 *Producto:* ${productName}
+`;
+      
+      // Agregar imagen si está disponible
+      if (productImageUrl) {
+        message += `🖼️ *Imagen del producto:*
+${productImageUrl}
+
+`;
+      }
+      
+      message += `📦 *Producto:* ${productName}
 ` +
         `💰 *Precio:* ${formatPrice(price)}
 

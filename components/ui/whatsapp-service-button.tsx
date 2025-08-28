@@ -14,6 +14,7 @@ interface WhatsAppServiceButtonProps {
   businessId: string;
   serviceId: string;
   serviceSlug?: string;
+  serviceImageUrl?: string;
 }
 
 export function WhatsAppServiceButton({ 
@@ -25,7 +26,8 @@ export function WhatsAppServiceButton({
   showShortText = false,
   businessId,
   serviceId,
-  serviceSlug
+  serviceSlug,
+  serviceImageUrl
 }: WhatsAppServiceButtonProps) {
   const formatPrice = (price?: number) => {
     if (!price) return 'Precio a consultar';
@@ -56,10 +58,21 @@ export function WhatsAppServiceButton({
       });
       
       const serviceUrl = serviceSlug ? `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/services/${serviceSlug}` : 'https://costaricaemprende.com';
-      const message = ` *¡Hola! Me interesa este servicio* 
+      
+      // Construir el mensaje con imagen si está disponible
+      let message = ` *¡Hola! Me interesa este servicio* 
 
-` +
-        `🛠️ *Servicio:* ${serviceName}
+`;
+      
+      // Agregar imagen si está disponible
+      if (serviceImageUrl) {
+        message += `🖼️ *Imagen del servicio:*
+${serviceImageUrl}
+
+`;
+      }
+      
+      message += `🛠️ *Servicio:* ${serviceName}
 ` +
         `💰 *Precio:* ${formatPrice(price)}
 
