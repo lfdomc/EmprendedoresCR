@@ -58,15 +58,14 @@ export function WhatsAppButton({
       
       const productUrl = productSlug ? `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/products/${productSlug}` : 'https://costaricaemprende.com';
       
-      // Construir el mensaje con imagen si está disponible
+      // Construir el mensaje
       let message = ` *¡Hola! Estoy interesado/a en este producto* 
 
 `;
       
-      // Agregar imagen si está disponible
+      // Agregar imagen si está disponible (solo para que WhatsApp la muestre)
       if (productImageUrl) {
-        message += `🖼️ *Imagen del producto:*
-${productImageUrl}
+        message += `${productImageUrl}
 
 `;
       }

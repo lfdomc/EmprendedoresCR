@@ -84,8 +84,19 @@ const ProductCardComponent = ({ product, viewMode, priority = false }: ProductCa
       hour12: true
     });
     
-    const message = ` ¡Hola! Estoy interesado/a en este producto \n\n` +
-      `📦 *Producto:* ${product.name}\n` +
+    // Construir el mensaje
+    let message = ` *¡Hola! Estoy interesado/a en este producto* 
+
+`;
+    
+    // Agregar imagen si está disponible (solo para que WhatsApp la muestre)
+    if (product.image_url && !imageError) {
+      message += `${product.image_url}
+
+`;
+    }
+    
+    message += `📦 *Producto:* ${product.name}\n` +
       `💰 *Precio:* ${formattedPrice}\n\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `🔗 *Ver detalles completos:*\n${productUrl}\n\n` +

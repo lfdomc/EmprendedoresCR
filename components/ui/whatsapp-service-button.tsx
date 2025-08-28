@@ -59,15 +59,14 @@ export function WhatsAppServiceButton({
       
       const serviceUrl = serviceSlug ? `${typeof window !== 'undefined' ? window.location.origin : 'https://costaricaemprende.com'}/services/${serviceSlug}` : 'https://costaricaemprende.com';
       
-      // Construir el mensaje con imagen si está disponible
+      // Construir el mensaje
       let message = ` *¡Hola! Me interesa este servicio* 
 
 `;
       
-      // Agregar imagen si está disponible
+      // Agregar imagen si está disponible (solo para que WhatsApp la muestre)
       if (serviceImageUrl) {
-        message += `🖼️ *Imagen del servicio:*
-${serviceImageUrl}
+        message += `${serviceImageUrl}
 
 `;
       }

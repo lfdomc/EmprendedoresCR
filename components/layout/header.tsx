@@ -127,6 +127,19 @@ function HeaderComponent() {
               <Building2 className="h-3 w-3" aria-hidden="true" />
               Emprendimientos
             </Link>
+            <Link 
+              href="/emprendedores" 
+              className={`text-sm font-normal transition-colors py-1.5 px-2 rounded flex items-center gap-1.5 focus:outline-none focus:ring-1 focus:ring-orange-400 focus:ring-offset-1 ${
+                pathname === '/emprendedores'
+                  ? 'text-orange-500 bg-orange-25'
+                  : 'text-gray-500 hover:text-orange-400 hover:bg-gray-50'
+              }`}
+              aria-current={pathname === '/emprendedores' ? 'page' : undefined}
+              aria-label="Información para Emprendedores"
+            >
+              <User className="h-3 w-3" aria-hidden="true" />
+              Para Emprendedores
+            </Link>
           </nav>
 
           {/* Desktop User Actions */}
@@ -269,6 +282,19 @@ function HeaderComponent() {
                 >
                   <Building2 className="h-4 w-4" />
                   Emprendimientos
+                </Link>
+                <Link 
+                  href="/emprendedores" 
+                  className={`flex items-center gap-2 text-sm font-normal transition-colors py-2 px-2 rounded ${
+                    pathname === '/emprendedores'
+                      ? 'text-orange-500 bg-orange-25'
+                      : 'text-gray-600 hover:text-orange-400 hover:bg-gray-50'
+                  }`}
+                  onClick={closeMenu}
+                  aria-current={pathname === '/emprendedores' ? 'page' : undefined}
+                >
+                  <User className="h-4 w-4" />
+                  Para Emprendedores
                 </Link>
               </div>
 

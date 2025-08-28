@@ -212,8 +212,15 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
     const itemType = cardData.type === 'product' ? 'producto' : 'servicio';
     const itemIcon = cardData.type === 'product' ? '📦' : '🛠️';
     
-    const message = ` ¡Hola! Estoy interesado/a en este ${itemType} \n\n` +
-      `${itemIcon} *${cardData.type === 'product' ? 'Producto' : 'Servicio'}:* ${cardData.data.name}\n` +
+    // Construir el mensaje
+    let message = ` *¡Hola! Estoy interesado/a en este ${itemType}* \n\n`;
+    
+    // Agregar imagen si está disponible (solo para que WhatsApp la muestre)
+    if (cardData.data.image_url && !imageError) {
+      message += `${cardData.data.image_url}\n\n`;
+    }
+    
+    message += `${itemIcon} *${cardData.type === 'product' ? 'Producto' : 'Servicio'}:* ${cardData.data.name}\n` +
       `💰 *Precio:* ${formattedPrice}\n\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `🔗 *Ver detalles completos:*\n${itemUrl}\n\n` +
