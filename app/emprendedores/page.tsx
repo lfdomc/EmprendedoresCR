@@ -269,7 +269,7 @@ export default function EmprendedoresPage() {
                 <ArrowRight className="w-4 md:w-5 h-4 md:h-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg">
+            <Button size="lg" variant="outline" className="border-white text-blue-800 hover:bg-white hover:text-blue-600 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold">
               <Link href="/businesses">
                 Ver emprendimientos
               </Link>
