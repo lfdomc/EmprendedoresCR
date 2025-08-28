@@ -318,7 +318,6 @@ export default function ProductClient({ product }: ProductClientProps) {
                 businessId={product.business?.id || ''}
                 productId={product.id}
                 productSlug={productSlug}
-                productImageUrl={product.image_url}
                 className="w-full"
               />
               <ShareProductButton 

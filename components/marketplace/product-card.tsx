@@ -89,13 +89,6 @@ const ProductCardComponent = ({ product, viewMode, priority = false }: ProductCa
 
 `;
     
-    // Agregar imagen si está disponible (solo para que WhatsApp la muestre)
-    if (product.image_url && !imageError) {
-      message += `${product.image_url}
-
-`;
-    }
-    
     message += `📦 *Producto:* ${product.name}\n` +
       `💰 *Precio:* ${formattedPrice}\n\n` +
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +

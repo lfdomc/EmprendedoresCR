@@ -14,7 +14,6 @@ interface WhatsAppServiceButtonProps {
   businessId: string;
   serviceId: string;
   serviceSlug?: string;
-  serviceImageUrl?: string;
 }
 
 export function WhatsAppServiceButton({ 
@@ -26,8 +25,7 @@ export function WhatsAppServiceButton({
   showShortText = false,
   businessId,
   serviceId,
-  serviceSlug,
-  serviceImageUrl
+  serviceSlug
 }: WhatsAppServiceButtonProps) {
   const formatPrice = (price?: number) => {
     if (!price) return 'Precio a consultar';
@@ -63,13 +61,6 @@ export function WhatsAppServiceButton({
       let message = ` *¡Hola! Me interesa este servicio* 
 
 `;
-      
-      // Agregar imagen si está disponible (solo para que WhatsApp la muestre)
-      if (serviceImageUrl) {
-        message += `${serviceImageUrl}
-
-`;
-      }
       
       message += `🛠️ *Servicio:* ${serviceName}
 ` +

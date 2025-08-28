@@ -236,7 +236,7 @@ const UniversalCardComponent = ({ data: cardData, viewMode, priority = false, is
     } else {
       alert('No hay número de WhatsApp disponible para este emprendimiento');
     }
-  }, [cardData, detailUrl, formattedPrice]);
+  }, [cardData, detailUrl, formattedPrice, imageError]);
 
   // Renderizado en modo lista
   if (viewMode === 'list') {

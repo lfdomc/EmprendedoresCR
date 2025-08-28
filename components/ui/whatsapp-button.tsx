@@ -13,7 +13,6 @@ interface WhatsAppButtonProps {
   businessId: string;
   productId: string;
   productSlug?: string;
-  productImageUrl?: string;
 }
 
 export function WhatsAppButton({ 
@@ -24,8 +23,7 @@ export function WhatsAppButton({
   className,
   businessId,
   productId,
-  productSlug,
-  productImageUrl
+  productSlug
 }: WhatsAppButtonProps) {
   const formatPrice = (price?: number) => {
     if (!price) return 'Precio a consultar';
@@ -62,13 +60,6 @@ export function WhatsAppButton({
       let message = ` *¡Hola! Estoy interesado/a en este producto* 
 
 `;
-      
-      // Agregar imagen si está disponible (solo para que WhatsApp la muestre)
-      if (productImageUrl) {
-        message += `${productImageUrl}
-
-`;
-      }
       
       message += `📦 *Producto:* ${productName}
 ` +
